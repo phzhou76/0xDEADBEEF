@@ -277,10 +277,10 @@ function initDeleteButton() {
             };
 
             var picture = {
-              url: markers[i].picture,
-              size: new google.maps.Size(60, 60),
-              scaledSize: new google.maps.Size(60, 60),
-              labelOrigin: new google.maps.Point(20, 50),
+              url: chooseImage(markers[i].type),
+        	  size: new google.maps.Size(100, 100),
+        	  scaledSize: new google.maps.Size(100, 100),
+        	  labelOrigin: new google.maps.Point(20, 50),
             };
 
             var marker = new google.maps.Marker({
