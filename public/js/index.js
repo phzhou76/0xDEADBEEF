@@ -17,6 +17,7 @@ var infoMap = new Object(); // Mapping of lat-lng (string) to message info.
 var objectMap = new Object(); // Mapping of lat-lng (string) to marker and infobox.
 var zoomImages = [];
 var lastLocation; // Location of the last click before drop was clicked.
+var marker_list = [];
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -54,9 +55,13 @@ function initMap() {
         });
 
         getGeoPosition();
-        initMapButtons();
+        initMapListenersButtons();
         initMapListeners();
         initModalListeners();
+
+        markerCluster = new MarkerClusterer(map, marker_list,
+            {imagePath: 'img/m'});
+
     }
 }
 
@@ -150,7 +155,7 @@ function initMapListeners() {
         }
         // If the map is clicked while not in drop mode, then shrink the current message open.
         else {
-            console.log("ugh");
+            //console.log("ugh");
             if (currentCow != null) {
                 //shrinkMessage2(locToString    (currentCow.getPosition().lat(), currentCow.getPosition().lng()), currInfo, currPreview);
                // currentCow = null;
@@ -189,7 +194,7 @@ function initModalListeners() {
 /**
  * Calls respective functions to create custom buttons for the map.
  */
-function initMapButtons() {
+function initMapListenersButtons() {
     initDropButton();
     initDeleteButton();
     initMarkers();
@@ -263,6 +268,7 @@ function initDeleteButton() {
     });
 }
 
+
 /**
  * Load initial markers
  */
@@ -294,6 +300,7 @@ function initDeleteButton() {
                 icon: picture,
                 animation: google.maps.Animation.DROP
             });
+            markerCluster.addMarker(marker, true);
             var infoBox;
 
         //    $.post("get_box", {
@@ -485,6 +492,7 @@ function addCowPin(location, topic, comments, type) {
                     animation: google.maps.Animation.DROP,
                     created: true
                 });
+                markerCluster.addMarker(marker, true);
                 currentCow = marker;
 
                 loc_string = locToString(location.lat(), location.lng());
@@ -842,6 +850,7 @@ function deleteMessage() {
             "lng": currentCow.position.lng(),
         });
         currentCow.setMap(null);
+        markerCluster.removeMarker(currentCow);
         currentCow = null
     }
 
