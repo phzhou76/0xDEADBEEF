@@ -13,6 +13,7 @@ var infoMap = new Object(); // Mapping of lat-lng (string) to message info.
 var objectMap = new Object(); // Mapping of lat-lng (string) to marker and infobox.
 var zoomImages = [];
 var lastLocation; // Location of the last click before drop was clicked.
+var marker_list = [];
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -53,6 +54,10 @@ function initMap() {
         initMapButtons();
         initMapListeners();
         initModalListeners();
+
+        markerCluster = new MarkerClusterer(map, marker_list,
+            {imagePath: 'img/m'});
+
     }
 }
 
@@ -377,6 +382,8 @@ function addCowPin(location, topic, comments, type) {
         animation: google.maps.Animation.DROP
     });
 
+    markerCluster.addMarker(marker, true);
+
     loc_string = locToString(location.lat(), location.lng());
 
     // Map the position of the marker to info relevant to the message.
@@ -693,6 +700,7 @@ function addComment() {
 function deleteMessage() {
     if (currentCow != null) {
         currentCow.setMap(null);
+        markerCluster.removeMarker(currentCow);
     }
 }
 
