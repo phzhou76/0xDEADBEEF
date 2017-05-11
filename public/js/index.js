@@ -55,7 +55,7 @@ function initMap() {
         });
 
         getGeoPosition();
-        initMapButtons();
+        initMapListenersButtons();
         initMapListeners();
         initModalListeners();
 
@@ -300,6 +300,7 @@ function initDeleteButton() {
                 icon: picture,
                 animation: google.maps.Animation.DROP
             });
+            markerCluster.addMarker(marker, true);
             var infoBox;
 
         //    $.post("get_box", {
@@ -491,6 +492,7 @@ function addCowPin(location, topic, comments, type) {
                     animation: google.maps.Animation.DROP,
                     created: true
                 });
+                markerCluster.addMarker(marker, true);
                 currentCow = marker;
 
                 loc_string = locToString(location.lat(), location.lng());
@@ -510,16 +512,6 @@ function addCowPin(location, topic, comments, type) {
                 map.panTo(location)
 
             });
-    var marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        icon: picture,
-        animation: google.maps.Animation.DROP
-    });
-
-    markerCluster.addMarker(marker, true);
-
-    loc_string = locToString(location.lat(), location.lng());
 
     });
 
@@ -858,6 +850,7 @@ function deleteMessage() {
             "lng": currentCow.position.lng(),
         });
         currentCow.setMap(null);
+        markerCluster.removeMarker(currentCow);
         currentCow = null
     }
 
@@ -872,7 +865,6 @@ function deleteMessage() {
         window.setTimeout(function() {
             $("#guide-footer").removeClass('active');
         }, 3000);
-        markerCluster.removeMarker(currentCow);
     }
 }
 
