@@ -189,7 +189,7 @@ function initModalListeners() {
 /**
  * Calls respective functions to create custom buttons for the map.
  */
-function initMapButtons() {
+function initMapListenersButtons() {
     initDropButton();
     initDeleteButton();
     initMarkers();
@@ -262,6 +262,7 @@ function initDeleteButton() {
         return deleteMessage();
     });
 }
+
 
 /**
  * Load initial markers
