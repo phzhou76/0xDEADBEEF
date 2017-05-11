@@ -151,7 +151,7 @@ function initMapListeners() {
         }
         // If the map is clicked while not in drop mode, then shrink the current message open.
         else {
-            console.log("ugh");
+            //console.log("ugh");
             if (currentCow != null) {
                 shrinkMessage(locToString(currentCow.getPosition().lat(), currentCow.getPosition().lng()));
                 currentCow = null;
