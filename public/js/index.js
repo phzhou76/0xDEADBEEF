@@ -23,8 +23,17 @@ var infoMap = new Object(); // Mapping of lat-lng (string) to message info.
 var objectMap = new Object(); // Mapping of lat-lng (string) to marker and infobox.
 var zoomImages = [];
 var lastLocation; // Location of the last click before drop was clicked.
-var marker_list = [];       
 
+var all_cows = [];
+var filter_cows = [];
+
+var show_food = false;
+var show_event = false;
+var show_sales = false;
+
+// var refresh_food = [];
+// var refresh_event = [];
+// var refresh_sales = [];
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -67,8 +76,12 @@ function initMap() {
         initMapListeners();
         initModalListeners();
 
-         markerCluster = new MarkerClusterer(map, marker_list,      
-            {imagePath: 'img/m'});
+         markerCluster = new MarkerClusterer(map, all_cows,      
+            {imagePath: 'img/m'},{ ignoreHidden: true });
+
+         markerClusterfilter = new MarkerClusterer(map, filter_cows,      
+            {imagePath: 'img/m'},{ ignoreHidden: true });
+         markerCluster.repaint();
     }
 }
 
@@ -256,10 +269,6 @@ function initFilterBox() {
     filterContainer = document.createElement('div');
     //filterContainer.style.padding = "10px 0px 0px 0px";
 
-    
-   
-
-
     var filterBorder = document.createElement('div');
     filterBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
     filterBorder.style.cursor = 'pointer';
@@ -337,8 +346,17 @@ function initCheckbox1(){
 
 
     map.controls[google.maps.ControlPosition.RIGHT].push(CheckContainer);
-
-
+    // Setup the map listener for the button.
+    google.maps.event.addDomListener(slider, 'click', function() {
+        if(show_food){
+            show_food = false;
+            refreshMarkers();
+        }
+        else{
+            show_food = true;
+            refreshMarkers();
+        }
+    });
 
 
 }
@@ -387,7 +405,17 @@ function initCheckbox2(){
 
     map.controls[google.maps.ControlPosition.RIGHT].push(CheckContainer2);
 
-
+    // Setup the map listener for the button.
+    google.maps.event.addDomListener(slider, 'click', function() {
+        if(show_event){
+            show_event = false;
+            refreshMarkers();
+        }
+        else{
+            show_event = true;
+            refreshMarkers();
+        }
+    });
 
 
 }
@@ -435,9 +463,17 @@ function initCheckbox3(){
 
     map.controls[google.maps.ControlPosition.RIGHT].push(CheckContainer3);
 
-
-
-
+    // Setup the map listener for the button.
+    google.maps.event.addDomListener(slider, 'click', function() {
+        if(show_sales){
+            show_sales = false;
+            refreshMarkers();
+        }
+        else{
+            show_sales = true;
+            refreshMarkers();
+        }
+    });
 }
 
 
@@ -481,6 +517,7 @@ function initDeleteButton() {
  function initMarkers() {
     $.get("get", function(markers) {
         for(var i=0; i < markers.length; i++) {
+            //console.log(markers[i].type);
             //Function closure
             (function () {
             var location = {
@@ -547,24 +584,126 @@ function initDeleteButton() {
                 initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
                 disableDrop();
 
-                // Attach preview to marker.
-                previewBox.open(map, marker);
+                //TODO disabled for now Attach preview to marker.
+                //previewBox.open(map, marker);
       //       });
+                //all_cows.push(marker);
           }());
         }
     });
  }
 
 
+ /**
+ * reload markers
+ */
+ function refreshMarkers() {
+    $.get("get", function(markers) {
+        markerClusterfilter.clearMarkers();
+        for(var i=0; i < markers.length; i++) {
+                //console.log(markers[i].type);
+                if((markers[i].type == 'Food' && show_food == true) || (markers[i].type == 'Event' && show_event == true) 
+                    || (markers[i].type == 'Sales' && show_sales == true)){
+                    (function () {
+                    var location = {
+                        lat: markers[i].lat,
+                        lng: markers[i].lng
+                    };
+
+                    var picture = {
+                      url: chooseImage(markers[i].type),
+                      size: new google.maps.Size(100, 100),
+                      scaledSize: new google.maps.Size(100, 100),
+                      labelOrigin: new google.maps.Point(20, 50),
+                    };
+
+                    var marker = new google.maps.Marker({
+                        position: location,
+                        topic: markers[i].topic,
+                        type: markers[i].type,
+                        comment: markers[i].comment,
+                        score: markers[i].score,
+                        id: markers[i]._id,
+                        map: map,
+                        icon: picture,
+                        animation: google.maps.Animation.DROP
+                    });
+                    markerClusterfilter.addMarker(marker, true);  
+                    // if(markers[i].type == 'Food'){
+                    //     refresh_food.push(marker);
+                    // }
+                    // else if(markers[i].type == 'Sales'){
+                    //     refresh_sales.push(marker);
+                    // }
+                    // else if(markers[i].type == 'Event'){
+                    //     refresh_event.push(marker);
+                    // }
+                    
+                    // if(marker.type == 'Food'){
+                    //     marker.setVisible(true);
+                    // }
+                    //markerCluster.addMarker(marker, true);  
+                    var infoBox;
+
+
+                    var infoBox = new InfoBox({
+                        boxStyle: {
+                            borderRadius: "10px",
+                            border: "6px solid rgba(43, 132, 237, 1.0)",
+                            textAlign: "center",
+                            fontSize: "12pt",
+                            width: "300px",
+                            display: "none",
+                            backgroundColor: "rgba(255, 255, 255, 1.0)"
+                        },
+                        pixelOffset: new google.maps.Size(-150, -300),
+                        enableEventPropagation: true,
+                        closeBoxURL: "",
+                    });
+
+                    var previewBox = new InfoBox({
+                        boxStyle: {
+                            borderRadius: "10px",
+                            border: "6px solid rgba(43, 132, 237, 0.5)",
+                            textAlign: "center",
+                            fontSize: "12pt",
+                            width: "150px",
+                            display: "block",
+                            backgroundColor: "rgba(255, 255, 255, 1.0)"                  },
+                        pixelOffset: new google.maps.Size(-75, -175),
+                        enableEventPropagation: true,
+                        closeBoxURL: "",
+                    });
+                    loc_string = locToString(marker.position.lat(), marker.position.lng())
+                    initMarkerListener(marker, loc_string, infoBox, previewBox, markers[i].comment);
+                    initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
+                    disableDrop();
+
+                        // Attach preview to marker.
+                        //previewBox.open(map, marker);
+                        //});
+                    }());
+            } 
+        }
+    });
+ }
+
+            
+
+
 function filterCows(){
     if(!filterMode) {
         enableFilter();
+        
     } else {
         disableFilter();
     }
 }
 
 function enableFilter(){
+    markerCluster.clearMarkers();
+    markerClusterfilter.repaint();
+    refreshMarkers();
     filterText.innerHTML = "All Cows";
     filterMode=true;
     deleteContainer.className = "options inactive";
@@ -577,6 +716,9 @@ function enableFilter(){
 }
 
 function disableFilter(){
+    markerClusterfilter.clearMarkers();
+    initMarkers();
+    markerCluster.repaint();
     filterText.innerHTML = "Filter Cows";
     filterMode=false;
     deleteContainer.className = "options";
@@ -733,6 +875,7 @@ function addCowPin(location, topic, comments, type) {
                     created: true
                 });
                 markerCluster.addMarker(marker, true);
+                markerCluster.repaint();
                 currentCow = marker;
 
                 loc_string = locToString(location.lat(), location.lng());
@@ -747,9 +890,10 @@ function addCowPin(location, topic, comments, type) {
                     "content": comments
                  })
 
-                previewBox.open(map, marker);
+                //previewBox.open(map, marker);
 
                 map.panTo(location)
+                all_cows.push(marker);
 
             });
 
@@ -1091,6 +1235,7 @@ function deleteMessage() {
         });
         currentCow.setMap(null);
         markerCluster.removeMarker(currentCow);
+        markerCluster.repaint();
         currentCow = null
     }
 
