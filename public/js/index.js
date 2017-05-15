@@ -24,16 +24,13 @@ var objectMap = new Object(); // Mapping of lat-lng (string) to marker and infob
 var zoomImages = [];
 var lastLocation; // Location of the last click before drop was clicked.
 
-var all_cows = [];
-var filter_cows = [];
+var all_cows = []; //array used for overall cluster
+var filter_cows = []; //array used for filter cow cluster
 
+//used for filter func
 var show_food = false;
 var show_event = false;
 var show_sales = false;
-
-// var refresh_food = [];
-// var refresh_event = [];
-// var refresh_sales = [];
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -225,7 +222,6 @@ function initMapButtons() {
     CheckContainer.className = "options inactive";
     CheckContainer2.className = "options inactive";
     CheckContainer3.className = "options inactive";
-    
 }
 
 /**
@@ -276,10 +272,6 @@ function initFilterBox() {
     filterBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     filterContainer.appendChild(filterBorder);
 
-
-
-
-
     filterText = document.createElement('div');
     filterText.style.color = '#fff';
     filterText.style.fontFamily = 'Arial,sans-serif';
@@ -289,9 +281,6 @@ function initFilterBox() {
     filterText.style.paddingRight = '15px';
     filterText.innerHTML = 'Filter Cows';
     filterBorder.append(filterText);
-
-    
-
     
     map.controls[google.maps.ControlPosition.RIGHT].push(filterContainer);
 
@@ -313,9 +302,6 @@ function initCheckbox1(){
     boxBorder.style.textAlign = 'center';
     //boxBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     CheckContainer.appendChild(boxBorder);
-    
-
-    
 
     var checkBorder = document.createElement('label');
     checkBorder.className= 'switch';
@@ -340,10 +326,6 @@ function initCheckbox1(){
     var slider = document.createElement('div');
     slider.className= 'slider round';
     checkBorder.append(slider);
-
-  
-
-
 
     map.controls[google.maps.ControlPosition.RIGHT].push(CheckContainer);
     // Setup the map listener for the button.
@@ -373,9 +355,6 @@ function initCheckbox2(){
     //boxBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     CheckContainer2.appendChild(boxBorder);
     
-
-    
-
     var checkBorder = document.createElement('label');
     checkBorder.className= 'switch';
     checkBorder.style.cursor = 'pointer';
@@ -399,10 +378,6 @@ function initCheckbox2(){
     var slider = document.createElement('div');
     slider.className= 'slider round';
     checkBorder.append(slider);
-
-
-
-
     map.controls[google.maps.ControlPosition.RIGHT].push(CheckContainer2);
 
     // Setup the map listener for the button.
@@ -587,7 +562,6 @@ function initDeleteButton() {
                 //TODO disabled for now Attach preview to marker.
                 //previewBox.open(map, marker);
       //       });
-                //all_cows.push(marker);
           }());
         }
     });
@@ -629,20 +603,6 @@ function initDeleteButton() {
                         animation: google.maps.Animation.DROP
                     });
                     markerClusterfilter.addMarker(marker, true);  
-                    // if(markers[i].type == 'Food'){
-                    //     refresh_food.push(marker);
-                    // }
-                    // else if(markers[i].type == 'Sales'){
-                    //     refresh_sales.push(marker);
-                    // }
-                    // else if(markers[i].type == 'Event'){
-                    //     refresh_event.push(marker);
-                    // }
-                    
-                    // if(marker.type == 'Food'){
-                    //     marker.setVisible(true);
-                    // }
-                    //markerCluster.addMarker(marker, true);  
                     var infoBox;
 
 
@@ -678,7 +638,6 @@ function initDeleteButton() {
                     initMarkerListener(marker, loc_string, infoBox, previewBox, markers[i].comment);
                     initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
                     disableDrop();
-
                         // Attach preview to marker.
                         //previewBox.open(map, marker);
                         //});
@@ -896,7 +855,6 @@ function addCowPin(location, topic, comments, type) {
                 all_cows.push(marker);
 
             });
-
     });
 
 
