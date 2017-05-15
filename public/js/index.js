@@ -1,23 +1,22 @@
-var map;
-var dropMode; // True if the user is trying to drop a cow.
+var googleMapObject; // The Google Maps object.
 var watchID; // Used to disable continuous tracking of user's location.
-var markerID;
 
+var dropMode; // True if the user is trying to drop a cow.
+var markerID;
 
 var centerMarker; // Need to store to affect visibility later on.
 var radiusMarker;
 var cowBtnText;
 var deleteContainer;
 
-var currInfo;
-var currPreview;
+var currCowInfo; // Holds info boxes of currently expanded message.
+var currCowPreview;
 
-var currentCow; // Location of cow whose message is currently expanded.
-var infoMap = new Object(); // Mapping of lat-lng (string) to message info.
-var objectMap = new Object(); // Mapping of lat-lng (string) to marker and infobox.
-var zoomImages = [];
 var lastLocation; // Location of the last click before drop was clicked.
-var marker_list = [];
+var zoomImages = [];
+
+var markerClusterElmts = []; // Used to store markers for clustering.
+var markerCluster;
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -25,7 +24,7 @@ var marker_list = [];
 function initMap() {
     dropMode = false;
     $("#map-loading").fadeOut();
-    map = new google.maps.Map(document.getElementById('map'), {
+    googleMapObject = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: 0.0,
             lng: 0.0
@@ -59,9 +58,9 @@ function initMap() {
         initMapListeners();
         initModalListeners();
 
-        markerCluster = new MarkerClusterer(map, marker_list,
-            {imagePath: 'img/m'});
-
+        markerCluster = new MarkerClusterer(googleMapObject, markerClusterElmts, {
+            imagePath: 'img/cow.png'
+        });
     }
 }
 
@@ -74,12 +73,12 @@ function getGeoPosition() {
     // Create a marker for the map center.
     centerMarker = new google.maps.Marker({
         icon: zoomImages[1],
-        map: map
+        map: googleMapObject
     });
 
     // Create a marker that constantly surrounds the map center marker.
     radiusMarker = new google.maps.Circle({
-        map: map,
+        map: googleMapObject,
         radius: 150,
         fillColor: 'rgba(30, 30, 30, 0.3)',
         strokeWeight: 4,
@@ -106,7 +105,7 @@ function getGeoPosition() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        map.setCenter(currPosition);
+        googleMapObject.setCenter(currPosition);
         centerMarker.setPosition(currPosition);
     });
 }
@@ -116,12 +115,12 @@ function getGeoPosition() {
  */
 function initMapListeners() {
     // Setup the map listener for any changes in zoom.
-    google.maps.event.addDomListener(map, 'zoom_changed',
+    google.maps.event.addDomListener(googleMapObject, 'zoom_changed',
         function() {
             // Adjust size of position icon depending on zoom.
-            if (map.getZoom() < 17) {
+            if (googleMapObject.getZoom() < 17) {
                 centerMarker.setIcon(zoomImages[0]);
-            } else if (map.getZoom() >= 17 && map.getZoom() < 20) {
+            } else if (googleMapObject.getZoom() >= 17 && googleMapObject.getZoom() < 20) {
                 centerMarker.setIcon(zoomImages[1]);
             } else {
                 centerMarker.setIcon(zoomImages[2]);
@@ -131,7 +130,7 @@ function initMapListeners() {
                 if ($("#guide-footer").hasClass('active') == false) {
                     $("#guide-footer").addClass('active');
                 }
-                if (map.getZoom() < 17) {
+                if (googleMapObject.getZoom() < 17) {
                     radiusMarker.setVisible(false);
                     $("#guide-text").text("Too far zoomed out!");
                     $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
@@ -144,7 +143,7 @@ function initMapListeners() {
         });
 
     // Setup the map listener for any clicks on the map.
-    google.maps.event.addListener(map, 'click', function(event) {
+    google.maps.event.addListener(googleMapObject, 'click', function(event) {
         // If drop mode is enabled, there should not be clicks outside of radius.
         if (dropMode) {
             if ($("#guide-footer").hasClass('active') == false) {
@@ -155,11 +154,9 @@ function initMapListeners() {
         }
         // If the map is clicked while not in drop mode, then shrink the current message open.
         else {
-            //console.log("ugh");
-            if (currentCow != null) {
-                //shrinkMessage2(locToString    (currentCow.getPosition().lat(), currentCow.getPosition().lng()), currInfo, currPreview);
-               // currentCow = null;
-                //console.log("rip")
+            if (currCowInfo != null && currCowPreview != null) {
+                shrinkMessage(currCowInfo, currCowPreview);
+                currCowInfo = currCowPreview = null;
             }
         }
     });
@@ -228,7 +225,7 @@ function initDropButton() {
     cowBtnBorder.append(cowBtnText);
 
     // Inserts the finished button to the right-center area of the map.
-    map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(cowBtnContainer);
+    googleMapObject.controls[google.maps.ControlPosition.RIGHT_CENTER].push(cowBtnContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(cowBtnContainer, 'click', function() {
@@ -260,7 +257,7 @@ function initDeleteButton() {
     deleteBorder.appendChild(deleteImg);
 
     // Inserts the finished button to the right-bottom area of the map.
-    map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(deleteContainer);
+    googleMapObject.controls[google.maps.ControlPosition.RIGHT_CENTER].push(deleteContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(deleteContainer, 'click', function() {
@@ -268,86 +265,52 @@ function initDeleteButton() {
     });
 }
 
+/**
+ * Load initial markers from the database.
+ */
+function initMarkers() {
+    $.get("getMarker", function(markers) {
+        for (var i = 0; i < markers.length; i++) {
+            initMarkersHelper(markers[i]);
+        }
+    });
+}
 
 /**
- * Load initial markers
+ * Create a marker, given the marker data from the database.
+ * @param {object} markerData - The data of the individual marker.
  */
- function initMarkers() {
- 	$.get("get", function(markers) {
-        for(var i=0; i < markers.length; i++) {
-            //Function closure
-            (function () {
-            var location = {
-                lat: markers[i].lat,
-                lng: markers[i].lng
-            };
+function initMarkersHelper(markerData) {
+    var location = {
+        lat: markerData.lat,
+        lng: markerData.lng
+    };
 
-            var picture = {
-              url: chooseImage(markers[i].type),
-        	  size: new google.maps.Size(100, 100),
-        	  scaledSize: new google.maps.Size(100, 100),
-        	  labelOrigin: new google.maps.Point(20, 50),
-            };
+    var picture = {
+        url: chooseImage(markerData.type),
+        size: new google.maps.Size(50, 50),
+        scaledSize: new google.maps.Size(50, 50),
+        labelOrigin: new google.maps.Point(20, 50)
+    };
 
-            var marker = new google.maps.Marker({
-                position: location,
-                topic: markers[i].topic,
-                type: markers[i].type,
-                comment: markers[i].comment,
-                score: markers[i].score,
-                id: markers[i]._id,
-                map: map,
-                icon: picture,
-                animation: google.maps.Animation.DROP
-            });
-            markerCluster.addMarker(marker, true);
-            var infoBox;
+    var marker = new google.maps.Marker({
+        position: location,
+        map: googleMapObject,
+        icon: picture
+    });
 
-        //    $.post("get_box", {
-        //        "lat": marker.position.lat(),
-       //         "lng": marker.position.lng(),
-       //      }, function(infobox) {
+    var infoBox = initInfoBox(markerData.topic, markerData.comment, markerData.score);
+    var previewBox = initPreviewBox(markerData.topic);
 
-                var infoBox = new InfoBox({
-                    boxStyle: {
-                        borderRadius: "10px",
-                        border: "6px solid rgba(43, 132, 237, 1.0)",
-                        textAlign: "center",
-                        fontSize: "12pt",
-                        width: "300px",
-                        display: "none",
-                        backgroundColor: "rgba(255, 255, 255, 1.0)"
-                    },
-                    pixelOffset: new google.maps.Size(-150, -300),
-                    enableEventPropagation: true,
-                    closeBoxURL: "",
-                });
+    initMarkerListener(marker, infoBox, previewBox);
+    disableDrop();
 
-                var previewBox = new InfoBox({
-                    boxStyle: {
-                        borderRadius: "10px",
-                        border: "6px solid rgba(43, 132, 237, 0.5)",
-                        textAlign: "center",
-                        fontSize: "12pt",
-                        width: "150px",
-                        display: "block",
-                        backgroundColor: "rgba(255, 255, 255, 1.0)"                  },
-                    pixelOffset: new google.maps.Size(-75, -175),
-                    enableEventPropagation: true,
-                    closeBoxURL: "",
-                });
-                loc_string = locToString(marker.position.lat(), marker.position.lng())
-                initMarkerListener(marker, loc_string, infoBox, previewBox, markers[i].comment);
-                initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
-                disableDrop();
+    markerCluster.addMarker(marker, true);
 
-                // Attach preview to marker.
-                previewBox.open(map, marker);
-      //       });
-          }());
-        }
- 	});
- }
+    // Attach both info boxes to the marker.
+    infoBox.open(googleMapObject, marker);
+    previewBox.open(googleMapObject, marker);
+}
 
 /**
  * Modifies the text of the message drop button, as well as the guide text.
@@ -369,8 +332,8 @@ function enableDrop() {
 
     // Only let the radius appear if the user is dropping a message.
     radiusMarker.setVisible(true);
-    map.panTo(centerMarker.position);
-    map.setZoom(18);
+    googleMapObject.panTo(centerMarker.position);
+    googleMapObject.setZoom(18);
     if ($("#guide-footer").hasClass('active') == false) {
         $("#guide-footer").addClass('active');
     }
@@ -424,247 +387,65 @@ function dropClick() {
  * @param {object} type - Contains the type of the message.
  */
 function addCowPin(location, topic, comments, type) {
-
-    // Initialize pin with visuals and text.
-    var infoBox = new InfoBox({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "8px solid rgba(43, 132, 237, 1.0)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "300px",
-            display: "block",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        },
-        pixelOffset: new google.maps.Size(-150, -300),
-        enableEventPropagation: false,
-        closeBoxURL: ""
-    });
-
-    var previewBox = new InfoBox({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "6px solid rgba(43, 132, 237, 0.5)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "150px",
-            display: "block",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        },
-        pixelOffset: new google.maps.Size(-75, -175),
-        enableEventPropagation: false,
-        closeBoxURL: ""
-    });
-
     var picture = {
         url: chooseImage(type),
-        size: new google.maps.Size(100, 100),
-        scaledSize: new google.maps.Size(100, 100),
-        labelOrigin: new google.maps.Point(20, 50),
+        size: new google.maps.Size(50, 50),
+        scaledSize: new google.maps.Size(50, 50)
     };
 
-    //Post marker info to routes
-    var marker = ""
-    $.post("add_marker", {
-          "picture": 'img/cow.png',
-          "topic": topic,
-          "type": type,
-          "comment": comments,
-          "score": 0,
-          "lat": location.lat(),
-          "lng": location.lng(),
-    }, function() {
-            $.post("get_current_marker", {
-                "lat": location.lat(),
-                "lng": location.lng(),
-             },
-            function(markers) {
-                markerID = markers[0]._id
-                marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    topic: topic,
-                    type: type,
-                    comment: comments,
-                    score: 0,
-                    id: markerID,
-                    icon: picture,
-                    animation: google.maps.Animation.DROP,
-                    created: true
-                });
-                markerCluster.addMarker(marker, true);
-                currentCow = marker;
+    // Post marker info to route to save to database.
+    var markerInfo = {
+        topic: topic,
+        type: type,
+        comment: comments,
+        score: 0,
+        lat: location.lat(),
+        lng: location.lng()
+    };
 
-                loc_string = locToString(location.lat(), location.lng());
+    $.post("addMarker", markerInfo);
 
-                initMarkerListener(marker, loc_string, infoBox, previewBox, comments);
-                initInfoBox(infoBox, previewBox, topic, comments, marker);
-                disableDrop();
-                //Post infobox to routes
-                $.post("add_box", {
-                    "lat": location.lat(),
-                    "lng": location.lng(),
-                    "content": comments
-                 })
-
-                previewBox.open(map, marker);
-
-                map.panTo(location)
-
-            });
-
+    var marker = new google.maps.Marker({
+        position: location,
+        map: googleMapObject,
+        icon: picture,
+        animation: google.maps.Animation.DROP,
     });
-
-
-}
-
-
-/** Database functions **/
-
-/**
- * Inits event listeners for the marker.
- * @param {object} marker - The marker that the listener will be attached to.
- * @param {string} location - The latitude and longitude in string form,
- *                            separated by a space.
- */
-function initMarkerListener(marker, location, infoBox, previewBox, comments) {
-    // Create bounce animation when moving over cow marker.
-    marker.addListener('mouseover', function() {
-        if (marker.getAnimation() == null) {
-            setTimeout(function() {
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-            }, 150);
-            setTimeout(function() {
-                marker.setAnimation(null);
-            }, 2950);
-        }
-    });
-
-    // When the marker is clicked on, the message will be expanded.
-    marker.addListener('click', function() {
-        enlargeMessage(location, marker, infoBox, previewBox, comments);
-    });
-    shrinkMessage(location, marker, infoBox, previewBox);
-}
-
-/**
- * Given the location of a marker, the message attached to that marker will
- * shrink down to the topic-only message.
- * @param {string} location - The string representation of the location, should
- *                            utilize locToString.
- */
-function shrinkMessage(location, infoBox, previewBox) {
-    infoBox.setOptions({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "6px solid rgba(43, 132, 237, 1.0)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "300px",
-            display: "none",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        }
-    });
-
-    previewBox.setOptions({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "6px solid rgba(43, 132, 237, 0.5)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "150px",
-            display: "block",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        }
-    });
-}
-
-/**
- * Given the location of a marker, the message attached to that marker will
- * expand to the full message.
- * @param {string} location - The string representation of the location, should
- *                            utilize locToString.
- */
-function enlargeMessage(location, marker, infoBox, previewBox, comments) {
-    // Closes infoBox and returns if clicking on an open message
-    if(currInfo == infoBox) {
-        shrinkMessage(locToString(location), currInfo, currPreview);
-        currInfo = null
-        currPreview = null
-        return;
-    }
-
-    // Shrink the contents of the previously opened message, if available.
-    if (currInfo != null) {
-       shrinkMessage(locToString(location), currInfo, currPreview);
-    }
-    currInfo = infoBox;
-    currPreview = previewBox;
+    markerCluster.addMarker(marker, true);
     currentCow = marker;
-    initInfoBox(infoBox, previewBox, marker.topic, marker.comment, marker);
 
+    var infoBox = initInfoBox(topic, comments, 0);
+    var previewBox = initPreviewBox(topic);
 
-    infoBox.setOptions({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "6px solid rgba(43, 132, 237, 1.0)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "300px",
-            display: "block",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        }
-    });
+    initMarkerListener(marker, infoBox, previewBox);
+    disableDrop();
 
-    previewBox.setOptions({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "6px solid rgba(43, 132, 237, 0.5)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "150px",
-            display: "none",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        }
-    });
-    infoBox.open(map, marker)
+    // Attach both info and preview boxes to the marker.
+    window.setTimeout(function() {
+        infoBox.open(googleMapObject, marker);
+    }, 600);
+    previewBox.open(googleMapObject, marker);
 
-    // Attach preview to marker.
-    //previewBox.open(map, marker);
-    var position = {
-        lat: currentCow.position.lat(),
-        lng: currentCow.position.lng()
-    }
-
-    map.panTo(position);
+    googleMapObject.panTo(location);
 }
 
 /**
- * Based on the type, returns a URL for the correct image.
- * @param {string} type - The type of the message.
- * @return {string} The location of the image.
- */
-function chooseImage(type) {
-    if (type == "Food") {
-        return 'img/cow-food.png';
-    } else if (type == "Event") {
-        return 'img/cow-event.png';
-    } else if (type == "Sales") {
-        return 'img/cow-sales.png';
-    } else {
-        return 'img/cow.png';
-    }
-}
-
-/**
- * Inits the contents of the info and preview box, and then attaches both boxes
- * to the given marker.
- * @param {object} infoBox - Infobox object that will display the full message.
- * @param {object} previewBox - Infobox object that only displays the topic.
+ * Inits the contents of the info box.
  * @param {string} topic - The topic of the message.
  * @param {string} comments - The comment of the message.
+ * @param {number} score - The score of the comment.
+ * @return {object} The created info box.
  */
-function initInfoBox(infoBox, previewBox, topic, comments, marker) {
+function initInfoBox(topic, comments, score) {
+    // Initialize the info box.
+    var infoBox = new InfoBox({
+        pixelOffset: new google.maps.Size(-150, -200),
+        enableEventPropagation: false,
+        closeBoxURL: ""
+    });
+
+    setInfoBoxVisibility(infoBox, true, true);
+
     // Initialize the topic.
     var topicHTML = document.createElement('h3');
     var topicContent = document.createTextNode(topic);
@@ -673,7 +454,7 @@ function initInfoBox(infoBox, previewBox, topic, comments, marker) {
 
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
-    commentHTML.appendChild(parseComment(comments, marker.score));
+    commentHTML.appendChild(parseComment(comments, score));
 
     // Initialize a button to trigger a comment-showing modal.
     var viewHTML = document.createElement('div');
@@ -702,22 +483,132 @@ function initInfoBox(infoBox, previewBox, topic, comments, marker) {
 
     infoBox.setContent(messageHTML);
 
+    return infoBox;
+}
+
+/**
+ * Inits the contents of the preview box.
+ * @param {string} topic - The topic of the message.
+ * @return {object} The created preview box.
+ */
+function initPreviewBox(topic) {
+    // Initialize the preview box.
+    var previewBox = new InfoBox({
+        pixelOffset: new google.maps.Size(-75, -75),
+        enableEventPropagation: false,
+        closeBoxURL: ""
+    });
+
+    setInfoBoxVisibility(previewBox, false, false);
+
     // Initialize the preview window with just the topic.
     var previewHTML = document.createElement('h3');
     previewHTML.className += 'topic-header';
     previewHTML.innerHTML = topic;
     previewBox.setContent(previewHTML);
+
+    return previewBox;
 }
 
 /**
- * Given a latitude and longitude (in float), will create a space-separated
- * string that has their values.
- * @param {float} latitude - The latitude of the location.
- * @param {float} longitude - The longitude of the location.
- * @return {string} The string representation of the latitude-longitude coords.
+ * Inits event listeners for the marker.
+ * @param {object} marker - The marker that the listener will be attached to.
+ * @param {object} infoBox - The info box attached to the marker that displays the
+ *      the full message.
+ * @param {object} previewBox - The info box attached to the marker that displays
+ *      only the topic.
  */
-function locToString(latitude, longitude) {
-    return parseFloat(latitude) + " " + parseFloat(longitude);
+function initMarkerListener(marker, infoBox, previewBox) {
+    // Create bounce animation when moving over cow marker.
+    marker.addListener('mouseover', function() {
+        if (marker.getAnimation() == null) {
+            setTimeout(function() {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }, 150);
+            setTimeout(function() {
+                marker.setAnimation(null);
+            }, 2950);
+        }
+    });
+
+    // When the marker is clicked on, the message will be expanded.
+    marker.addListener('click', function() {
+        enlargeMessage(marker, infoBox, previewBox);
+    });
+    shrinkMessage(infoBox, previewBox);
+}
+
+/**
+ * Sets the visibility of an info box. Can be used for preview boxes too.
+ * @param {object} infoBox - The info box to set the opacity of.
+ * @param {bool} visible - True if visibility desired, false otherwise.
+ * @param {bool} isInfoBox - True if info box, false if preview box.
+ */
+function setInfoBoxVisibility(infoBox, visible, isInfoBox) {
+    infoBox.setOptions({
+        boxStyle: {
+            borderRadius: "10px",
+            border: "6px solid rgba(43, 132, 237, 0.5)",
+            textAlign: "center",
+            fontSize: "12pt",
+            width: (isInfoBox) ? "300px" : "150px",
+            display: (visible) ? "block" : "none",
+            backgroundColor: "rgba(255, 255, 255, 1.0)"
+        }
+    });
+}
+
+/**
+ * Given the location of a marker, the message attached to that marker will
+ * shrink down to the topic-only message.
+ * @param {object} infoBox - The expanded info box of the message.
+ * @param {object} previewBox - The shrunk down preview box of the message.
+ */
+function shrinkMessage(infoBox, previewBox) {
+    setInfoBoxVisibility(infoBox, false, true);
+    setInfoBoxVisibility(previewBox, true, false);
+}
+
+/**
+ * Given the location of a marker, the message attached to that marker will
+ * expand to the full message.
+ * @param {object} marker - The marker that was clicked on to enlarge its message.
+ * @param {object} infoBox - The info box object that will be expanded.
+ * @param {object} previewBox - The info box object that will disappear.
+ */
+function enlargeMessage(marker, infoBox, previewBox) {
+    // Shrink the contents of the previously opened message, if available.
+    if (currCowInfo != null && currCowPreview != null) {
+        shrinkMessage(currCowInfo, currCowPreview);
+    }
+
+    currInfo = infoBox;
+    currPreview = previewBox;
+
+    setInfoBoxVisibility(infoBox, true, true);
+    setInfoBoxVisibility(previewBox, false, false);
+
+    googleMapObject.panTo({
+        marker.position.lat(),
+        marker.position.lng()
+    });
+}
+
+/**
+ * Based on the type, returns a URL for the correct image.
+ * @param {string} type - The type of the message.
+ * @return {string} The location of the image.
+ */
+function chooseImage(type) {
+    if (type == "Food") {
+        return 'img/cow-food.png';
+    } else if (type == "Event") {
+        return 'img/cow-event.png';
+    } else if (type == "Sales") {
+        return 'img/cow-sales.png';
+    } else {
+        return 'img/cow.png';
+    }
 }
 
 /**
@@ -743,7 +634,7 @@ function parseComment(comments, score, isOtherComment) {
     countDiv.innerHTML = score;
 
     //Adds id if it is not the main comment
-    if(isOtherComment == true) {
+    if (isOtherComment == true) {
         countDiv.value = "other"
     }
 
@@ -771,7 +662,6 @@ function parseComment(comments, score, isOtherComment) {
  * Loads the contents of one message cow into the modal.
  */
 function loadComments() {
-    loc_string = locToString(currentCow.position.lat(), currentCow.position.lng());
     // Clear the contents of the modal.
     var commentsDiv = document.getElementById("comments-div");
     if (commentsDiv != null) {
@@ -795,15 +685,15 @@ function loadComments() {
         "lng": currentCow.position.lng(),
     }, function(comments) {
 
-            for(var j = 0; j < comments.length; j++) {
-                var otherComments = document.createElement('table');
-                otherComments.className += 'comments-table';
-                otherComments.id = 'other-comments';    
-                otherComments.appendChild(parseComment(comments[j].content, comments[j].score, true));  
-                var line = document.createElement('hr');
-                commentsDiv.appendChild(line);
-                commentsDiv.appendChild(otherComments); 
-            }   
+        for (var j = 0; j < comments.length; j++) {
+            var otherComments = document.createElement('table');
+            otherComments.className += 'comments-table';
+            otherComments.id = 'other-comments';
+            otherComments.appendChild(parseComment(comments[j].content, comments[j].score, true));
+            var line = document.createElement('hr');
+            commentsDiv.appendChild(line);
+            commentsDiv.appendChild(otherComments);
+        }
         $('#commentsModal').modal('show'); // Reveals the modal.*/
     });
 }
@@ -813,26 +703,24 @@ function loadComments() {
  * add a new comment if the same text does not already exist.
  */
 function addComment() {
-    loc_string = locToString(currentCow.getPosition().lat(), currentCow.getPosition().lng());
     var commentBox = document.getElementById("add-comment");
     if (commentBox.value != "") {
         $.post("get_comment", {
             "content": commentBox.value,
-            "lat": currentCow.getPosition().lat(), 
+            "lat": currentCow.getPosition().lat(),
             "lng": currentCow.getPosition().lng(),
         }, function(comment) {
-            if(comment.length > 0) {
+            if (comment.length > 0) {
                 return;
-            }
-            else {
+            } else {
                 $.post("add_comment", {
-                "content": commentBox.value,
-                "score": 0,
-                "lat": currentCow.getPosition().lat(), 
-                "lng": currentCow.getPosition().lng(),
-            });
-            commentBox.value = "";
-            loadComments(currentCow);
+                    "content": commentBox.value,
+                    "score": 0,
+                    "lat": currentCow.getPosition().lat(),
+                    "lng": currentCow.getPosition().lng(),
+                });
+                commentBox.value = "";
+                loadComments(currentCow);
             }
         });
     }
@@ -849,12 +737,12 @@ function deleteMessage() {
             "lat": currentCow.position.lat(),
             "lng": currentCow.position.lng(),
         });
-        currentCow.setMap(null);
+        if (currentCow != null) {
+            currentCow.setMap(null);
+        }
         markerCluster.removeMarker(currentCow);
         currentCow = null
-    }
-
-    else {
+    } else {
         // Print an error for the user.
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
@@ -905,3 +793,10 @@ $(document).on('click', '.increment', function() {
         $(this).parent().removeClass("bump");
     }, 400);
 });
+
+/**
+ * Whenever the window exits, disable the geolocation tracking.
+ */
+window.onbeforeunload = function() {
+    navigator.geolocation.clearWatch(watchID);
+}

@@ -1,31 +1,29 @@
-
 var Mongoose = require('mongoose');
 
-
 var MarkerSchema = new Mongoose.Schema({
-	"picture": String,
-	"topic": String,
-	"type": String,
-	"comment": String,
-	"score": Number,
-	"lat": Number,
-	"lng": Number,
-	//"createdAt": {type: Date, expires: 10, default: Date.now }
+    topic: String,
+    type: String,
+    comment: String,
+    score: Number,
+    lat: Number,
+    lng: Number
+}, {
+    autoIndex: false // Index creation has significant performance impact.
 });
 
-var InfoBoxSchema = new Mongoose.Schema({
-	"content": String,
-	"lat": Number,
-	"lng": Number
-})
-
 var CommentSchema = new Mongoose.Schema({
-	"content": String,
-	"score": Number,
-	"lat": Number,
-	"lng": Number
-})
+    content: String,
+    score: Number,
+    lat: Number,
+    lng: Number,
+    date: {
+        type: Date,
+        default: Date.now
+    }
+}, {
+    autoIndex: false
+});
 
-exports.Marker = Mongoose.model('Marker', MarkerSchema);
-exports.InfoBox = Mongoose.model('InfoBox', InfoBoxSchema);
-exports.Comment = Mongoose.model('Comment', CommentSchema);
+// Init models for use as document objects.
+exports.ModelMarker = Mongoose.model('Marker', MarkerSchema);
+exports.ModelComment = Mongoose.model('Comment', CommentSchema);
