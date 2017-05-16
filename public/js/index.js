@@ -560,7 +560,7 @@ function initDeleteButton() {
                 disableDrop();
 
                 //TODO disabled for now Attach preview to marker.
-                //previewBox.open(map, marker);
+                previewBox.open(map, marker);
       //       });
           }());
         }
@@ -639,7 +639,7 @@ function initDeleteButton() {
                     initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
                     disableDrop();
                         // Attach preview to marker.
-                        //previewBox.open(map, marker);
+                        previewBox.open(map, marker);
                         //});
                     }());
             } 
