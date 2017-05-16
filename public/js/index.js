@@ -1,22 +1,28 @@
-var googleMapObject; // The Google Maps object.
-var watchID; // Used to disable continuous tracking of user's location.
+var googleMapObject;    // The Google Maps object.
+var watchID;            // Used to disable continuous tracking of user's location.
+var dropMode;           // True if the user is trying to drop a cow.
 
-var dropMode; // True if the user is trying to drop a cow.
-var markerID;
+var userMarkers = {     // Holds marker marking current position and nearby area.
+    center: null,
+    radius: null
+};
 
-var centerMarker; // Need to store to affect visibility later on.
-var radiusMarker;
-var cowBtnText;
-var deleteContainer;
+var currCow = {         // Holds contents of currently expanded message.
+    infoBox: null,
+    previewBox: null,
+    marker: null
+};
 
-var currCowInfo; // Holds info boxes of currently expanded message.
-var currCowPreview;
+var zoomImages = [];    // Holds different image sizes for different zoom amounts.
 
-var lastLocation; // Location of the last click before drop was clicked.
-var zoomImages = [];
+var cowBtnText;         // Used to modify the drop cow button text.
+var deleteContainer;    // Used to modify the location of the delete message button.
 
-var markerClusterElmts = []; // Used to store markers for clustering.
+var lastLocation;       // Location of the last click before drop was clicked.
+
+// Used to store markers for clustering.
 var markerCluster;
+var markerClusterElmts = [];
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -71,13 +77,13 @@ function initMap() {
  */
 function getGeoPosition() {
     // Create a marker for the map center.
-    centerMarker = new google.maps.Marker({
+    userMarkers.center = new google.maps.Marker({
         icon: zoomImages[0],
         map: googleMapObject
     });
 
     // Create a marker that constantly surrounds the map center marker.
-    radiusMarker = new google.maps.Circle({
+    userMarkers.radius = new google.maps.Circle({
         map: googleMapObject,
         radius: 150,
         fillColor: 'rgba(30, 30, 30, 0.3)',
@@ -85,15 +91,15 @@ function getGeoPosition() {
         strokeColor: 'rgba(45, 252, 142, 0.5)'
     });
 
-    radiusMarker.bindTo('center', centerMarker, 'position');
-    radiusMarker.setVisible(false);
+    userMarkers.radius.bindTo('center', userMarkers.center, 'position');
+    userMarkers.radius.setVisible(false);
 
     // Set listeners to allow for message drops on the markers.
-    google.maps.event.addDomListener(centerMarker, 'click', function(event) {
+    google.maps.event.addDomListener(userMarkers.center, 'click', function(event) {
         lastLocation = event.latLng;
         return dropClick();
     });
-    google.maps.event.addDomListener(radiusMarker, 'click', function(event) {
+    google.maps.event.addDomListener(userMarkers.radius, 'click', function(event) {
         lastLocation = event.latLng;
         return dropClick();
     });
@@ -106,7 +112,7 @@ function getGeoPosition() {
             lng: position.coords.longitude
         };
         googleMapObject.setCenter(currPosition);
-        centerMarker.setPosition(currPosition);
+        userMarkers.center.setPosition(currPosition);
     });
 }
 
@@ -119,11 +125,11 @@ function initMapListeners() {
         function() {
             // Adjust size of position icon depending on zoom.
             if (googleMapObject.getZoom() < 17) {
-                centerMarker.setIcon(zoomImages[0]);
+                userMarkers.center.setIcon(zoomImages[0]);
             } else if (googleMapObject.getZoom() >= 17 && googleMapObject.getZoom() < 20) {
-                centerMarker.setIcon(zoomImages[1]);
+                userMarkers.center.setIcon(zoomImages[1]);
             } else {
-                centerMarker.setIcon(zoomImages[2]);
+                userMarkers.center.setIcon(zoomImages[2]);
             }
 
             if (dropMode) {
@@ -131,11 +137,11 @@ function initMapListeners() {
                     $("#guide-footer").addClass('active');
                 }
                 if (googleMapObject.getZoom() < 17) {
-                    radiusMarker.setVisible(false);
+                    userMarkers.radius.setVisible(false);
                     $("#guide-text").text("Too far zoomed out!");
                     $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
                 } else {
-                    radiusMarker.setVisible(true);
+                    userMarkers.radius.setVisible(true);
                     $("#guide-text").text("Drop a cow within the gray area.");
                     $("#guide-text").css('color', 'rgba(43, 132, 237, 1)');
                 }
@@ -154,9 +160,9 @@ function initMapListeners() {
         }
         // If the map is clicked while not in drop mode, then shrink the current message open.
         else {
-            if (currCowInfo != null && currCowPreview != null) {
-                shrinkMessage(currCowInfo, currCowPreview);
-                currCowInfo = currCowPreview = null;
+            if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
+                shrinkMessage(currCow.infoBox, currCow.previewBox);
+                currCow.infoBox = currCow.previewBox = currCow.marker = null;
             }
         }
     });
@@ -331,8 +337,8 @@ function enableDrop() {
     dropMode = true;
 
     // Only let the radius appear if the user is dropping a message.
-    radiusMarker.setVisible(true);
-    googleMapObject.panTo(centerMarker.position);
+    userMarkers.radius.setVisible(true);
+    googleMapObject.panTo(userMarkers.center.position);
     googleMapObject.setZoom(18);
     if ($("#guide-footer").hasClass('active') == false) {
         $("#guide-footer").addClass('active');
@@ -350,7 +356,7 @@ function enableDrop() {
 function disableDrop() {
     cowBtnText.innerHTML = "Drop a Cow!";
     dropMode = false;
-    radiusMarker.setVisible(false);
+    userMarkers.radius.setVisible(false);
     if ($("#guide-footer").hasClass('active')) {
         $("#guide-footer").removeClass('active');
     }
@@ -412,7 +418,7 @@ function addCowPin(location, topic, comments, type) {
         animation: google.maps.Animation.DROP,
     });
     markerCluster.addMarker(marker, true);
-    currentCow = marker;
+    currCow.marker = marker;
 
     var infoBox = initInfoBox(topic, comments, 0);
     var previewBox = initPreviewBox(topic);
@@ -578,8 +584,8 @@ function shrinkMessage(infoBox, previewBox) {
  */
 function enlargeMessage(marker, infoBox, previewBox) {
     // Shrink the contents of the previously opened message, if available.
-    if (currCowInfo != null && currCowPreview != null) {
-        shrinkMessage(currCowInfo, currCowPreview);
+    if (currCow.infoBox != null && currCow.previewBox != null) {
+        shrinkMessage(currCow.infoBox, currCow.previewBox);
     }
 
     currInfo = infoBox;
@@ -673,18 +679,18 @@ function loadComments() {
     // Recreate the contents of the message.
     var topicHeader = document.getElementById("topic-header");
     if (topicHeader != null) {
-        topicHeader.innerHTML = currentCow.topic;
+        topicHeader.innerHTML = currCow.marker.topic;
     }
 
     var mainComment = document.createElement('table');
     mainComment.className += 'comments-table';
     mainComment.id = 'main-comment';
-    mainComment.appendChild(parseComment(currentCow.comment, currentCow.score));
+    mainComment.appendChild(parseComment(currCow.marker.comment, currCow.marker.score));
     commentsDiv.appendChild(mainComment);
 
     $.post("get_comments", {
-        "lat": currentCow.position.lat(),
-        "lng": currentCow.position.lng(),
+        "lat": currCow.marker.position.lat(),
+        "lng": currCow.marker.position.lng(),
     }, function(comments) {
 
         for (var j = 0; j < comments.length; j++) {
@@ -709,8 +715,8 @@ function addComment() {
     if (commentBox.value != "") {
         $.post("get_comment", {
             "content": commentBox.value,
-            "lat": currentCow.getPosition().lat(),
-            "lng": currentCow.getPosition().lng(),
+            "lat": currCow.marker.getPosition().lat(),
+            "lng": currCow.marker.getPosition().lng(),
         }, function(comment) {
             if (comment.length > 0) {
                 return;
@@ -718,11 +724,11 @@ function addComment() {
                 $.post("add_comment", {
                     "content": commentBox.value,
                     "score": 0,
-                    "lat": currentCow.getPosition().lat(),
-                    "lng": currentCow.getPosition().lng(),
+                    "lat": currCow.marker.getPosition().lat(),
+                    "lng": currCow.marker.getPosition().lng(),
                 });
                 commentBox.value = "";
-                loadComments(currentCow);
+                loadComments(currCow.marker);
             }
         });
     }
@@ -730,20 +736,20 @@ function addComment() {
 
 //Only deletes the message if the user created it before reloading the page
 function deleteMessage() {
-    if (currentCow != null && currentCow.created == true) {
+    if (currCow.marker != null && currCow.marker.created == true) {
         $.post("delete_box", {
-            "lat": currentCow.position.lat(),
-            "lng": currentCow.position.lng(),
+            "lat": currCow.marker.position.lat(),
+            "lng": currCow.marker.position.lng(),
         });
         $.post("delete_marker", {
-            "lat": currentCow.position.lat(),
-            "lng": currentCow.position.lng(),
+            "lat": currCow.marker.position.lat(),
+            "lng": currCow.marker.position.lng(),
         });
-        if (currentCow != null) {
-            currentCow.setMap(null);
+        if (currCow.marker != null) {
+            currCow.marker.setMap(null);
         }
-        markerCluster.removeMarker(currentCow);
-        currentCow = null
+        markerCluster.removeMarker(currCow.marker);
+        currCow.marker = null
     } else {
         // Print an error for the user.
         if ($("#guide-footer").hasClass('active') == false) {
@@ -786,19 +792,14 @@ function addDownvote(event) {
 }
 
 function updateScore(latitude, longitude, content, score, type) {
-    $.post("update_score", {
-        "lat": currentCow.position.lat(),
-        "lng": currentCow.position.lng(),
-        "content": content,
-        "score": count,
-        "type": type,
+    $.post("updateScore", {
+        lat: latitude,
+        lng: longitude,
+        content: content,
+        score: score,
+        type: type
     });
 }
-
-//Voting function.  Updates either main comment or other comment
-$(document).on('click', '.increment', function() {
-
-});
 
 /**
  * Whenever the window exits, disable the geolocation tracking.
