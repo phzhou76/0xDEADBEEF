@@ -72,7 +72,7 @@ function initMap() {
 function getGeoPosition() {
     // Create a marker for the map center.
     centerMarker = new google.maps.Marker({
-        icon: zoomImages[1],
+        icon: zoomImages[0],
         map: googleMapObject
     });
 
@@ -626,16 +626,18 @@ function parseComment(comments, score, isOtherComment) {
     voteDiv.className += 'vote chev';
     var upvoteDiv = document.createElement('div');
     upvoteDiv.className += 'increment up';
+    upvoteDiv.addEventListener('click', addUpvote);
     var downvoteDiv = document.createElement('div');
     downvoteDiv.className += 'increment down';
+    downboteDiv.addEventListener('click', addDownvote);
     var countDiv = document.createElement('div');
     countDiv.className += 'count';
-    countDiv.id = comments
+    countDiv.id = comments;
     countDiv.innerHTML = score;
 
-    //Adds id if it is not the main comment
+    // Adds id if it is not the main comment.
     if (isOtherComment == true) {
-        countDiv.value = "other"
+        countDiv.value = "other";
     }
 
     // Init comment segment.
@@ -756,42 +758,46 @@ function deleteMessage() {
     }
 }
 
-//Voting function.  Updates either main comment or other comment
-$(document).on('click', '.increment', function() {
-    var count = parseInt($("~ .count", this).text());
-    var content = $(this).parent().closest("div").find('.count').get(0).id
-    var type = $(this).parent().closest("div").find('.count').get(0).value
+function addUpvote(event) {
+    var count = parseInt($("~ .count", this).text()) + 1;
+    var content = $(this).parent().closest("div").find('.count').get(0).id;
+    var type = $(this).parent().closest("div").find('.count').get(0).value;
 
-    if ($(this).hasClass("up")) {
-        var count = count + 1;
-        $.post("update_score", {
-            "lat": currentCow.position.lat(),
-            "lng": currentCow.position.lng(),
-            "content": content,
-            "score": count,
-            "type": type,
-        });
-        currentCow.score += 1;
-
-        $("~ .count", this).text(count);
-    } else {
-        var count = count - 1;
-        $.post("update_score", {
-            "lat": currentCow.position.lat(),
-            "lng": currentCow.position.lng(),
-            "content": content,
-            "score": count,
-            "type": type,
-        });
-        currentCow.score -= 1;
-        $("~ .count", this).text(count);
-    }
+    $("~ .count", this).text(count);
+    updateScore();
 
     $(this).parent().addClass("bump");
-
     setTimeout(function() {
         $(this).parent().removeClass("bump");
     }, 400);
+}
+
+function addDownvote(event) {
+    var count = parseInt($("~ .count", this).text()) - 1;
+    var content = $(this).parent().closest("div").find('.count').get(0).id;
+    var type = $(this).parent().closest("div").find('.count').get(0).value;
+
+    $("~ .count", this).text(count);
+
+    $(this).parent().addClass("bump");
+    setTimeout(function() {
+        $(this).parent().removeClass("bump");
+    }, 400);
+}
+
+function updateScore(latitude, longitude, content, score, type) {
+    $.post("update_score", {
+        "lat": currentCow.position.lat(),
+        "lng": currentCow.position.lng(),
+        "content": content,
+        "score": count,
+        "type": type,
+    });
+}
+
+//Voting function.  Updates either main comment or other comment
+$(document).on('click', '.increment', function() {
+
 });
 
 /**
