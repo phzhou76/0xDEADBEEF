@@ -34,7 +34,7 @@ exports.getMarkers = function(req, res) {
 
 /**
  * POST function: Obtains a specific marker in the datebase.
- * @param {object} req - The GET request.
+ * @param {object} req - The POST request.
  * @param {object} res - The resulting marker.
  */
 exports.getMarker = function(req, res) {
@@ -52,6 +52,26 @@ exports.getMarker = function(req, res) {
             }
         });
 };
+
+/**
+ * POST function: Obtains all markers of a certain type.
+ * @param {object} req - Contains the type.
+ * @param {object} res - The resulting markers of that type.
+ */
+ exports.getMarkersByType = function(req, res) {
+     models.ModelMarker
+         .find({
+             type: req.body.type
+         })
+         .exec(function(err, markers) {
+             if (err) {
+                 console.log(err);
+                 res.send(400);
+             } else {
+                 res.send(markers);
+             }
+         });
+ };
 
 /**
  * POST function: Grabs all comments at a certain coordinate location.
@@ -91,7 +111,6 @@ exports.getComment = function(req, res) {
                 console.log(err);
                 res.send(500);
             } else {
-                console.log(comment);
                 res.send(comment);
             }
         });
