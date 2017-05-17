@@ -79,7 +79,14 @@ function initMap() {
          markerClusterfilter = new MarkerClusterer(map, filter_cows,      
             {imagePath: 'img/m'},{ ignoreHidden: true });
 
-        //  swal({
+        
+         //markerCluster.repaint();
+    }
+}
+
+
+function Tutorial(){
+    //  swal({
         //   title: "Hi!",
         //   text: "Would you like to see the tutorial?",
         //   showCancelButton: true,
@@ -90,17 +97,12 @@ function initMap() {
         // function(){
         //   swal("Tutorial");
         // });
-        // swal({
-        //   title: "Welcome to Deja Moo!",
-        //   timer: 1500,
-        //   showConfirmButton: false
-        // });
-         //markerCluster.repaint();
-    }
+        swal({
+          title: "Welcome to Deja Moo!",
+          timer: 1500,
+          showConfirmButton: false
+        });
 }
-
-
-
 
 
 /**
