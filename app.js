@@ -47,6 +47,7 @@ if ('development' == app.get('env')) {
 app.get('/', indexRoutes.view);
 app.get('/getMarkers', indexRoutes.getMarkers);
 app.post('/getMarker', indexRoutes.getMarker);
+app.post('/getMarkersByType', indexRoutes.getMarkersByType);
 app.post('/getComments', indexRoutes.getComments);
 app.post('/getComment', indexRoutes.getComment);
 app.post('/addMarker', indexRoutes.addMarker);

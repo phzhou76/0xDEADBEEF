@@ -26,6 +26,12 @@ var markerCluster; // Used to store markers for clustering.
 
 var locationMap = []; // Mapping of location to markers and their info boxes.
 
+var filterTypes = [ // Types of filters. Can be added to later.
+    "Food",
+    "Event",
+    "Sales"
+];
+
 /******************************* GLOBALS END **********************************/
 
 
@@ -54,8 +60,12 @@ function initMap() {
         initZoomImages();
         initUserMarker();
         initGeoPosition();
+
         initDropButton();
         initDeleteButton();
+        initOptionsButton();
+        initTypeFilters();
+
         initMarkers();
         initMapListeners();
         initModalListeners();
@@ -217,6 +227,93 @@ function initDeleteButton() {
     google.maps.event.addDomListener(deleteContainer, 'click', function(event) {
         return deleteMessage();
     });
+}
+
+/**
+ * Creates a custom map button that shows various options (like filtering).
+ */
+function initOptionsButton() {
+    // Create a div that holds the options button.
+    var optionsContainer = document.createElement('div');
+    optionsContainer.style.padding = "10px 10px 0px 0px";
+    optionsContainer.className = "options";
+
+    // Set the CSS for the button's border.
+    var optionsBorder = document.createElement('div');
+    optionsBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    optionsBorder.style.cursor = 'pointer';
+    optionsBorder.style.textAlign = 'center';
+    optionsBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+    optionsContainer.appendChild(optionsBorder);
+
+    // Set the CSS for the button's interior content.
+    var optionsImg = document.createElement('img');
+    optionsImg.setAttribute('src', 'img/options.png');
+    optionsBorder.appendChild(optionsImg);
+
+    // Inserts the finished button to the right-bottom area of the map.
+    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(optionsContainer);
+
+    // Setup the map listener for the button.
+    google.maps.event.addDomListener(optionsContainer, 'click', function(event) {
+        return showOptions();
+    });
+
+    // Setup type filter button for clicks.
+    $("#types-button").click(function() {
+        if ($("#types-filter").hasClass("active")) {
+            $("#types-filter").removeClass("active");
+        } else {
+            $("#types-filter").addClass("active");
+        }
+    });
+}
+
+/**
+ * Inits the type filter buttons.
+ */
+function initTypeFilters() {
+    for (var i = 0; i < filterTypes.length; ++i) {
+        var filterContainer = document.createElement('div');
+        filterContainer.style.padding = "0px 16px 0px 10px";
+
+        var filterBorder = document.createElement('label');
+        filterBorder.className = 'switch';
+        filterBorder.style.cursor = 'pointer';
+        filterContainer.append(filterBorder);
+
+        filterText = document.createElement('div');
+        filterText.style.color = '#fff';
+        filterText.style.fontFamily = 'Arial,sans-serif';
+        filterText.style.fontSize = '16px';
+        filterText.style.lineHeight = '38px';
+        filterText.style.paddingLeft = '17px';
+        filterText.style.paddingRight = '17px';
+        filterText.innerHTML = filterTypes[i];
+        filterBorder.before(filterText);
+
+        var inputBorder = document.createElement('input');
+        inputBorder.className = 'switch';
+        inputBorder.type = 'checkbox';
+        inputBorder.checked = true;
+
+        var inputType = document.createAttribute("data-type");
+        inputType.value = filterTypes[i];
+        console.log(inputType.value);
+        inputBorder.setAttributeNode(inputType);
+
+        filterBorder.append(inputBorder);
+
+        var slider = document.createElement('div');
+        slider.className = 'slider round';
+        filterBorder.append(slider);
+
+        $("#types-filter").append(filterContainer);
+
+        inputBorder.addEventListener("click", function() {
+            toggleType(this.getAttribute("data-type"), this.checked);
+        });
+    }
 }
 
 /**
@@ -496,6 +593,36 @@ function loadComments() {
         });
 
         $('#commentsModal').modal('show'); // Reveals the modal.
+    });
+}
+
+/**
+ * Reveals the options menu.
+ */
+function showOptions() {
+    if ($("#options-sidebar").hasClass("active")) {
+        $("#options-sidebar").removeClass("active");
+    } else {
+        $("#options-sidebar").addClass("active");
+    }
+}
+
+/**
+ * Toggles the visibility of a certain type of cow message.
+ * @param {string} type - The category that the message falls under.
+ * @param {bool} visible - True if the visiblity should be on.
+ */
+function toggleType(type, visible) {
+    // Obtain list of all markers of this type.
+    $.post("getMarkersByType", {
+        type: type
+    }, function(markers) {
+        for(var i = 0; i < markers.length; ++i) {
+            var locString = locToString(markers[i].lat, markers[i].lng);
+            locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
+            setInfoBoxVisibility(locationMap[locString].infoBox, false, true);
+            setInfoBoxVisibility(locationMap[locString].previewBox, visible, false);
+        }
     });
 }
 
