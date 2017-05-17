@@ -86,22 +86,22 @@ function initMap() {
 
 
 function Tutorial(){
-    //  swal({
-        //   title: "Hi!",
-        //   text: "Would you like to see the tutorial?",
-        //   showCancelButton: true,
-        //   confirmButtonColor: "#228B22",
-        //   confirmButtonText: "Yes!",
-        //   closeOnConfirm: false
-        // },
-        // function(){
-        //   swal("Tutorial");
-        // });
-        swal({
-          title: "Welcome to Deja Moo!",
-          timer: 1500,
-          showConfirmButton: false
+     swal({
+          title: "Hi!",
+          text: "Would you like to see the tutorial?",
+          showCancelButton: true,
+          confirmButtonColor: "#228B22",
+          confirmButtonText: "Yes!",
+          closeOnConfirm: false
+        },
+        function(){
+          swal("Tutorial");
         });
+        // swal({
+        //   title: "Welcome to Deja Moo!",
+        //   timer: 1500,
+        //   showConfirmButton: false
+        // });
 }
 
 
