@@ -78,9 +78,30 @@ function initMap() {
 
          markerClusterfilter = new MarkerClusterer(map, filter_cows,      
             {imagePath: 'img/m'},{ ignoreHidden: true });
-         markerCluster.repaint();
+
+        //  swal({
+        //   title: "Hi!",
+        //   text: "Would you like to see the tutorial?",
+        //   showCancelButton: true,
+        //   confirmButtonColor: "#228B22",
+        //   confirmButtonText: "Yes!",
+        //   closeOnConfirm: false
+        // },
+        // function(){
+        //   swal("Tutorial");
+        // });
+        // swal({
+        //   title: "Welcome to Deja Moo!",
+        //   timer: 1500,
+        //   showConfirmButton: false
+        // });
+         //markerCluster.repaint();
     }
 }
+
+
+
+
 
 /**
  * Continuously tracks the user's location, and sets the map's current center
@@ -849,7 +870,7 @@ function addCowPin(location, topic, comments, type) {
                     "content": comments
                  })
 
-                //previewBox.open(map, marker);
+                previewBox.open(map, marker);
 
                 map.panTo(location)
                 all_cows.push(marker);
