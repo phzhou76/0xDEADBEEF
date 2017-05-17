@@ -1079,4 +1079,55 @@ window.onbeforeunload = function() {
     navigator.geolocation.clearWatch(watchID);
 }
 
+function Tutorial(){
+    swal.setDefaults({
+      confirmButtonText: 'Next &rarr;',
+      showCancelButton: true,
+      animation: false,
+      progressSteps: ['1', '2', '3', '4', '5', '6']
+    })
+
+    var steps = [
+      {
+        title: 'Welcome to Deja Moo!',
+        text: 'Deja Moo allows you to view cows in your surrounding areas to find ' + 
+            'events, food, and sales!',
+      },
+      {
+        title: 'Dropping a Cow',
+        text: 'Dropping a cow lets you place a cow pin near your current location. Enter ' +
+            'the topic, comment, and cow type to begin'
+      },
+      {
+        title: 'Deleting a Cow',
+        text: 'Click on your own cow and click the delete button to delete a cow.  You can ' +
+               'only delete a cow you have dropped before refreshing the page'
+      },
+      {
+        title: 'Viewing Other Cows',
+        text: 'Click on a cow on the map to see the main comment!  Click view comments to view' +
+               'all of the comments'
+      },
+      {
+        title: 'Voting Comments',
+        text: 'Click on the green arrow to upvote and the red arrow to downvote comments!'
+      },
+      {
+        title: 'Filtering Cows',
+        text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!'
+      },
+    ]
+
+    swal.queue(steps).then(function (result) {
+      swal.resetDefaults()
+      swal({
+        title: 'All done!',
+        confirmButtonText: 'Ready to Deja Moo',
+        showCancelButton: false
+      })
+    }, function () {
+      swal.resetDefaults()
+    })
+}
+
 /**************************** MISC FUNCTIONS END ******************************/
