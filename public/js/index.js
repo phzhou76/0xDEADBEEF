@@ -1084,8 +1084,8 @@ window.onbeforeunload = function() {
  */
 function Tutorial(){
     swal.setDefaults({
-      showCancelButton: true,
       confirmButtonText: 'Next &rarr;',
+      showCancelButton: true,
       animation: false,
       progressSteps: ['1', '2', '3', '4', '5', '6']
     })

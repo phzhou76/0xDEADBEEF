@@ -168,12 +168,14 @@ main tab-section.active {
     color: rgba(255, 255, 255, 1);
 }
 
+<<<<<<< HEAD
 .btn.btn-default.tut-btn {
     background-color: rgba(43, 132, 237, 1);
     color: rgba(255, 255, 255, 1);
     padding-top: 11px;
     padding-bottom: 12px;
     float: left;
+=======
 .switch {
   position: relative;
   display: inline-block;
@@ -229,6 +231,7 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+>>>>>>> master
 }
 
 footer {
