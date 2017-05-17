@@ -602,6 +602,9 @@ function loadComments() {
 function showOptions() {
     if ($("#options-sidebar").hasClass("active")) {
         $("#options-sidebar").removeClass("active");
+        if ($("#types-filter").hasClass("active")) {
+            $("#types-filter").removeClass("active");
+        }
     } else {
         $("#options-sidebar").addClass("active");
     }
