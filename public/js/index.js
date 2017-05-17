@@ -32,6 +32,8 @@ var filterTypes = [ // Types of filters. Can be added to later.
     "Sales"
 ];
 
+var username;
+
 /******************************* GLOBALS END **********************************/
 
 
@@ -161,6 +163,17 @@ function initModalListeners() {
     $('#drop').click(messageDropListener);
     // Inits click for the view comments modal.
     $('#add').click(addComment);
+    //$('#loginModal').click(login);
+    $('#loginModal').on('hide.bs.modal', function () {    
+      username = $("#username").val()
+      console.log(username)
+      console.log('username : '+$("#username").val());    
+      console.log('result : '+$("#password").val());    
+    })
+}
+
+function login() {
+    console.log("yay")
 }
 
 /**
