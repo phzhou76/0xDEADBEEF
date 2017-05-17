@@ -15,7 +15,7 @@ var mongoose = require('mongoose');
 var local_database_name = 'dejamoo';
 var local_database_uri  = 'mongodb://localhost/' + local_database_name
 //var uri = "mongodb://sase:saseislyfe@ds023478.mlab.com:23478/heroku_m9jc2gg9";
-uri = ""
+var uri = "mongodb://dejamoo:0xDEADBEEF@ds153719.mlab.com:53719/heroku_wv684s23";
 var database_uri = uri || local_database_uri;
 mongoose.connect(database_uri);
 
