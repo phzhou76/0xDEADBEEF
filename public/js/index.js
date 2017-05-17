@@ -90,17 +90,68 @@ function initMap() {
 
 
 function Tutorial(){
-     swal({
-          title: "Hi!",
+    /* swal({
+          title: "Moo!",
           text: "Would you like to see the tutorial?",
           showCancelButton: true,
           confirmButtonColor: "#228B22",
           confirmButtonText: "Yes!",
           closeOnConfirm: false
         },
-        function(){
-          swal("Tutorial");
-        });
+          function(){
+            swal({
+            title: "Welcome to Deja Moo!",
+            text: "Deja Moo allows you to view cows in your surrounding areas to find " + 
+            "events, food, and sales!",
+            showCancelButton: true,
+            confirmButtonColor: "#228B22",
+            confirmButtonText: "Next!",
+            cancelButtonText: "Close",
+            closeOnConfirm: false
+          },
+          function(){
+            swal({
+            title: "Dropping a Cow",
+            text: "Dropping a cow lets you place a cow pin near your current location. Enter " +
+            "the topic, comment, and cow type to begin",
+            showCancelButton: true,
+            confirmButtonColor: "#228B22",
+            confirmButtonText: "Next!",
+            cancelButtonText: "Close",
+            closeOnConfirm: false
+          })},
+        )});*/
+        swal.setDefaults({
+  input: 'text',
+  confirmButtonText: 'Next &rarr;',
+  showCancelButton: true,
+  animation: false,
+  progressSteps: ['1', '2', '3']
+})
+
+var steps = [
+  {
+    title: 'Question 1',
+    text: 'Chaining swal2 modals is easy'
+  },
+  'Question 2',
+  'Question 3'
+]
+
+swal.queue(steps).then(function (result) {
+  swal.resetDefaults()
+  swal({
+    title: 'All done!',
+    html:
+      'Your answers: <pre>' +
+        JSON.stringify(result) +
+      '</pre>',
+    confirmButtonText: 'Lovely!',
+    showCancelButton: false
+  })
+}, function () {
+  swal.resetDefaults()
+})
         // swal({
         //   title: "Welcome to Deja Moo!",
         //   timer: 1500,
@@ -741,100 +792,58 @@ function dropClick() {
  * @param {object} type - Contains the type of the message.
  */
 function addCowPin(location, topic, comments, type) {
-
-    // Initialize pin with visuals and text.
-    var infoBox = new InfoBox({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "8px solid rgba(43, 132, 237, 1.0)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "300px",
-            display: "block",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        },
-        pixelOffset: new google.maps.Size(-150, -300),
-        enableEventPropagation: false,
-        closeBoxURL: ""
-    });
-
-    var previewBox = new InfoBox({
-        boxStyle: {
-            borderRadius: "10px",
-            border: "6px solid rgba(43, 132, 237, 0.5)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: "150px",
-            display: "block",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        },
-        pixelOffset: new google.maps.Size(-75, -175),
-        enableEventPropagation: false,
-        closeBoxURL: ""
-    });
-
-    var picture = {
+        var picture = {
         url: chooseImage(type),
-        size: new google.maps.Size(100, 100),
-        scaledSize: new google.maps.Size(100, 100),
-        labelOrigin: new google.maps.Point(20, 50),
+        size: new google.maps.Size(50, 50),
+        scaledSize: new google.maps.Size(50, 50)
     };
 
-    //Post marker info to routes
-    var marker = ""
-    $.post("add_marker", {
-          "picture": 'img/cow.png',
-          "topic": topic,
-          "type": type,
-          "comment": comments,
-          "score": 0,
-          "lat": location.lat(),
-          "lng": location.lng(),
-    }, function() {
-            $.post("get_current_marker", {
-                "lat": location.lat(),
-                "lng": location.lng(),
-             },
-            function(markers) {
-                markerID = markers[0]._id
-                marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    topic: topic,
-                    type: type,
-                    comment: comments,
-                    score: 0,
-                    id: markerID,
-                    icon: picture,
-                    animation: google.maps.Animation.DROP,
-                    created: true
-                });
-                all_markers.push(marker)
-                markerCluster.addMarker(marker, true);
-                markerCluster.repaint();
-                currentCow = marker;
+    var currDate = new Date();
 
-                loc_string = locToString(location.lat(), location.lng());
+    // Post marker info to route to save to database.
+    var markerInfo = {
+        topic: topic,
+        type: type,
+        numComments: 0,
+        lat: location.lat(),
+        lng: location.lng(),
+        date: currDate
+    };
+    $.post("addMarker", markerInfo);
 
-                initMarkerListener(marker, loc_string, infoBox, previewBox, comments);
-                initInfoBox(infoBox, previewBox, topic, comments, marker);
-                disableDrop();
-                //Post infobox to routes
-                $.post("add_box", {
-                    "lat": location.lat(),
-                    "lng": location.lng(),
-                    "content": comments
-                 })
+    // Post comment info to route to save to database.
+    var commentInfo = {
+        content: comments,
+        score: 0,
+        index: 0,
+        numComments: 1,
+        lat: location.lat(),
+        lng: location.lng(),
+        date: currDate
+    };
+    $.post("addComment", commentInfo);
 
-                previewBox.open(map, marker);
-
-                map.panTo(location)
-                all_cows.push(marker);
-
-            });
+    var marker = new google.maps.Marker({
+        position: location,
+        map: googleMapObject,
+        icon: picture,
+        animation: google.maps.Animation.DROP,
     });
+    markerCluster.addMarker(marker, true);
 
+    var infoBox = createInfoBox(topic, comments, 0);
+    var previewBox = createPreviewBox(topic);
 
+    initMarkerListener(marker, infoBox, previewBox);
+    storeSortingInfo(location.lat(), location.lng(), marker, infoBox, previewBox);
+    enlargeMessage(marker, infoBox, previewBox);
+    disableDrop();
+
+    // Attach both info and preview boxes to the marker.
+    window.setTimeout(function() {
+        infoBox.open(googleMapObject, marker);
+    }, 600);
+    previewBox.open(googleMapObject, marker);
 }
 
 
