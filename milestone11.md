@@ -13,7 +13,7 @@ Implemented full filter functionality and cleaned code.
 Designed new buttons and filter
 
 ## Screenshot
-![Screenshot](images/Milestone11.png)
-![Screenshot](images/Milestone11_2.png)
-![Screenshot](images/Milestone11_3.png)
+![Screenshot](Images/Milestone11.png)
+![Screenshot](Images/Milestone11_2.png)
+![Screenshot](Images/Milestone11_3.png)
 Unlike the previous iteration, this iteration includes a full filter to filter cows by type. It has improved UI design, where the delete button is more clear as a trash can. The cows were resized to be smaller and easier to view on the map. There is now an attractive tutorial and a preliminary login page.     
