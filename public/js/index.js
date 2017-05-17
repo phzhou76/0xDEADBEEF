@@ -176,6 +176,7 @@ function login() {
     console.log("yay")
 }
 
+
 /**
  * Creates a custom map button to allow toggling of message-dropping
  * functionality.
@@ -352,8 +353,8 @@ function initMarkersHelper(markerData) {
 
     var picture = {
         url: chooseImage(markerData.type),
-        size: new google.maps.Size(75, 75),
-        scaledSize: new google.maps.Size(75, 75),
+        size: new google.maps.Size(50, 50),
+        scaledSize: new google.maps.Size(50, 50),
         labelOrigin: new google.maps.Point(20, 50)
     };
 
