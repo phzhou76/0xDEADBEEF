@@ -339,8 +339,8 @@ function initMarkersHelper(markerData) {
 
     var picture = {
         url: chooseImage(markerData.type),
-        size: new google.maps.Size(50, 50),
-        scaledSize: new google.maps.Size(50, 50),
+        size: new google.maps.Size(65, 65),
+        scaledSize: new google.maps.Size(65, 65),
         labelOrigin: new google.maps.Point(20, 50)
     };
 
@@ -469,8 +469,8 @@ function dropClick() {
 function addCowPin(location, topic, comments, type) {
     var picture = {
         url: chooseImage(type),
-        size: new google.maps.Size(50, 50),
-        scaledSize: new google.maps.Size(50, 50)
+        size: new google.maps.Size(60, 60),
+        scaledSize: new google.maps.Size(60, 60)
     };
 
     var currDate = new Date();
