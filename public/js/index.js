@@ -339,8 +339,8 @@ function initMarkersHelper(markerData) {
 
     var picture = {
         url: chooseImage(markerData.type),
-        size: new google.maps.Size(50, 50),
-        scaledSize: new google.maps.Size(50, 50),
+        size: new google.maps.Size(75, 75),
+        scaledSize: new google.maps.Size(75, 75),
         labelOrigin: new google.maps.Point(20, 50)
     };
 
