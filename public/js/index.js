@@ -1079,6 +1079,9 @@ window.onbeforeunload = function() {
     navigator.geolocation.clearWatch(watchID);
 }
 
+/**
+ * Opens modals for tutorials
+ */
 function Tutorial(){
     swal.setDefaults({
       confirmButtonText: 'Next &rarr;',
