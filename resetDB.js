@@ -18,32 +18,30 @@ mongoose.connect(herokuDatabaseURI || localDatabaseURI);
 var markersJSON = [{
         "topic": "Pizza Hut",
         "type": "Food",
-        "comment": "I love Pizza Hut!",
-        "score": 0,
+        "numComments": 0,
         "lat": 32.8698645954428,
-        "lng": -117.22189486026764
+        "lng": -117.22189486026764,
+        "date": new Date("11/20/2014 04:11")
     },
     {
         "topic": "Geisel 1st Floor",
         "type": "Event",
-        "comment": "Too full",
-        "score": 0,
+        "numComments": 0,
         "lat": 32.8799645954428,
-        "lng": -117.22199486026761
+        "lng": -117.22199486026761,
+        "date": new Date("11/20/2014 04:11")
     }
 ];
 
 // Step 2: Remove all existing documents.
-models.ModelMarker
-    .find()
-    .remove();
 models.ModelComment
     .find()
     .remove()
-    .exec(function(err) {
-        insertComment(err);
-        loadData(err);
-    });
+    .exec(insertComment);
+models.ModelMarker
+    .find()
+    .remove()
+    .exec(loadData);
 
 /**
  * Inits some comments and saves them to the database, which should be empty.
@@ -58,16 +56,20 @@ function insertComment(err) {
     var newCommentA = new models.ModelComment({
         "content": "It's great",
         "score": 0,
+        "index": 0,
         "lat": 32.8698645954428,
-        "lng": -117.22189486026764
+        "lng": -117.22189486026764,
+        "date": new Date("11/20/2014 04:11")
     });
     newCommentA.save();
 
     var newCommentB = new models.ModelComment({
         "content": "Amazing",
         "score": 0,
+        "index": 0,
         "lat": 32.8698645954428,
-        "lng": -117.22189486026764
+        "lng": -117.22189486026764,
+        "date": new Date("11/20/2014 04:11")
     });
     newCommentB.save();
 }
