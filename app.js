@@ -5,7 +5,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var handlebars = require('express-handlebars')
-var indexRoute = require('./routes/indexRoutes');
+var indexRoutes = require('./routes/indexRoutes');
 var app = express();
 var mongoose = require('mongoose');
 
@@ -44,14 +44,15 @@ if ('development' == app.get('env')) {
 }
 
 // Add routes here.
-app.get('/', indexRoute.view);
-app.get('/getMarker', indexRoute.getMarker);
-app.post('/addMarker', indexRoute.addMarker);
-app.post('/deleteMarker', indexRoute.deleteMarker);
-app.post('/updateScore', indexRoute.updateScore);
-app.post('/getComments', indexRoute.getComments)
-app.post('/getComment', indexRoute.getComment)
-app.post('/addComment', indexRoute.addComment)
+app.get('/', indexRoutes.view);
+app.get('/getMarkers', indexRoutes.getMarkers);
+app.post('/getMarker', indexRoutes.getMarker);
+app.post('/getComments', indexRoutes.getComments);
+app.post('/getComment', indexRoutes.getComment);
+app.post('/addMarker', indexRoutes.addMarker);
+app.post('/deleteMarker', indexRoutes.deleteMarker);
+app.post('/updateScore', indexRoutes.updateScore);
+app.post('/addComment', indexRoutes.addComment);
 
 
 http.createServer(app).listen(app.get('port'), function() {

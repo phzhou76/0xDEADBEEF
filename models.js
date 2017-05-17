@@ -3,10 +3,13 @@ var Mongoose = require('mongoose');
 var MarkerSchema = new Mongoose.Schema({
     topic: String,
     type: String,
-    comment: String,
-    score: Number,
+    numComments: Number, // Total number of comments that this marker contains.
     lat: Number,
-    lng: Number
+    lng: Number,
+    date: {
+        type: Date,
+        default: Date.now
+    }
 }, {
     autoIndex: false // Index creation has significant performance impact.
 });
@@ -14,6 +17,7 @@ var MarkerSchema = new Mongoose.Schema({
 var CommentSchema = new Mongoose.Schema({
     content: String,
     score: Number,
+    index: Number, // Index 0 is the main comment.
     lat: Number,
     lng: Number,
     date: {
