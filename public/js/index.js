@@ -28,9 +28,13 @@ var all_cows = []; //array used for overall cluster
 var filter_cows = []; //array used for filter cow cluster
 
 //used for filter func
-var show_food = false;
-var show_event = false;
-var show_sales = false;
+var show_food = true;
+var show_event = true;
+var show_sales = true;
+
+var all_markers = []; //array for all markers
+var preview_dict = {};
+var info_dict = {};
 
 /**
  * Initializes the Google Map and geolocation settings.
@@ -541,6 +545,7 @@ function initDeleteButton() {
                 icon: picture,
                 animation: google.maps.Animation.DROP
             });
+            all_markers.push(marker)
             markerCluster.addMarker(marker, true);  
             var infoBox;
 
@@ -577,6 +582,8 @@ function initDeleteButton() {
                     enableEventPropagation: true,
                     closeBoxURL: "",
                 });
+                info_dict[markers[i].lat + " " + markers[i].lng] = infoBox;
+                preview_dict[markers[i].lat + " " + markers[i].lng] = previewBox;
                 loc_string = locToString(marker.position.lat(), marker.position.lng())
                 initMarkerListener(marker, loc_string, infoBox, previewBox, markers[i].comment);
                 initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
@@ -595,83 +602,29 @@ function initDeleteButton() {
  * reload markers
  */
  function refreshMarkers() {
-    $.get("get", function(markers) {
-        markerClusterfilter.clearMarkers();
-        for(var i=0; i < markers.length; i++) {
-                //console.log(markers[i].type);
-                if((markers[i].type == 'Food' && show_food == true) || (markers[i].type == 'Event' && show_event == true) 
-                    || (markers[i].type == 'Sales' && show_sales == true)){
-                    (function () {
-                    var location = {
-                        lat: markers[i].lat,
-                        lng: markers[i].lng
-                    };
+ 	for(var i = 0; i < all_markers.length; i++) {
+ 		var infoBox = info_dict[all_markers[i].position.lat() + " " + all_markers[i].position.lng()]
+ 		var previewBox = preview_dict[all_markers[i].position.lat() + " " + all_markers[i].position.lng()]
+        if((all_markers[i].type == 'Food' && show_food == true) || (all_markers[i].type == 'Event' && show_event == true) 
+             || (all_markers[i].type == 'Sales' && show_sales == true)){
+           var previewMap = previewBox.getMap();
+           if( previewMap == null ) {
+           	console.log("opening")
+ 	   	     previewBox.open(map, all_markers[i])
+    	   }
+ 		    all_markers[i].setVisible(true)
+     	}
+     	else {
+     		previewBox.close(map, all_markers[i])
+     		all_markers[i].setVisible(false)
+     		var infoMap = infoBox.getMap();
+     		if( infoMap != null) {
+     			infoBox.close(map, all_markers[i])
+     		}
+     	}
+ 	}
 
-                    var picture = {
-                      url: chooseImage(markers[i].type),
-                      size: new google.maps.Size(100, 100),
-                      scaledSize: new google.maps.Size(100, 100),
-                      labelOrigin: new google.maps.Point(20, 50),
-                    };
-
-                    var marker = new google.maps.Marker({
-                        position: location,
-                        topic: markers[i].topic,
-                        type: markers[i].type,
-                        comment: markers[i].comment,
-                        score: markers[i].score,
-                        id: markers[i]._id,
-                        map: map,
-                        icon: picture,
-                        animation: google.maps.Animation.DROP
-                    });
-                    markerClusterfilter.addMarker(marker, true);  
-                    var infoBox;
-
-
-                    var infoBox = new InfoBox({
-                        boxStyle: {
-                            borderRadius: "10px",
-                            border: "6px solid rgba(43, 132, 237, 1.0)",
-                            textAlign: "center",
-                            fontSize: "12pt",
-                            width: "300px",
-                            display: "none",
-                            backgroundColor: "rgba(255, 255, 255, 1.0)"
-                        },
-                        pixelOffset: new google.maps.Size(-150, -300),
-                        enableEventPropagation: true,
-                        closeBoxURL: "",
-                    });
-
-                    var previewBox = new InfoBox({
-                        boxStyle: {
-                            borderRadius: "10px",
-                            border: "6px solid rgba(43, 132, 237, 0.5)",
-                            textAlign: "center",
-                            fontSize: "12pt",
-                            width: "150px",
-                            display: "block",
-                            backgroundColor: "rgba(255, 255, 255, 1.0)"                  },
-                        pixelOffset: new google.maps.Size(-75, -175),
-                        enableEventPropagation: true,
-                        closeBoxURL: "",
-                    });
-                    loc_string = locToString(marker.position.lat(), marker.position.lng())
-                    initMarkerListener(marker, loc_string, infoBox, previewBox, markers[i].comment);
-                    initInfoBox(infoBox, previewBox, marker.topic, markers[i].comment, marker);
-                    disableDrop();
-                        // Attach preview to marker.
-                        previewBox.open(map, marker);
-                        //});
-                    }());
-            } 
-        }
-    });
  }
-
-            
-
 
 function filterCows(){
     if(!filterMode) {
@@ -683,9 +636,9 @@ function filterCows(){
 }
 
 function enableFilter(){
-    markerCluster.clearMarkers();
-    markerClusterfilter.repaint();
-    refreshMarkers();
+    //markerCluster.clearMarkers();
+    //markerClusterfilter.repaint();
+    //refreshMarkers();
     filterText.innerHTML = "All Cows";
     filterMode=true;
     deleteContainer.className = "options inactive";
@@ -698,9 +651,9 @@ function enableFilter(){
 }
 
 function disableFilter(){
-    markerClusterfilter.clearMarkers();
-    initMarkers();
-    markerCluster.repaint();
+    //markerClusterfilter.clearMarkers();
+    //initMarkers();
+    //markerCluster.repaint();
     filterText.innerHTML = "Filter Cows";
     filterMode=false;
     deleteContainer.className = "options";
@@ -856,6 +809,7 @@ function addCowPin(location, topic, comments, type) {
                     animation: google.maps.Animation.DROP,
                     created: true
                 });
+                all_markers.push(marker)
                 markerCluster.addMarker(marker, true);
                 markerCluster.repaint();
                 currentCow = marker;
