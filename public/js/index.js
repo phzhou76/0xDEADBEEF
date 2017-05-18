@@ -353,8 +353,8 @@ function initMarkersHelper(markerData) {
 
     var picture = {
         url: chooseImage(markerData.type),
-        size: new google.maps.Size(50, 50),
-        scaledSize: new google.maps.Size(50, 50),
+        size: new google.maps.Size(65, 65),
+        scaledSize: new google.maps.Size(65, 65),
         labelOrigin: new google.maps.Point(20, 50)
     };
 
@@ -483,8 +483,8 @@ function dropClick() {
 function addCowPin(location, topic, comments, type) {
     var picture = {
         url: chooseImage(type),
-        size: new google.maps.Size(50, 50),
-        scaledSize: new google.maps.Size(50, 50)
+        size: new google.maps.Size(60, 60),
+        scaledSize: new google.maps.Size(60, 60)
     };
 
     var currDate = new Date();
@@ -1106,29 +1106,47 @@ function Tutorial(){
         title: 'Welcome to Deja Moo!',
         text: 'Deja Moo allows you to view cows in your surrounding areas to find ' + 
             'events, food, and sales!',
+        imageUrl: 'img/cow.png',
+        imageWidth: '200px',
+        imageHeight: '200px'
       },
       {
         title: 'Dropping a Cow',
-        text: 'Dropping a cow lets you place a cow pin near your current location. Enter ' +
-            'the topic, comment, and cow type to begin'
+        text: 'Dropping a cow lets you place a cow pin near your current location. Click on the "Drop a Cow!" button and enter ' +
+            'the topic, comment, and cow type to begin.',
+        imageUrl: 'img/tut2.png',
+        imageWidth: '400px',
+        imageHeight: '375px'
       },
       {
         title: 'Deleting a Cow',
         text: 'Click on your own cow and click the delete button to delete a cow.  You can ' +
-               'only delete a cow you have dropped before refreshing the page'
+               'only delete a cow you have dropped before refreshing the page.',
+        imageUrl: 'img/tut3.png',
+        imageWidth: '520px',
+        imageHeight: '300px'
       },
       {
         title: 'Viewing Other Cows',
         text: 'Click on a cow on the map to see the main comment!  Click view comments to view' +
-               'all of the comments'
+               ' all of the comments.',
+        imageUrl: 'img/tut4.png',
+        imageWidth: '400px',
+        imageHeight: '250px'
       },
       {
         title: 'Voting Comments',
-        text: 'Click on the green arrow to upvote and the red arrow to downvote comments!'
+        text: 'Click on the green arrow to upvote and the red arrow to downvote comments!',
+        imageUrl: 'img/tut5.png',
+        imageWidth: '350px',
+        imageHeight: '250px'
       },
       {
         title: 'Filtering Cows',
-        text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!'
+        text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!',
+        imageUrl: 'img/tut6.png',
+        imageWidth: '600px',
+        imageHeight: '275px'
       },
     ]
 
