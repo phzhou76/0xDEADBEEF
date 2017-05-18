@@ -241,4 +241,47 @@ exports.addUser = function(req, res) {
         }
     });
 };
+
+/**
+ * POST request: Saves an added user to the database
+ * @param {object} req - The details of the user.
+ * @param {object} res - Should be empty if successful.
+ */
+
+exports.getUser = function(req, res) {
+    models.ModelUser
+        .find({
+            username: req.body.username
+        })
+        .exec(function(err, user) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.send(user);
+            }
+        });
+};
+
+/**
+ * POST request: Saves an added user to the database
+ * @param {object} req - The details of the user.
+ * @param {object} res - Should be empty if successful.
+ */
+
+exports.login = function(req, res) {
+    models.ModelUser
+        .find({
+            username: req.body.username,
+            password: req.body.password
+        })
+        .exec(function(err, user) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.send(user);
+            }
+        });
+};
 /************************* DATABASE POST FUNCTIONS END ************************/

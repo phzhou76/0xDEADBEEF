@@ -976,9 +976,23 @@ function addUpvoteListener(event) {
     var score = parseInt($("~ .count", this).text()) + 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
 
-    $("~ .count", this).text(score);
-    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-        score, index);
+    if(username) {
+      $("~ .count", this).text(score);
+
+      updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+          score, index); 
+    }
+
+    else {
+      if ($("#guide-footer").hasClass('active') == false) {
+        $("#guide-footer").addClass('active');
+        setTimeout(function() {
+          $("#guide-footer").removeClass("active");
+         }, 1500);
+      }
+      $("#guide-text").text('Please login to vote');
+      $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+    }
 
     $(this).parent().addClass("bump");
     setTimeout(function() {
@@ -993,10 +1007,23 @@ function addUpvoteListener(event) {
 function addDownvoteListener(event) {
     var score = parseInt($("~ .count", this).text()) - 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
-
-    $("~ .count", this).text(score);
-    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+  
+    if(username) {
+      $("~ .count", this).text(score);
+      updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
         score, index);
+    } 
+
+    else {
+      if ($("#guide-footer").hasClass('active') == false) {
+        $("#guide-footer").addClass('active');
+        setTimeout(function() {
+          $("#guide-footer").removeClass("active");
+         }, 1500);
+      }
+      $("#guide-text").text('Please login to vote');
+      $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+    }
 
     $(this).parent().addClass("bump");
     setTimeout(function() {
@@ -1087,11 +1114,26 @@ function addDownvoteListener(event) {
         addFormError(form["user_password"], 'The password is invalid');
         return false; // stop the script if validation is triggered
       }
-      console.log(data.user_username)
-      username = data.user_username;
-      password = data.user_password;
-      $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
-      $('#dialog').addClass('dialog-effect-out');
+      $.post("login", {
+        username: data.user_username,
+        password: data.user_password
+      }, function(user) { 
+         if(user[0] != null ) {
+            username = data.user_username;
+            password = data.user_password;
+            console.log(username)
+            console.log(password)
+            $('#successful_login').removeClass('active');
+            dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+            document.getElementById('login_form').reset();
+            $('#login-modal').modal('hide');
+        }
+        else {
+            addFormError(form["user_username"], 'The username or password is incorrect');
+        }
+    });
+     // $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
+      //$('#dialog').addClass('dialog-effect-out');
 
       $('#successful_login').addClass('active');
       //return true;
@@ -1099,7 +1141,6 @@ function addDownvoteListener(event) {
 
     // REGISTRATION FORM: Validation function
     function validate_registration_form(form, data) {
-        console.log("validating")
       if (data.user_username == "") {
         // if username variable is empty
         addFormError(form["user_username"], 'The username is invalid');
@@ -1118,14 +1159,28 @@ function addDownvoteListener(event) {
         return false; // stop the script if validation is triggered
       }
 
-      $.post("addUser", {
+      //Creates user unless user already exists
+      $.post("getUser", {
         username: data.user_username,
         password: data.user_password
+      }, function(user) {   
+        if(user[0] != null ) {
+            addFormError(form["user_username"], 'The username already exists');
+        }
+        else {
+          $.post("addUser", {
+            username: data.user_username,
+            password: data.user_password
+          });
+         $('#successful_login,#successful_registration').removeClass('active');
+         document.getElementById('register_form').reset();
+         $('#login-modal').modal('hide');
+         dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+        }
       });
-
       
-      $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
-      $('#dialog').addClass('dialog-effect-out');
+     // $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
+     // $('#dialog').addClass('dialog-effect-out');
       $('#successful_registration').addClass('active');
 
       //return true;
@@ -1142,22 +1197,21 @@ function addDownvoteListener(event) {
 
    $( "#submit_login" ).click(function() {
     //$('#successful_login,#successful_registration').removeClass('active');
-      if ($('#successful_login').hasClass('active')) {
+  /*    if ($('#successful_login').hasClass('active')) {
        $('#successful_login').removeClass('active');
         dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
         document.getElementById('login_form').reset();
         $('#login-modal').modal('hide');
-      };
+      };*/
    });
 
-  $( "#submit_registration" ).click(function() {
-      if ($('#successful_registration').hasClass('active')) {
+  $("#submit_registration" ).click(function() {
+    /*  if ($('#successful_registration').hasClass('active')) {
          $('#successful_login,#successful_registration').removeClass('active');
          document.getElementById('register_form').reset();
          $('#login-modal').modal('hide');
          dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
-
-      }  
+      }  */
    });
 
 /*************************** LOGIN FUNCTIONS END *****************************/

@@ -55,6 +55,9 @@ app.post('/deleteMarker', indexRoutes.deleteMarker);
 app.post('/updateScore', indexRoutes.updateScore);
 app.post('/addComment', indexRoutes.addComment);
 app.post('/addUser', indexRoutes.addUser);
+app.post('/getUser', indexRoutes.getUser);
+app.post('/login', indexRoutes.login);
+
 
 
 http.createServer(app).listen(app.get('port'), function() {
