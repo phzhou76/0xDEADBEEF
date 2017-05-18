@@ -19,16 +19,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/sweetalert2.css">
+    <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,100,500'>
+    <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto+Slab:400,700,300,100'>
+    <link rel="stylesheet" href="css/login.css">
 </head>
 
 <body>
     <nav>
         <a class="btn btn-default tut-btn" data-dismiss="modal" onclick="Tutorial()">Tutorial
         </a>
-        <button type="button" class="btn btn-default tut-btn" data-toggle="modal" data-target="#loginModal">Login</button>
+         <button type="button" class="btn btn-default tut-btn" data-toggle="modal" data-target="#login-modal">Login</button>       
         Deja Moo
     </nav>
     <main>
+
         <!-- Options Sidebar -->
         <nav id="options-sidebar">
             <h3>Options</h3>
@@ -81,24 +86,6 @@
                 </div>
             </div>
         </div>
-        <!-- Login Modal -->
-        <div id="loginModal" class="modal fade" role="dialog">
-        <div style="text-align: center">
-            <div class="modal-dialog">
-                <!-- Modal content. -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="topic-header"></h4>
-                    </div>
-                    <div class="modal-body" id="comments-div">
-              <p><input type="text" class="span3" name="eid" id="username" placeholder="Username"></p>
-              <p><input type="password" class="span3" name="passwd" id="password" placeholder="Password"></p>
-              <p><button type="submit" class="btn btn-primary" data-dismiss="modal">Sign in</button>
-                <a href="#">Forgot Password?</a>
-              </p>
-            </form>
-          </div>
-                    </div> </div>
 
         <!-- Comments Modal -->
         <div id="commentsModal" class="modal fade" role="dialog">
@@ -122,12 +109,80 @@
                 </div>
             </div>
         </div>
+       <!-- Comments Modal -->
+       <div id="login-modal" class="modal fade" role="dialog">
 
-    </main>
+          <div id="dialog" class="dialog dialog-effect-in">
+            <div class="dialog-front">
+              <div class="dialog-content">
+                <form id="login_form" class="dialog-form" action="" method="POST">
+                  <fieldset>
+                    <legend>Log in</legend>
+                      <div class="form-group">
+                       <label for="user_username" class="control-label">Username:</label>
+                       <input type="text" id="user_username" class="form-control" name="user_username" autofocus/>
+                      </div>
+                    <div class="form-group">
+                      <label for="user_password" class="control-label">Password:</label>
+                      <input type="password" id="user_password" class="form-control" name="user_password"/>
+                    </div>
+                    <div class="text-center pad-top-20">
+                      <p>Have you forgotten your<br><a href="#" class="link"><strong>username</strong></a> or <a href="#" class="link"><strong>password</strong></a>?</p>
+                    </div>
+                    <div class="pad-top-20 pad-btm-20">
+                      <input type="submit" class="btn btn-default btn-block btn-lg" value="Continue">
+                    </div>
+                    <div class="text-center">
+                      <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+           </div>
+           <div class="dialog-back">
+             <div class="dialog-content">
+               <form id="register_form" class="dialog-form" action="" method="POST">
+               <fieldset>
+                 <legend>Register</legend>
+                 <div class="form-group">
+                   <label for="user_username" class="control-label">Username:</label>
+                   <input type="text" id="user_username" class="form-control" name="user_username"/> 
+                 </div>
+                 <div class="form-group">
+                   <label for="user_password" class="control-label">Password:</label>
+                     <input type="password" id="user_password" class="form-control" name="user_password"/>
+                 </div>
+                <div class="form-group">
+                  <label for="user_cnf_password" class="control-label">Confirm password:</label>
+                  <input type="password" id="user_cnf_password" class="form-control" name="user_cnf_password"/>
+                </div>
+                <div class="form-group pad-top-20 form-group-checkbox">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" id="user_terms" name="user_terms">
+                        I have read and I agree with the Terms and Conditions
+                    </label>
+                  </div>
+                </div>
+                <div class="pad-btm-20">
+                  <input type="submit" class="btn btn-default btn-block btn-lg" value="Continue"/>
+                </div>
+                 <div class="text-center">
+                   <p>Return to <a href="#" class="link user-actions"><strong>log in page</strong></a>?</p>
+                 </div>
+                </fieldset>
+                </form>
+          </div>
+     </div>
+   </div>
+</div>
+
+
     <footer id="guide-footer">
         <tab id="guide-text">Moo!</tab>
     </footer>
     <script src="js/index.js"></script>
+    <script src="js/login.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9oo55BbM0hkN5HBMwpCflHN0Ed0p_w8A&callback=initMap"></script>
 </body>
 
