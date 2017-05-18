@@ -8,10 +8,8 @@
   <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,100,500'>
 <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
 <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto+Slab:400,700,300,100'>
+<link rel="stylesheet" href="../public/css/login.css">
 
-      <link rel="stylesheet" href="../public/css/login.css">
-
-  
 </head>
 
 <body>
@@ -46,7 +44,7 @@
             <p>Have you forgotten your<br><a href="#" class="link"><strong>username</strong></a> or <a href="#" class="link"><strong>password</strong></a>?</p>
           </div>
           <div class="pad-top-20 pad-btm-20">
-            <input type="submit" class="btn btn-default btn-block btn-lg" value="Continue">
+            <button class="btn btn-default btn-block btn-lg" onclick="closeModal()" value="Continue"> </button>
           </div>
           <div class="text-center">
             <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
@@ -91,6 +89,15 @@
     </div>
   </div>
 </div>
+<script>
+  function closeModal() {
+    console.log("hello")
+      dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+    $('#login-modal').modal('hide');
+    document.getElementById('register_form').reset();
+
+  }
+  </script>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 
     <script src="../public/js/login.js"></script>
