@@ -12,7 +12,7 @@ var localHost = true;   // Flag to test on local machine.
 var localDatabaseURI = "mongodb://localhost/dejamoo";
 var herokuDatabaseURI = (localHost) ? null : "mongodb://dejamoo:0xDEADBEEF@ds153719.mlab.com:53719/heroku_wv684s23";
 
-mongoose.connect(herokuDatabaseURI || localDatabaseURI);
+mongoose.connect(localDatabaseURI || herokuDatabaseURI);
 
 // Step 1: load the JSON data
 var markersJSON = [{
@@ -38,6 +38,10 @@ models.ModelComment
     .find()
     .remove()
     .exec(insertComment);
+models.ModelUser
+    .find()
+    .remove()
+    .exec(createUsers);
 models.ModelMarker
     .find()
     .remove()
@@ -59,7 +63,7 @@ function insertComment(err) {
         "index": 0,
         "lat": 32.8698645954428,
         "lng": -117.22189486026764,
-        "date": new Date("11/20/2014 04:11")
+        "date": new Date("5/7/2017 04:11")
     });
     newCommentA.save();
 
@@ -67,11 +71,34 @@ function insertComment(err) {
         "content": "Amazing",
         "score": 0,
         "index": 0,
-        "lat": 32.8698645954428,
-        "lng": -117.22189486026764,
-        "date": new Date("11/20/2014 04:11")
+        "lat": 32.8799645954428,
+        "lng": -117.22199486026761,
+        "date": new Date("5/18/2017 1:14")
     });
     newCommentB.save();
+}
+
+/**
+ * Inits some users and saves them to the database, which should be empty.
+ * @param {object} err - If it is not null, then an error has occurred in
+ *      the execution of clearing the users.
+ */
+ function createUsers(err) {
+    if (err) {
+        console.log(err);
+    }
+
+    var newUserA = new models.ModelUser({
+        "username": "Phillip",
+        "password": "boom"
+    });
+    newUserA.save();
+
+    var newUserB = new models.ModelUser({
+        "username": "Ricky",
+        "password": "mongo"
+    });
+    newUserB.save();
 }
 
 // Step 3: load the data from the JSON file
@@ -81,7 +108,8 @@ function insertComment(err) {
  * @param {object} err - If it is not null, then an error has occurred in
  *      the execution of loadData;
  */
-function loadData(err) {
+function loadData(err) { 
+    var to_save_count = markersJSON.length;
     if (err) {
         console.log(err);
     }
@@ -92,10 +120,14 @@ function loadData(err) {
         var markerModel = new models.ModelMarker(markerContent);
 
         markerModel.save(function(markerError) {
+            to_save_count--;
+            if(to_save_count <= 0) {
+              mongoose.connection.close();    
+            }
             if(markerError) {
                 console.log(markerError);
             }
         });
     }
-    mongoose.connection.close();
+    //mongoose.connection.close();
 }

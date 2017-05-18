@@ -28,6 +28,16 @@ var CommentSchema = new Mongoose.Schema({
     autoIndex: false
 });
 
+
+var UserSchema = new Mongoose.Schema({
+    username: String,
+    password: String,
+
+}, {
+    autoIndex: false
+});
+
 // Init models for use as document objects.
 exports.ModelMarker = Mongoose.model('Marker', MarkerSchema);
 exports.ModelComment = Mongoose.model('Comment', CommentSchema);
+exports.ModelUser = Mongoose.model('User', UserSchema);

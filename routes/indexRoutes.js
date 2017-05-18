@@ -219,4 +219,26 @@ exports.addComment = function(req, res) {
     });
 };
 
+/**
+ * POST request: Saves an added user to the database
+ * @param {object} req - The details of the user.
+ * @param {object} res - Should be empty if successful.
+ */
+
+exports.addUser = function(req, res) {
+    var newUser = new models.ModelUser({
+        username: req.body.username,
+        password: req.body.password
+    });
+    
+    // Save user document to the database.
+    newUser.save(function(err) {
+        if (err) {
+            console.log(err);
+            res.send(500);
+        } else {
+            res.redirect('/');
+        }
+    });
+};
 /************************* DATABASE POST FUNCTIONS END ************************/
