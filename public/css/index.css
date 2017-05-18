@@ -165,18 +165,12 @@ main tab-section.active {
     color: rgba(255, 255, 255, 1);
 }
 
-.btn.btn-default.tut-btn {
-    background-color: rgba(43, 132, 237, 1);
-    color: rgba(255, 255, 255, 1);
-    padding-top: 11px;
-    padding-bottom: 12px;
-    float: left;
 .switch {
   position: relative;
   display: inline-block;
   width: 60px;
   height: 34px;
-} }
+}
 
 .switch input {display:none;}
 
@@ -378,8 +372,6 @@ footer tab {
     animation: bump 200ms;
 }
 
-<<<<<<< HEAD
-=======
 
 
 .btn.btn-default.tut-btn {
