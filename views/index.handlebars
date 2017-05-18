@@ -111,6 +111,14 @@
         </div>
        <!-- Login Modal -->
        <div id="login-modal" class="modal fade" role="dialog">
+         <div id="successful_login" class="fix-middle">
+           <div class="container text-center">
+          </div>
+         </div>
+         <div id="successful_registration" class="fix-middle">
+          <div class="container text-center">
+          </div>
+       </div>
           <div id="dialog" class="dialog dialog-effect-in">
             <div class="dialog-front">
               <div class="dialog-content">
@@ -124,9 +132,6 @@
                     <div class="form-group">
                       <label for="user_password" class="control-label">Password:</label>
                       <input type="password" id="user_password" class="form-control" name="user_password"/>
-                    </div>
-                    <div class="text-center pad-top-20">
-                      <p>Have you forgotten your<br><a href="#" class="link"><strong>username</strong></a> or <a href="#" class="link"><strong>password</strong></a>?</p>
                     </div>
                     <div class="pad-top-20 pad-btm-20">
                       <input type="submit" id="submit_login" class="btn btn-default btn-block btn-lg" value="Continue">
@@ -154,14 +159,6 @@
                 <div class="form-group">
                   <label for="user_cnf_password" class="control-label">Confirm password:</label>
                   <input type="password" id="user_cnf_password" class="form-control" name="user_cnf_password"/>
-                </div>
-                <div class="form-group pad-top-20 form-group-checkbox">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="user_terms" name="user_terms">
-                        I have read and I agree with the Terms and Conditions
-                    </label>
-                  </div>
                 </div>
                 <div class="pad-btm-20">
                   <input type="submit" class="btn btn-default btn-block btn-lg" id="submit_registration" value="Continue"/>
