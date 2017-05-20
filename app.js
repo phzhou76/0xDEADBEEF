@@ -57,6 +57,9 @@ app.post('/addComment', indexRoutes.addComment);
 app.post('/addUser', indexRoutes.addUser);
 app.post('/getUser', indexRoutes.getUser);
 app.post('/login', indexRoutes.login);
+app.post('/getVote', indexRoutes.getVote);
+app.post('/addVote', indexRoutes.addVote);
+app.post('/updateVote', indexRoutes.updateVote);
 
 
 

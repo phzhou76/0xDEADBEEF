@@ -243,9 +243,9 @@ exports.addUser = function(req, res) {
 };
 
 /**
- * POST request: Saves an added user to the database
- * @param {object} req - The details of the user.
- * @param {object} res - Should be empty if successful.
+ * POST request: Gets username from database
+ * @param {object} req - The username
+ * @param {object} res - Should contain the user if successful
  */
 
 exports.getUser = function(req, res) {
@@ -264,9 +264,9 @@ exports.getUser = function(req, res) {
 };
 
 /**
- * POST request: Saves an added user to the database
+ * POST request: Attempts user login given username and password
  * @param {object} req - The details of the user.
- * @param {object} res - Should be empty if successful.
+ * @param {object} res - Should contain user if successful
  */
 
 exports.login = function(req, res) {
@@ -282,6 +282,73 @@ exports.login = function(req, res) {
             } else {
                 res.send(user);
             }
+        });
+};
+
+/**
+ * POST request: Saves an added vote to the database
+ * @param {object} req - The details of the vote.
+ * @param {object} res - Should contain the vote if successful
+ */
+
+exports.getVote = function(req, res) {
+    models.ModelVote
+        .find({
+            commentID: req.body.commentID,
+            username: req.body.username,
+
+        })
+        .exec(function(err, vote) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.send(vote);
+            }
+        });
+};
+
+
+/**
+ * POST request: Saves an added vote to the database
+ * @param {object} req - The details of the vote.
+ * @param {object} res - Should be empty if successful
+ */
+
+exports.addVote = function(req, res) {
+    var newVote = new models.ModelVote({
+            commentID: req.body.commentID,
+            username: req.body.username,
+            score: req.body.score
+    });
+    newVote.save(function(err) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } 
+        });
+};
+
+/**
+ * POST request: Updates the vote score.
+ * @param {object} req - Contains info on the comment to update.
+ * @param {object} res - The result of the post request.
+ */
+exports.updateVote = function(req, res) {
+    models.ModelVote
+        .find({
+            commentID: req.body.commentID,
+            username: req.body.username
+        })
+        .update({
+            score: req.body.score
+        })
+        .exec(function(err) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            }
+            console.log(req.body.score)
         });
 };
 /************************* DATABASE POST FUNCTIONS END ************************/

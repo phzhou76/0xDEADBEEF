@@ -973,17 +973,54 @@ function messageDropListener(event) {
  * TODO: Need to implement users, so that a single upvote is allowed at any time.
  */
 function addUpvoteListener(event) {
+    var thisButton = this;
     var score = parseInt($("~ .count", this).text()) + 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
 
+    //Only upvotes if user is logged in
     if(username) {
-      $("~ .count", this).text(score);
+      $.post("getComment", {
+        index: index,
+        lat: currCow.marker.getPosition().lat(),
+        lng: currCow.marker.getPosition().lng(),
+      }, function(comment) {
 
-      updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-          score, index); 
+        //Get vote using commentID and username
+        $.post("getVote", {
+            commentID: comment[0]._id,
+            username: username,
+        }, function(vote) {
+            //If vote doesn't exist, post a new vote
+            if(!vote[0]) {
+                console.log("creating new vote")
+                $.post("addVote", {
+                    commentID: comment[0]._id,
+                    username: username,
+                    score: 1
+                });
+                $("~ .count", thisButton).text(score);
+                updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                score, index); 
+            }
+            //Change vote to +1 of what it was before if not already at 1 (upvoted)
+            else {
+                if(vote[0].score != 1) {
+                  $.post("updateVote", {
+                    commentID: comment[0]._id,
+                    username: username,
+                    score: vote[0].score + 1
+                  })
+                   $("~ .count", thisButton).text(score);
+                   updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                   score, index); 
+                }
+            }
+        })
+      });
+
     }
 
-    else {
+   else {
       if ($("#guide-footer").hasClass('active') == false) {
         $("#guide-footer").addClass('active');
         setTimeout(function() {
@@ -1002,16 +1039,50 @@ function addUpvoteListener(event) {
 
 /**
  * Subtracts 1 from the score count of a message.
- * TODO: Need to implement users, so that a single downvote is allowed at any time.
  */
 function addDownvoteListener(event) {
+    var thisButton = this;
     var score = parseInt($("~ .count", this).text()) - 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
   
     if(username) {
-      $("~ .count", this).text(score);
-      updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-        score, index);
+      $.post("getComment", {
+        index: index,
+        lat: currCow.marker.getPosition().lat(),
+        lng: currCow.marker.getPosition().lng(),
+      }, function(comment) {
+
+        //Get vote using commentID and username
+        $.post("getVote", {
+            commentID: comment[0]._id,
+            username: username,
+        }, function(vote) {
+            //If vote doesn't exist, post a new vote with score of -1
+            if(!vote[0]) {
+                $.post("addVote", {
+                    commentID: comment[0]._id,
+                    username: username,
+                    score: -1
+                });
+                $("~ .count", thisButton).text(score);
+                updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                score, index); 
+            }
+            //Change vote to -1 of what it was before if not already at 1 (upvoted)
+            else {
+                if(vote[0].score != -1) {
+                  $.post("updateVote", {
+                    commentID: comment[0]._id,
+                    username: username,
+                    score: vote[0].score - 1
+                  });
+                   $("~ .count", thisButton).text(score);
+                   updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                   score, index); 
+                }
+            }
+        })
+      });
     } 
 
     else {

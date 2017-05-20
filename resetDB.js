@@ -34,6 +34,10 @@ var markersJSON = [{
 ];
 
 // Step 2: Remove all existing documents.
+models.ModelVote
+    .find()
+    .remove()
+    .exec(createVotes)
 models.ModelComment
     .find()
     .remove()
@@ -100,6 +104,39 @@ function insertComment(err) {
     });
     newUserB.save();
 }
+
+/**
+ * Inits some votes and saves them to the database, which should be empty.
+ * @param {object} err - If it is not null, then an error has occurred in
+ *      the execution of clearing the votes.
+ */
+ function createVotes(err) {
+    if (err) {
+        console.log(err);
+    }
+    console.log("going to create vote")
+
+    var newVoteA = new models.ModelVote({
+        "commentID": "This is a dummy",
+        "username": "to create collection",
+        "score": 0
+    });
+
+    //Don't know why, needed this function to save
+    newVoteA.save(function(err) {
+        if(err) {
+            console.log("error")
+        }
+    });
+
+    var newVoteB = new models.ModelVote({
+        "commentID": "This",
+        "username": "to create collection",
+        "score": 0
+    });
+    newVoteB.save();
+}
+
 
 // Step 3: load the data from the JSON file
 
