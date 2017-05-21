@@ -974,8 +974,11 @@ function messageDropListener(event) {
  */
 function addUpvoteListener(event) {
     var thisButton = this;
+    var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
+    var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
     var score = parseInt($("~ .count", this).text()) + 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    console.log(score)
 
     //Only upvotes if user is logged in
     if(username) {
@@ -1001,6 +1004,8 @@ function addUpvoteListener(event) {
                 $("~ .count", thisButton).text(score);
                 updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
                 score, index); 
+                $(thisButton).addClass("active")
+
             }
             //Change vote to +1 of what it was before if not already at 1 (upvoted)
             else {
@@ -1013,6 +1018,16 @@ function addUpvoteListener(event) {
                    $("~ .count", thisButton).text(score);
                    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
                    score, index); 
+
+                   //From vote score -1 to 0:
+                   if(vote[0].score == - 1) {
+                      console.log("hello")
+                      $(increment_down).removeClass('active')
+                   }
+                   //From vote score 0 to 1
+                   else {
+                      $(increment_up).addClass('active')
+                   }
                 }
             }
         })
@@ -1043,6 +1058,8 @@ function addUpvoteListener(event) {
 function addDownvoteListener(event) {
     var thisButton = this;
     var score = parseInt($("~ .count", this).text()) - 1;
+    var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
+    var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
   
     if(username) {
@@ -1066,7 +1083,8 @@ function addDownvoteListener(event) {
                 });
                 $("~ .count", thisButton).text(score);
                 updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                score, index); 
+                score, index);
+                $(increment_down).addClass('active') 
             }
             //Change vote to -1 of what it was before if not already at 1 (upvoted)
             else {
@@ -1079,6 +1097,16 @@ function addDownvoteListener(event) {
                    $("~ .count", thisButton).text(score);
                    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
                    score, index); 
+
+                   //From 1 to 0
+                   if(vote[0].score == 1) {
+                      $(increment_up).removeClass('active')
+                   }
+
+                   //From 0 to -1
+                   else {
+                      $(increment_down).addClass('active')
+                   }
                 }
             }
         })

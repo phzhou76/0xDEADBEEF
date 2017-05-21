@@ -335,9 +335,18 @@ footer tab {
     margin-bottom: 0.25rem;
 }
 
+.increment.up.active {
+    opacity: 1;    
+}
+
 .increment.down {
     background: #C15044;
     height: 50%;
+}
+
+.increment.down.active {
+    opacity: 1;
+
 }
 
 .increment:hover {
