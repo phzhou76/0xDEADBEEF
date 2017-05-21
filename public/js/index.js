@@ -34,6 +34,7 @@ var filterTypes = [ // Types of filters. Can be added to later.
 
 var username;
 var password;
+var commentNode;
 
 /******************************* GLOBALS END **********************************/
 
@@ -358,7 +359,7 @@ function initMarkersHelper(markerData) {
         lat: markerData.lat,
         lng: markerData.lng
     }, function(comment) {
-        var infoBox = createInfoBox(markerData.topic, comment[0].content, comment[0].score);
+        var infoBox = createInfoBox(markerData.topic, comment[0].content, comment[0].score, comment[0]._id);
         var previewBox = createPreviewBox(markerData.topic);
         initMarkerListener(marker, infoBox, previewBox);
         storeSortingInfo(markerData.lat, markerData.lng, marker, infoBox, previewBox);
@@ -713,7 +714,7 @@ function updateScore(latitude, longitude, score, index) {
  * @param {number} score - The score of the comment.
  * @return {Object} The created info box.
  */
-function createInfoBox(topic, comments, score) {
+function createInfoBox(topic, comments, score, commentID) {
     // Initialize the info box.
     var infoBox = new InfoBox({
         pixelOffset: new google.maps.Size(-150, -225),
@@ -731,7 +732,7 @@ function createInfoBox(topic, comments, score) {
 
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
-    commentHTML.appendChild(parseComment(comments, score, 0));
+    commentHTML.appendChild(parseComment(comments, score, 0, commentID));
 
     // Initialize a button to trigger a comment-showing modal.
     var viewHTML = document.createElement('div');
@@ -792,51 +793,76 @@ function createPreviewBox(topic) {
  * @param {string} comment - The details of the message.
  * @param {number} score - The score of the comment.
  * @param {number} index - The index of the comment.
+ * @param {string} commentID - The id of the comment
  * @return {Object} The DOM Object that contains the message details.
  */
-function parseComment(comment, score, index) {
-    var tableRow = document.createElement('tr');
-    tableRow.className = 'commentRow';
+function parseComment(comment, score, index, commentID) {
+    var commentNode;
+    jQuery.ajax({
+        url: 'getVote',
+        type: 'POST',
+        data: {username: username, commentID: commentID },
+        success: function(vote) {
+            var tableRow = document.createElement('tr');
+            tableRow.className = 'commentRow';
 
-    // Init voting segment.
-    var voteHeader = document.createElement('th');
-    var voteDiv = document.createElement('div');
-    voteDiv.className += 'vote chev';
+            // Init voting segment.
+            var voteHeader = document.createElement('th');
+            var voteDiv = document.createElement('div');
+            voteDiv.className += 'vote chev';
 
-    var upvoteDiv = document.createElement('div');
-    upvoteDiv.className += 'increment up';
-    upvoteDiv.addEventListener('click', addUpvoteListener);
+            var upvoteDiv = document.createElement('div');
 
-    var downvoteDiv = document.createElement('div');
-    downvoteDiv.className += 'increment down';
-    downvoteDiv.addEventListener('click', addDownvoteListener);
+            //Lets user know if they have already voted
+            if(vote[0] && vote[0].score == 1) {
+                upvoteDiv.className += 'increment up active'
+            }
+            else {
+              upvoteDiv.className += 'increment up';
+            }
+            upvoteDiv.addEventListener('click', addUpvoteListener);
 
-    var countDiv = document.createElement('div');
-    countDiv.className += 'count';
-    countDiv.innerHTML = score;
+            var downvoteDiv = document.createElement('div');
 
-    // Init comment segment.
-    var commentHeader = document.createElement('th');
-    var commentDiv = document.createElement('div');
-    commentDiv.className += 'comment';
-    commentDiv.innerHTML = comment;
+            if(vote[0] && vote[0].score == -1) {
+                downvoteDiv.className += 'increment down active';
+            }
+            else {
+                downvoteDiv.className += 'increment down';
+            }
+            downvoteDiv.addEventListener('click', addDownvoteListener);
 
-    var commentIndex = document.createAttribute("data-index");
-    commentIndex.value = index;
-    commentDiv.setAttributeNode(commentIndex);
+            var countDiv = document.createElement('div');
+            countDiv.className += 'count';
+            countDiv.innerHTML = score;
 
-    // Put the two headers together into the row of the table.
-    tableRow.appendChild(voteHeader);
-    tableRow.appendChild(commentHeader);
+            // Init comment segment.
+            var commentHeader = document.createElement('th');
+            var commentDiv = document.createElement('div');
+            commentDiv.className += 'comment';
+            commentDiv.innerHTML = comment;
 
-    voteHeader.appendChild(voteDiv);
-    voteDiv.appendChild(upvoteDiv);
-    voteDiv.appendChild(downvoteDiv);
-    voteDiv.appendChild(countDiv);
+            var commentIndex = document.createAttribute("data-index");
+            commentIndex.value = index;
+            commentDiv.setAttributeNode(commentIndex);
 
-    commentHeader.appendChild(commentDiv);
+            // Put the two headers together into the row of the table.
+            tableRow.appendChild(voteHeader);
+            tableRow.appendChild(commentHeader);
 
-    return tableRow;
+            voteHeader.appendChild(voteDiv);
+            voteDiv.appendChild(upvoteDiv);
+            voteDiv.appendChild(downvoteDiv);
+            voteDiv.appendChild(countDiv);
+
+            commentHeader.appendChild(commentDiv);
+            commentNode = tableRow;
+
+        }, 
+        async: false
+    })
+
+    return commentNode;
 }
 
 /**
@@ -850,7 +876,7 @@ function createMainComment(comment) {
     mainComment.className = 'comments-table';
     mainComment.id = 'main-comment';
     mainComment.appendChild(parseComment(comment.content,
-        comment.score, comment.index));
+        comment.score, comment.index, comment._id));
 
     return mainComment;
 }
@@ -868,7 +894,7 @@ function createOtherComments(comments) {
 
     for (var j = 1; j < comments.length; j++) {
         otherComments.appendChild(parseComment(comments[j].content,
-            comments[j].score, comments[j].index));
+            comments[j].score, comments[j].index, comments[j]._id));
     }
 
     return otherComments;
@@ -970,7 +996,6 @@ function messageDropListener(event) {
 
 /**
  * Adds 1 to a score count of a message.
- * TODO: Need to implement users, so that a single upvote is allowed at any time.
  */
 function addUpvoteListener(event) {
     var thisButton = this;
@@ -995,12 +1020,12 @@ function addUpvoteListener(event) {
         }, function(vote) {
             //If vote doesn't exist, post a new vote
             if(!vote[0]) {
-                console.log("creating new vote")
                 $.post("addVote", {
                     commentID: comment[0]._id,
                     username: username,
                     score: 1
                 });
+                //Update comment score and html
                 $("~ .count", thisButton).text(score);
                 updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
                 score, index); 
@@ -1035,6 +1060,7 @@ function addUpvoteListener(event) {
 
     }
 
+   //If not logged in, tells user to login and opens login page
    else {
       if ($("#guide-footer").hasClass('active') == false) {
         $("#guide-footer").addClass('active');
@@ -1044,6 +1070,7 @@ function addUpvoteListener(event) {
       }
       $("#guide-text").text('Please login to vote');
       $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+      $("#login-modal").modal('show')
     }
 
     $(this).parent().addClass("bump");
@@ -1081,6 +1108,7 @@ function addDownvoteListener(event) {
                     username: username,
                     score: -1
                 });
+                //Update comment score and html
                 $("~ .count", thisButton).text(score);
                 updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
                 score, index);
@@ -1113,6 +1141,7 @@ function addDownvoteListener(event) {
       });
     } 
 
+   //If not logged in, tells user to login and opens login page
     else {
       if ($("#guide-footer").hasClass('active') == false) {
         $("#guide-footer").addClass('active');
@@ -1122,6 +1151,7 @@ function addDownvoteListener(event) {
       }
       $("#guide-text").text('Please login to vote');
       $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+      $("#login-modal").modal('show')
     }
 
     $(this).parent().addClass("bump");
@@ -1213,6 +1243,8 @@ function addDownvoteListener(event) {
         addFormError(form["user_password"], 'The password is invalid');
         return false; // stop the script if validation is triggered
       }
+
+      //Attempt login.  If successful, change login text to username, hides modal, and reinits markers
       $.post("login", {
         username: data.user_username,
         password: data.user_password
@@ -1226,6 +1258,9 @@ function addDownvoteListener(event) {
             dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
             document.getElementById('login_form').reset();
             $('#login-modal').modal('hide');
+            $('#loginButton').text(username)
+            markerCluster.clearMarkers()
+            initMarkers();
         }
         else {
             addFormError(form["user_username"], 'The username or password is incorrect');

@@ -114,7 +114,6 @@ function insertComment(err) {
     if (err) {
         console.log(err);
     }
-    console.log("going to create vote")
 
     var newVoteA = new models.ModelVote({
         "commentID": "This is a dummy",
