@@ -1114,7 +1114,7 @@ function addDownvoteListener(event) {
                 score, index);
                 $(increment_down).addClass('active') 
             }
-            //Change vote to -1 of what it was before if not already at 1 (upvoted)
+            //Change vote to -1 of what it was before if not already at -1 (downvoted)
             else {
                 if(vote[0].score != -1) {
                   $.post("updateVote", {

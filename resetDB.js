@@ -6,10 +6,11 @@
 var mongoose = require('mongoose');
 var models = require('./models');
 
-var localHost = true;   // Flag to test on local machine.
+var localHost = false;   // Flag to test on local machine.
 
 // Create two URIs, one for the local machine, and the other for Heroku.
 var localDatabaseURI = "mongodb://localhost/dejamoo";
+var localDatabaseURI = null
 var herokuDatabaseURI = (localHost) ? null : "mongodb://dejamoo:0xDEADBEEF@ds153719.mlab.com:53719/heroku_wv684s23";
 
 mongoose.connect(localDatabaseURI || herokuDatabaseURI);
