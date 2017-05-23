@@ -406,7 +406,7 @@ function initMarkerListener(marker, infoBox, previewBox) {
 
 
 $(function() {
-        $('body').removeClass('fade-out');
+    $('body').removeClass('fade-out');
 });
 
 /**************************** INIT FUNCTIONS END ******************************/
