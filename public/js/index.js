@@ -369,7 +369,7 @@ var commentNode;
 
         // Attach both info boxes to the marker.
         infoBox.open(googleMapObject, marker);
-        previewBox.open(googleMapObject, marker);
+        //previewBox.open(googleMapObject, marker);
 
         shrinkMessage(infoBox, previewBox);
     });
@@ -386,6 +386,10 @@ var commentNode;
  function initMarkerListener(marker, infoBox, previewBox) {
     // Create bounce animation when moving over cow marker.
     marker.addListener('mouseover', function(event) {
+        previewBox.open(googleMapObject, marker);
+        setTimeout(function() {
+                previewBox.close();
+            }, 2000);
         if (marker.getAnimation() == null) {
             setTimeout(function() {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -527,7 +531,7 @@ $(function() {
     window.setTimeout(function() {
         infoBox.open(googleMapObject, marker);
     }, 600);
-    previewBox.open(googleMapObject, marker);
+    //previewBox.open(googleMapObject, marker);
 }
 
 /**
