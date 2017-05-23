@@ -1003,7 +1003,6 @@ function addUpvoteListener(event) {
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
     var score = parseInt($("~ .count", this).text()) + 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
-    console.log(score)
 
     //Only upvotes if user is logged in
     if(username) {
@@ -1046,7 +1045,6 @@ function addUpvoteListener(event) {
 
                    //From vote score -1 to 0:
                    if(vote[0].score == - 1) {
-                      console.log("hello")
                       $(increment_down).removeClass('active')
                    }
                    //From vote score 0 to 1
@@ -1252,8 +1250,6 @@ function addDownvoteListener(event) {
          if(user[0] != null ) {
             username = data.user_username;
             password = data.user_password;
-            console.log(username)
-            console.log(password)
             $('#successful_login').removeClass('active');
             dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
             document.getElementById('login_form').reset();
