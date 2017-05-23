@@ -41,6 +41,8 @@ var commentNode;
 
 /**************************** INIT FUNCTIONS START ****************************/
 
+
+
 /**
  * Initializes the Google Map and geolocation settings.
  */
@@ -401,6 +403,11 @@ function initMarkerListener(marker, infoBox, previewBox) {
         enlargeMessage(this, infoBox, previewBox);
     });
 }
+
+
+$(function() {
+        $('body').removeClass('fade-out');
+});
 
 /**************************** INIT FUNCTIONS END ******************************/
 
@@ -1388,6 +1395,7 @@ function chooseImage(type) {
  * @param {bool} isInfoBox - True if info box, false if preview box.
  */
 function setInfoBoxVisibility(infoBox, visible, isInfoBox) {
+    //console.log(infoBox);
     infoBox.setOptions({
         boxStyle: {
             borderRadius: "10px",
