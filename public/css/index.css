@@ -6,7 +6,7 @@ body {
     font-family: sans-serif;
     background-color: rgba(250, 250, 255, 1);
     opacity: 1;
-    transition: 3.5s opacity;
+    transition: 5s opacity;
 }
 
 body.fade-out {
