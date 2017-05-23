@@ -4,8 +4,9 @@
 <head>
     <title>Deja Moo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,
-      user-scalable=no">
+    user-scalable=no">
     <link rel="stylesheet" href="css/index.css" />
+    <link href='//fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -26,11 +27,11 @@
 </head>
 
 <body>
+    <script>document.body.className += ' fade-out';</script>
     <nav>
-        <a class="btn btn-default tut-btn" data-dismiss="modal" onclick="Tutorial()">Tutorial
-        </a>
-         <button type="button" class="btn btn-default tut-btn" id="loginButton" data-toggle="modal" data-target="#login-modal">Login</button>       
-        Deja Moo
+        <button STYLE="font-family: 'Sofia'" class="btn btn-default tut-btn" data-dismiss="modal" onclick="Tutorial()" id="loginButton">Tutorial</button>
+        <button STYLE="font-family: 'Sofia'" type="button" class="btn btn-default tut-btn" id="loginButton" data-toggle="modal" data-target="#login-modal">Login</button>       
+        <p STYLE="font-family: 'Sofia'">Deja Moo</p>
     </nav>
     <main>
 
@@ -64,118 +65,118 @@
                     <div class="modal-body">
                         <form id="dropform">
                             <label for="topic">Topic</label>
-                            </br>
-                            <input type="text" id="topic">
-                            </br>
-                            <label for="comments">Comment</label>
-                            <textarea rows="3" cols="50" class="form-control" id="comments"></textarea>
-                        </form>
-                        <div class="form-group">
-                            <label for="category">Cow Type</label>
-                            <select class="form-control" id="type">
-                                <option>Food</option>
-                                <option>Event</option>
-                                <option>Sales</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default drop-btn" data-dismiss="modal" id="drop">Drop</button>
-                        <button type="button" class="btn btn-default drop-btn" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Comments Modal -->
-        <div id="commentsModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content. -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <!-- Topic dynamically placed here. -->
-                        <h4 class="modal-title" id="topic-header"></h4>
-                    </div>
-                    <!-- Comments dynamically placed here. -->
-                    <div class="modal-body" id="comments-div">
-                    </div>
-                    <div class="modal-footer">
-                        <h4 class="add-header">Add a Cowmment!</h4>
-                        <textarea rows="6" cols="50" class="form-control" id="add-comment"></textarea>
-                        <button type="button" class="btn btn-default add-btn" id="add">
-                            <img src="img/new.png"/>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-       <!-- Login Modal -->
-       <div id="login-modal" class="modal fade" role="dialog">
-         <div id="successful_login" class="fix-middle">
-         </div>
-         <div id="successful_registration" class="fix-middle">
-       </div>
-          <div id="dialog" class="dialog dialog-effect-in">
-            <div class="dialog-front">
-              <div class="dialog-content">
-                <form id="login_form" class="dialog-form" action="" method="POST">
-                  <fieldset>
-                    <legend>Log in</legend>
-                      <div class="form-group">
-                       <label for="user_username" class="control-label">Username:</label>
-                       <input type="text" id="user_username" class="form-control" name="user_username" autofocus/>
-                      </div>
-                    <div class="form-group">
-                      <label for="user_password" class="control-label">Password:</label>
-                      <input type="password" id="user_password" class="form-control" name="user_password"/>
-                    </div>
-                    <div class="pad-top-20 pad-btm-20">
-                      <input type="submit" id="submit_login" class="btn btn-default btn-block btn-lg" value="Continue">
-                    </div>
-                    <div class="text-center">
-                      <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
-                    </div>
-                  </fieldset>
+                        </br>
+                        <input type="text" id="topic">
+                    </br>
+                    <label for="comments">Comment</label>
+                    <textarea rows="3" cols="50" class="form-control" id="comments"></textarea>
                 </form>
-              </div>
-           </div>
-           <div class="dialog-back">
-             <div class="dialog-content">
-               <form id="register_form" class="dialog-form" action="" method="POST">
-               <fieldset>
-                 <legend>Register</legend>
-                 <div class="form-group">
-                   <label for="user_username" class="control-label">Username:</label>
-                   <input type="text" id="user_username" class="form-control" name="user_username"/> 
-                 </div>
-                 <div class="form-group">
-                   <label for="user_password" class="control-label">Password:</label>
-                     <input type="password" id="user_password" class="form-control" name="user_password"/>
-                 </div>
                 <div class="form-group">
-                  <label for="user_cnf_password" class="control-label">Confirm password:</label>
-                  <input type="password" id="user_cnf_password" class="form-control" name="user_cnf_password"/>
+                    <label for="category">Cow Type</label>
+                    <select class="form-control" id="type">
+                        <option>Food</option>
+                        <option>Event</option>
+                        <option>Sales</option>
+                    </select>
                 </div>
-                <div class="pad-btm-20">
-                  <input type="submit" class="btn btn-default btn-block btn-lg" id="submit_registration" value="Continue"/>
-                </div>
-                 <div class="text-center">
-                   <p>Return to <a href="#" class="link user-actions"><strong>log in page</strong></a>?</p>
-                 </div>
-                </fieldset>
-                </form>
-          </div>
-       </div>
-   </div>
-   </div>
-   </main>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default drop-btn" data-dismiss="modal" id="drop">Drop</button>
+                <button type="button" class="btn btn-default drop-btn" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <footer id="guide-footer">
-        <tab id="guide-text">Moo!</tab>
-    </footer>
-    <script src="js/index.js"></script>
-    <script src="js/login.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9oo55BbM0hkN5HBMwpCflHN0Ed0p_w8A&callback=initMap"></script>
+<!-- Comments Modal -->
+<div id="commentsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content. -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- Topic dynamically placed here. -->
+                <h4 class="modal-title" id="topic-header"></h4>
+            </div>
+            <!-- Comments dynamically placed here. -->
+            <div class="modal-body" id="comments-div">
+            </div>
+            <div class="modal-footer">
+                <h4 class="add-header">Add a Cowmment!</h4>
+                <textarea rows="6" cols="50" class="form-control" id="add-comment"></textarea>
+                <button type="button" class="btn btn-default add-btn" id="add">
+                    <img src="img/new.png"/>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Login Modal -->
+<div id="login-modal" class="modal fade" role="dialog">
+   <div id="successful_login" class="fix-middle">
+   </div>
+   <div id="successful_registration" class="fix-middle">
+   </div>
+   <div id="dialog" class="dialog dialog-effect-in">
+    <div class="dialog-front">
+      <div class="dialog-content">
+        <form id="login_form" class="dialog-form" action="" method="POST">
+          <fieldset>
+            <legend>Log in</legend>
+            <div class="form-group">
+             <label for="user_username" class="control-label">Username:</label>
+             <input type="text" id="user_username" class="form-control" name="user_username" autofocus/>
+         </div>
+         <div class="form-group">
+          <label for="user_password" class="control-label">Password:</label>
+          <input type="password" id="user_password" class="form-control" name="user_password"/>
+      </div>
+      <div class="pad-top-20 pad-btm-20">
+          <input type="submit" id="submit_login" class="btn btn-default btn-block btn-lg" value="Continue">
+      </div>
+      <div class="text-center">
+          <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
+      </div>
+  </fieldset>
+</form>
+</div>
+</div>
+<div class="dialog-back">
+   <div class="dialog-content">
+     <form id="register_form" class="dialog-form" action="" method="POST">
+         <fieldset>
+           <legend>Register</legend>
+           <div class="form-group">
+             <label for="user_username" class="control-label">Username:</label>
+             <input type="text" id="user_username" class="form-control" name="user_username"/> 
+         </div>
+         <div class="form-group">
+             <label for="user_password" class="control-label">Password:</label>
+             <input type="password" id="user_password" class="form-control" name="user_password"/>
+         </div>
+         <div class="form-group">
+          <label for="user_cnf_password" class="control-label">Confirm password:</label>
+          <input type="password" id="user_cnf_password" class="form-control" name="user_cnf_password"/>
+      </div>
+      <div class="pad-btm-20">
+          <input type="submit" class="btn btn-default btn-block btn-lg" id="submit_registration" value="Continue"/>
+      </div>
+      <div class="text-center">
+         <p>Return to <a href="#" class="link user-actions"><strong>log in page</strong></a>?</p>
+     </div>
+ </fieldset>
+</form>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<footer id="guide-footer">
+    <tab id="guide-text">Moo!</tab>
+</footer>
+<script src="js/index.js"></script>
+<script src="js/login.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9oo55BbM0hkN5HBMwpCflHN0Ed0p_w8A&callback=initMap"></script>
 </body>
 
 </html>

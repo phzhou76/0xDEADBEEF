@@ -5,6 +5,17 @@ body {
     min-width: 320px;
     font-family: sans-serif;
     background-color: rgba(250, 250, 255, 1);
+    opacity: 1;
+    transition: 5s opacity;
+}
+
+body.fade-out {
+    opacity: 0;
+    transition: 3s opacity;
+}
+
+html {
+    background-color: rgba(43, 132, 237, 1);
 }
 
 nav {
@@ -389,6 +400,7 @@ footer tab {
     padding-top: 11px;
     padding-bottom: 12px;
     float: right;
+
 .switch {
   position: relative;
   display: inline-block;
