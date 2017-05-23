@@ -195,7 +195,7 @@ var commentNode;
     cowBtnBorder.append(cowBtnText);
 
     // Inserts the finished button to the right-center area of the map.
-    googleMapObject.controls[google.maps.ControlPosition.RIGHT_CENTER].push(cowBtnContainer);
+    googleMapObject.controls[google.maps.ControlPosition.LEFT_CENTER].push(cowBtnContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(cowBtnContainer, 'click', dropTextListener);
@@ -208,7 +208,7 @@ var commentNode;
  function initDeleteButton() {
     // Create a div that holds the delete message button.
     deleteContainer = document.createElement('div');
-    deleteContainer.style.padding = "10px 10px 0px 0px";
+    deleteContainer.style.padding = "0px 0px 0px 0px";
     deleteContainer.className = "options";
 
     // Set the CSS for the button's border.
@@ -402,6 +402,7 @@ var commentNode;
     });
 }
 
+//function for css fade in after init page and functions load
 $(function() {
     $('body').removeClass('fade-out');
 });
