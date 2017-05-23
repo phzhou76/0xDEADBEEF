@@ -1434,7 +1434,7 @@ function Tutorial(){
     swal.setDefaults({
       confirmButtonText: 'Next &rarr;',
       showCancelButton: true,
-      animation: false,
+      animation: true,
       progressSteps: ['1', '2', '3', '4', '5', '6']
     })
 
@@ -1453,7 +1453,8 @@ function Tutorial(){
             'the topic, comment, and cow type to begin.',
         imageUrl: 'img/tut2.png',
         imageWidth: '400px',
-        imageHeight: '375px'
+        imageHeight: '375px',
+        animation: false
       },
       {
         title: 'Deleting a Cow',
@@ -1461,7 +1462,8 @@ function Tutorial(){
                'only delete a cow you have dropped before refreshing the page.',
         imageUrl: 'img/tut3.png',
         imageWidth: '520px',
-        imageHeight: '300px'
+        imageHeight: '300px',
+        animation: false
       },
       {
         title: 'Viewing Other Cows',
@@ -1469,21 +1471,24 @@ function Tutorial(){
                ' all of the comments.',
         imageUrl: 'img/tut4.png',
         imageWidth: '400px',
-        imageHeight: '250px'
+        imageHeight: '250px',
+        animation: false
       },
       {
         title: 'Voting Comments',
         text: 'Click on the green arrow to upvote and the red arrow to downvote comments!',
         imageUrl: 'img/tut5.png',
         imageWidth: '350px',
-        imageHeight: '250px'
+        imageHeight: '250px',
+        animation: false
       },
       {
         title: 'Filtering Cows',
         text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!',
         imageUrl: 'img/tut6.png',
         imageWidth: '600px',
-        imageHeight: '275px'
+        imageHeight: '275px',
+        animation: false
       },
     ]
 
