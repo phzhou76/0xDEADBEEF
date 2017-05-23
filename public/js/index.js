@@ -79,6 +79,7 @@ var commentNode;
         markerCluster = new MarkerClusterer(googleMapObject, null, {
             imagePath: '/img/m'
         });
+        
     }
 }
 
