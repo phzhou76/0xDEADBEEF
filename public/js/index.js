@@ -637,7 +637,8 @@ $(function() {
             var locString = locToString(markers[i].lat, markers[i].lng);
             locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
             setInfoBoxVisibility(locationMap[locString].infoBox, false, true);
-            setInfoBoxVisibility(locationMap[locString].previewBox, visible, false);
+            locationMap[locString].previewBox.close();
+            //setInfoBoxVisibility(locationMap[locString].previewBox, visible, false);
         }
     });
 }
