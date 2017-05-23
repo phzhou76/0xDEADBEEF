@@ -637,6 +637,7 @@ $(function() {
             var locString = locToString(markers[i].lat, markers[i].lng);
             locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
             setInfoBoxVisibility(locationMap[locString].infoBox, false, true);
+            //only close preview box not set visi to true since previewbox is now display on hover.
             locationMap[locString].previewBox.close();
             //setInfoBoxVisibility(locationMap[locString].previewBox, visible, false);
         }
