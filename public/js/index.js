@@ -186,7 +186,6 @@ var commentNode;
     //cowBtnBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
     cowBtnBorder.style.cursor = 'pointer';
     cowBtnBorder.style.textAlign = 'center';
-    cowBtnBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
     cowBtnContainer.appendChild(cowBtnBorder);
 
     // Set the CSS for the button's interior content.
@@ -198,6 +197,8 @@ var commentNode;
     cowBtnText.style.lineHeight = '38px';
     cowBtnText.style.paddingLeft = '10px';
     cowBtnText.style.paddingRight = '10px';
+    cowBtnText.style.borderRadius = '10px';
+    cowBtnText.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     cowBtnText.innerHTML = 'Drop a Cow!';
     cowBtnBorder.append(cowBtnText);
 
@@ -228,7 +229,7 @@ var commentNode;
     // Set the CSS for the button's interior content.
     var deleteImg = document.createElement('img');
     deleteImg.className = "mapBtn";
-    deleteImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
+    deleteImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     deleteImg.style.borderRadius = '35%';
     deleteImg.setAttribute('src', 'img/trash.png');
     deleteImg.style.height = '57.6px';
@@ -265,7 +266,7 @@ var commentNode;
     // Set the CSS for the button's interior content.
     var optionsImg = document.createElement('img');
     optionsImg.className = "mapBtn";
-    optionsImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
+    optionsImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     optionsImg.style.borderRadius = '30%';
     optionsImg.style.padding = "4px 4px 4px 4px";
     optionsImg.setAttribute('src', 'img/options.png');
