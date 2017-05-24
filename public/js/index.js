@@ -229,8 +229,11 @@ var commentNode;
     var deleteImg = document.createElement('img');
     deleteImg.className = "mapBtn";
     deleteImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
-    deleteImg.style.borderRadius = '45%';
-    deleteImg.setAttribute('src', 'img/delete.png');
+    deleteImg.style.borderRadius = '35%';
+    deleteImg.setAttribute('src', 'img/trash.png');
+    deleteImg.style.height = '57.6px';
+    deleteImg.style.width = '47px';
+    deleteImg.style.padding = "6px 6px 6px 6px";
     deleteBorder.appendChild(deleteImg);
 
     // Inserts the finished button to the right-bottom area of the map.
@@ -263,7 +266,8 @@ var commentNode;
     var optionsImg = document.createElement('img');
     optionsImg.className = "mapBtn";
     optionsImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
-    optionsImg.style.borderRadius = '45%';
+    optionsImg.style.borderRadius = '30%';
+    optionsImg.style.padding = "4px 4px 4px 4px";
     optionsImg.setAttribute('src', 'img/options.png');
     optionsBorder.appendChild(optionsImg);
 
