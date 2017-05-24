@@ -7,6 +7,7 @@ Changed fonts, added images to tutorial
 Changed login page, implemented full login functionality with database, voting once per user, CSS to show if a comment was voted by a user, outer glow to signify the user's own cows, sweet alert confirmation for the delete buttons.
 
 ## Phillip
+Changed clustering icon to better fit theme.
 
 ## Arvin
 Designed new buttons and reorganized layout
