@@ -795,7 +795,7 @@ $(function() {
  function createInfoBox(topic, comments, score, commentID) {
     // Initialize the info box.
     var infoBox = new InfoBox({
-        pixelOffset: new google.maps.Size(-150, -225),
+        pixelOffset: new google.maps.Size(-150, -235),
         enableEventPropagation: false,
         closeBoxURL: ""
     });
@@ -850,7 +850,7 @@ $(function() {
  function createPreviewBox(topic) {
     // Initialize the preview box.
     var previewBox = new InfoBox({
-        pixelOffset: new google.maps.Size(-75, -125),
+        pixelOffset: new google.maps.Size(-100, -140),
         enableEventPropagation: false,
         closeBoxURL: ""
     });
@@ -1481,7 +1481,9 @@ setTimeout(function() {
             border: (isInfoBox) ? "6px solid rgba(43, 132, 237, 1.0)" : "6px solid rgba(43, 132, 237, 0.5)",
             textAlign: "center",
             fontSize: "12pt",
-            width: (isInfoBox) ? "300px" : "150px",
+            width: (isInfoBox) ? "300px" : "200px",
+            height: (isInfoBox) ? "175px" : "40px",
+            paddingBottom: "55px",
             display: (visible) ? "block" : "none",
             backgroundColor: "rgba(255, 255, 255, 1.0)"
         }
