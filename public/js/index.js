@@ -1273,6 +1273,7 @@ setTimeout(function() {
             addFormError(form["user_username"], 'The username or password is incorrect');
         }
     });
+  }
 
     // REGISTRATION FORM: Validation function
     function validate_registration_form(form, data) {
