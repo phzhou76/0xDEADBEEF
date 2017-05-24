@@ -9,7 +9,8 @@ var MarkerSchema = new Mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    userID: String
 }, {
     autoIndex: false // Index creation has significant performance impact.
 });

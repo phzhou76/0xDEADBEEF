@@ -45,6 +45,7 @@ var commentNode;
  * Initializes the Google Map and geolocation settings.
  */
  function initMap() {
+    console.log("init")
     // Infobox.js relies on Google Maps API, dynamically load script.
     var infoBoxScript = document.createElement('script');
     infoBoxScript.type = 'text/javascript';
@@ -495,7 +496,8 @@ $(function() {
         numComments: 0,
         lat: location.lat(),
         lng: location.lng(),
-        date: currDate
+        date: currDate,
+        userID: username
     };
     $.post("addMarker", markerInfo);
 
@@ -679,21 +681,34 @@ $(function() {
 
 /**
  * Allows the user to delete a message only if the user has created it.
- * TODO: Need to implement a way to detect a returning user.
  */
  function deleteMessage() {
     if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
-        $.post("deleteMarker", {
-            lat: currCow.marker.position.lat(),
-            lng: currCow.marker.position.lng()
-        });
+        $.post("getMarker", {
+            lat: currCow.marker.getPosition().lat(),
+            lng: currCow.marker.getPosition().lng(),
+        }, function(marker) {
+            //Only deletes if marker was created by user
+           if(marker[0].userID == username) {
+             $.post("deleteMarker", {
+                lat: currCow.marker.position.lat(),
+                lng: currCow.marker.position.lng()
+             });
 
-        if (currCow.marker != null) {
-            currCow.marker.setMap(null);
-        }
+            if (currCow.marker != null) {
+                currCow.marker.setMap(null);
+            }
 
-        markerCluster.removeMarker(currCow.marker);
-        currCow.infoBox = currCow.previewBox = currCow.marker = null;
+            markerCluster.removeMarker(currCow.marker);
+            currCow.infoBox = currCow.previewBox = currCow.marker = null;
+           }
+
+           else {
+               $("#guide-text").text("You can only delete your own cows!");
+               $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+           }  
+          }
+       )
     }
 }
 
