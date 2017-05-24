@@ -26,7 +26,7 @@ nav {
     line-height: 45px;
     width: 100%;
     text-align: center;
-    background-color: rgba(43, 132, 237, 1);
+    background-color: rgba(20, 116, 225, 1);
     color: white;
     font-size: 20px;
 }
@@ -58,10 +58,10 @@ main tab-section.active {
 #options-sidebar {
     z-index: 1000;
     left: 0;
-    width: 195px;
-    height: 18%;
+    top:155px;
+    width: 116px;
+    height: 19%;
     transform: translateX(-200px);
-    top: 10%;
     background-color: transparent;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     -webkit-transition: all 0.6s ease 0s;
@@ -72,7 +72,8 @@ main tab-section.active {
 }
 
 #options-sidebar.active {
-    left: 230px;
+    left: 200px;
+    top:155px;
     background-color: rgba(43, 132, 237, 1);
     -webkit-transition: all 0.4s ease 0s;
     -moz-transition: all 0.4s ease 0s;
@@ -95,10 +96,10 @@ main tab-section.active {
 #types-filter {
     z-index: 1000;
     left: 0;
-    width: 150px;
-    height: 35%;
+    top:155px;
+    width: 116px;
+    height: 40%;
     transform: translateX(-175px);
-    top: 10%;
     background-color: transparent;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     -webkit-transition: all 1.0s ease 0s;
@@ -109,7 +110,8 @@ main tab-section.active {
 }
 
 #types-filter.active {
-    left: 425px;
+    left: 175px;
+    top:155px;
     background-color: rgba(43, 132, 237, 1);
     -webkit-transition: all 0.4s ease 0s;
     -moz-transition: all 0.4s ease 0s;
@@ -148,7 +150,28 @@ main tab-section.active {
     margin-bottom: 5px;
 }
 
+.mapBtn{
+    border:1px solid #39ade7; font-size:12px;font-family:Arial, sans-serif; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+   background-color: #6BC2ED; background-image: -webkit-gradient(linear, left top, left bottom, from(#6BC2ED), to(#2B84ED));
+   background-image: -webkit-linear-gradient(top, #6BC2ED, #2B84ED);
+   background-image: -moz-linear-gradient(top, #6BC2ED, #2B84ED);
+   background-image: -ms-linear-gradient(top, #6BC2ED, #2B84ED);
+   background-image: -o-linear-gradient(top, #6BC2ED, #2B84ED);
+   background-image: linear-gradient(to bottom, #6BC2ED, #2B84ED);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#6BC2ED, endColorstr=#2B84ED);
+}
+
+.mapBtn:hover{
+    border:2px solid #1a99d8;
+   background-color: #3eafe7; background-image: -webkit-gradient(linear, left top, left bottom, from(#3eafe7), to(#126BD3));
+   background-image: -webkit-linear-gradient(top, #3eafe7, #126BD3);
+   background-image: -moz-linear-gradient(top, #3eafe7, #126BD3);
+   background-image: -ms-linear-gradient(top, #3eafe7, #126BD3);
+   background-image: -o-linear-gradient(top, #3eafe7, #126BD3);
+   background-image: linear-gradient(to bottom, #3eafe7, #126BD3);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#3eafe7, endColorstr=#126BD3);
+}
+
 .options {
+    
     -webkit-transition: all 0.4s ease 0s;
     -moz-transition: all 0.4s ease 0s;
     -ms-transition: all 0.4s ease 0s;
@@ -157,8 +180,10 @@ main tab-section.active {
 }
 
 .options.inactive {
-    transform: translateX(75px);
+    transform: translateX(-75px);
 }
+
+
 
 .modal-header {
     background-color: rgba(43, 132, 237, 1);
@@ -171,7 +196,7 @@ main tab-section.active {
     text-align: center;
 }
 
-.btn.btn-default.drop-btn {
+.btn.-default.drop-btn {
     background-color: rgba(43, 132, 237, 1);
     color: rgba(255, 255, 255, 1);
 }
@@ -395,11 +420,17 @@ footer tab {
 
 
 .btn.btn-default.tut-btn {
-    background-color: rgba(43, 132, 237, 1);
+    background-color: rgba(20, 116, 225, 1);
     color: rgba(255, 255, 255, 1);
     padding-top: 11px;
     padding-bottom: 12px;
     float: right;
+}
+
+.btn.btn-default.tut-btn:hover {
+    background-color: rgba(14, 84, 164, 1);
+}
+
 
 .switch {
   position: relative;

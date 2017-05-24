@@ -19,6 +19,7 @@ var zoomImages = []; // Holds different image sizes for different zoom amounts.
 
 var cowBtnText; // Used to modify the drop cow button text.
 var deleteContainer; // Used to modify the location of the delete message button.
+var optionsContainer;// Used to modify the location of the options button.
 
 var lastLocation; // Location of the last click before drop was clicked.
 
@@ -68,8 +69,8 @@ var commentNode;
         initGeoPosition();
 
         initDropButton();
-        initDeleteButton();
         initOptionsButton();
+        initDeleteButton();
         initTypeFilters();
 
         initMarkers();
@@ -177,18 +178,21 @@ var commentNode;
  function initDropButton() {
     // Create a div that holds the cow-dropping button.
     var cowBtnContainer = document.createElement('div');
+     cowBtnContainer.style.padding = "10px 10px 0px 0px";
+
 
     // Set the CSS for the button's border.
     var cowBtnBorder = document.createElement('div');
-    cowBtnBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    //cowBtnBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
     cowBtnBorder.style.cursor = 'pointer';
     cowBtnBorder.style.textAlign = 'center';
-    cowBtnBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+    cowBtnBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
     cowBtnContainer.appendChild(cowBtnBorder);
 
     // Set the CSS for the button's interior content.
     cowBtnText = document.createElement('div');
-    cowBtnText.style.color = '#fff';
+    //cowBtnText.style.color = '#fff';
+    cowBtnText.className = "mapBtn";
     cowBtnText.style.fontFamily = 'Arial,sans-serif';
     cowBtnText.style.fontSize = '16px';
     cowBtnText.style.lineHeight = '38px';
@@ -198,7 +202,7 @@ var commentNode;
     cowBtnBorder.append(cowBtnText);
 
     // Inserts the finished button to the right-center area of the map.
-    googleMapObject.controls[google.maps.ControlPosition.LEFT_CENTER].push(cowBtnContainer);
+    googleMapObject.controls[google.maps.ControlPosition.LEFT].push(cowBtnContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(cowBtnContainer, 'click', dropTextListener);
@@ -211,24 +215,26 @@ var commentNode;
  function initDeleteButton() {
     // Create a div that holds the delete message button.
     deleteContainer = document.createElement('div');
-    deleteContainer.style.padding = "0px 0px 0px 0px";
+    deleteContainer.style.padding = "0px 0px 10px 10px";
     deleteContainer.className = "options";
 
     // Set the CSS for the button's border.
     var deleteBorder = document.createElement('div');
-    deleteBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    //deleteBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
     deleteBorder.style.cursor = 'pointer';
     deleteBorder.style.textAlign = 'center';
-    deleteBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
     deleteContainer.appendChild(deleteBorder);
 
     // Set the CSS for the button's interior content.
     var deleteImg = document.createElement('img');
+    deleteImg.className = "mapBtn";
+    deleteImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
+    deleteImg.style.borderRadius = '45%';
     deleteImg.setAttribute('src', 'img/delete.png');
     deleteBorder.appendChild(deleteImg);
 
     // Inserts the finished button to the right-bottom area of the map.
-    googleMapObject.controls[google.maps.ControlPosition.RIGHT_CENTER].push(deleteContainer);
+    googleMapObject.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(deleteContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(deleteContainer, 'click', function(event) {
@@ -242,24 +248,27 @@ var commentNode;
  function initOptionsButton() {
     // Create a div that holds the options button.
     var optionsContainer = document.createElement('div');
-    optionsContainer.style.padding = "10px 10px 0px 0px";
+    optionsContainer.style.padding = "10px 0px 0px 10px";
     optionsContainer.className = "options";
 
     // Set the CSS for the button's border.
     var optionsBorder = document.createElement('div');
-    optionsBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    //optionsBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
     optionsBorder.style.cursor = 'pointer';
     optionsBorder.style.textAlign = 'center';
-    optionsBorder.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+    optionsBorder.style.borderRadius = '20%';
     optionsContainer.appendChild(optionsBorder);
 
     // Set the CSS for the button's interior content.
     var optionsImg = document.createElement('img');
+    optionsImg.className = "mapBtn";
+    optionsImg.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 1)';
+    optionsImg.style.borderRadius = '45%';
     optionsImg.setAttribute('src', 'img/options.png');
     optionsBorder.appendChild(optionsImg);
 
     // Inserts the finished button to the right-bottom area of the map.
-    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(optionsContainer);
+    googleMapObject.controls[google.maps.ControlPosition.LEFT].push(optionsContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(optionsContainer, 'click', function(event) {
@@ -275,7 +284,7 @@ var commentNode;
         }
     });
 }
-
+ 
 /**
  * Inits the type filter buttons.
  */
@@ -437,7 +446,9 @@ $(function() {
     $("#guide-text").css('color', 'rgba(43, 132, 237, 1)');
 
     // Remove the add comment and delete pin functionality if drop mode is true.
+    //optionsContainer.className = "options inactive";
     deleteContainer.className = "options inactive";
+
 }
 
 /**
@@ -452,6 +463,7 @@ $(function() {
     }
 
     // Add the add comment and delete pin functionality if drop mode is false.
+    //optionsContainer.className = "options";
     deleteContainer.className = "options";
 }
 
