@@ -795,7 +795,7 @@ $(function() {
  function createInfoBox(topic, comments, score, commentID) {
     // Initialize the info box.
     var infoBox = new InfoBox({
-        pixelOffset: new google.maps.Size(-150, -235),
+        pixelOffset: new google.maps.Size(-150, -255),
         enableEventPropagation: false,
         closeBoxURL: ""
     });
