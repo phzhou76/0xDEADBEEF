@@ -48,6 +48,7 @@ var commentNode;
  * Initializes the Google Map and geolocation settings.
  */
  function initMap() {
+    console.log("init")
     // Infobox.js relies on Google Maps API, dynamically load script.
     var infoBoxScript = document.createElement('script');
     infoBoxScript.type = 'text/javascript';
@@ -242,7 +243,42 @@ var commentNode;
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(deleteContainer, 'click', function(event) {
-        return deleteMessage();
+        //Checks if cow was created by user
+        if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
+            $.post("getMarker", {
+                lat: currCow.marker.getPosition().lat(),
+                lng: currCow.marker.getPosition().lng(),
+            }, function(marker) {
+                //Only deletes if marker was created by user
+                if(marker[0].userID == username) {
+                    swal({
+                        title: 'Are you sure you want to delete the "' + marker[0].topic +  '" cow?',
+                        text: "You won't be able to revert this!",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then(function () {
+                    swal(
+                        'Deleted!',
+                        '"' + marker[0].topic + '"' + " has been deleted",
+                        'success'
+                    )
+                    deleteMessage();
+                    })
+                }
+            });
+      }
+
+      //Otherwise raise an error
+      else {
+        swal(
+            'Oops...',
+            'You can only delete your own cow!',
+            'error'
+        )
+      }
     });
 }
 
@@ -358,17 +394,29 @@ var commentNode;
         lng: markerData.lng
     };
 
-    var picture = {
-        url: chooseImage(markerData.type),
-        size: new google.maps.Size(65, 65),
-        scaledSize: new google.maps.Size(65, 65),
-        labelOrigin: new google.maps.Point(20, 50)
-    };
+    //Highlights users' own markers
+    if(markerData.userID == username) {
+        var picture = {
+            url: chooseImageUser(markerData.type),
+            size: new google.maps.Size(65, 65),
+            scaledSize: new google.maps.Size(65, 65),
+            labelOrigin: new google.maps.Point(20, 50)
+        };    
+    }
+    else {
+        var picture = {
+            url: chooseImage(markerData.type),
+            size: new google.maps.Size(65, 65),
+            scaledSize: new google.maps.Size(65, 65),
+            labelOrigin: new google.maps.Point(20, 50)
+        };
+    }
 
     var marker = new google.maps.Marker({
         position: location,
         map: googleMapObject,
-        icon: picture
+        icon: picture,
+        topic: markerData.topic,
     });
 
     $.post("getComment", {
@@ -501,7 +549,7 @@ $(function() {
  */
  function addCowPin(location, topic, comments, type) {
     var picture = {
-        url: chooseImage(type),
+        url: chooseImageUser(type),
         size: new google.maps.Size(60, 60),
         scaledSize: new google.maps.Size(60, 60)
     };
@@ -515,7 +563,8 @@ $(function() {
         numComments: 0,
         lat: location.lat(),
         lng: location.lng(),
-        date: currDate
+        date: currDate,
+        userID: username
     };
     $.post("addMarker", markerInfo);
 
@@ -536,6 +585,7 @@ $(function() {
         map: googleMapObject,
         icon: picture,
         animation: google.maps.Animation.DROP,
+        topic: topic,
     });
     markerCluster.addMarker(marker, true);
 
@@ -699,22 +749,19 @@ $(function() {
 
 /**
  * Allows the user to delete a message only if the user has created it.
- * TODO: Need to implement a way to detect a returning user.
  */
  function deleteMessage() {
-    if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
-        $.post("deleteMarker", {
-            lat: currCow.marker.position.lat(),
-            lng: currCow.marker.position.lng()
-        });
+    $.post("deleteMarker", {
+        lat: currCow.marker.position.lat(),
+        lng: currCow.marker.position.lng()
+    });
 
-        if (currCow.marker != null) {
-            currCow.marker.setMap(null);
-        }
-
-        markerCluster.removeMarker(currCow.marker);
-        currCow.infoBox = currCow.previewBox = currCow.marker = null;
+    if (currCow.marker != null) {
+        currCow.marker.setMap(null);
     }
+
+    markerCluster.removeMarker(currCow.marker);
+    currCow.infoBox = currCow.previewBox = currCow.marker = null;
 }
 
 /**
@@ -1034,7 +1081,6 @@ $(function() {
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
     var score = parseInt($("~ .count", this).text()) + 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
-    console.log(score)
 
     //Only upvotes if user is logged in
     if(username) {
@@ -1077,7 +1123,6 @@ $(function() {
 
                    //From vote score -1 to 0:
                    if(vote[0].score == - 1) {
-                      console.log("hello")
                       $(increment_down).removeClass('active')
                   }
                    //From vote score 0 to 1
@@ -1279,29 +1324,22 @@ setTimeout(function() {
       $.post("login", {
         username: data.user_username,
         password: data.user_password
-    }, function(user) { 
-       if(user[0] != null ) {
-        username = data.user_username;
-        password = data.user_password;
-        console.log(username)
-        console.log(password)
-        $('#successful_login').removeClass('active');
-        dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
-        document.getElementById('login_form').reset();
-        $('#login-modal').modal('hide');
-        $('#loginButton').text(username)
-        markerCluster.clearMarkers()
-        initMarkers();
-    }
-    else {
-        addFormError(form["user_username"], 'The username or password is incorrect');
-    }
-});
-     // $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
-      //$('#dialog').addClass('dialog-effect-out');
-
-      $('#successful_login').addClass('active');
-      //return true;
+      }, function(user) { 
+         if(user[0] != null ) {
+            username = data.user_username;
+            password = data.user_password;
+            $('#successful_login').removeClass('active');
+            dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+            document.getElementById('login_form').reset();
+            $('#login-modal').modal('hide');
+            $('#loginButton').text(username)
+            markerCluster.clearMarkers()
+            initMarkers();
+        }
+        else {
+            addFormError(form["user_username"], 'The username or password is incorrect');
+        }
+    });
   }
 
     // REGISTRATION FORM: Validation function
@@ -1407,6 +1445,23 @@ setTimeout(function() {
         return 'img/cow-event.png';
     } else if (type == "Sales") {
         return 'img/cow-sales.png';
+    } else {
+        return 'img/cow.png';
+    }
+}
+
+/**
+ * Based on the type, returns a URL for the correct image.
+ * @param {string} type - The type of the message.
+ * @return {string} The location of the image.
+ */
+ function chooseImageUser(type) {
+    if (type == "Food") {
+        return 'img/cow-food-user.png';
+    } else if (type == "Event") {
+        return 'img/cow-event-user.png';
+    } else if (type == "Sales") {
+        return 'img/cow-sales-user.png';
     } else {
         return 'img/cow.png';
     }

@@ -6,31 +6,32 @@
 var mongoose = require('mongoose');
 var models = require('./models');
 
-var localHost = false;   // Flag to test on local machine.
+var localHost = true;   // Flag to test on local machine.
 
 // Create two URIs, one for the local machine, and the other for Heroku.
 var localDatabaseURI = "mongodb://localhost/dejamoo";
-var localDatabaseURI = null
 var herokuDatabaseURI = (localHost) ? null : "mongodb://dejamoo:0xDEADBEEF@ds153719.mlab.com:53719/heroku_wv684s23";
 
 mongoose.connect(localDatabaseURI || herokuDatabaseURI);
 
 // Step 1: load the JSON data
 var markersJSON = [{
-        "topic": "Pizza Hut",
-        "type": "Food",
+        "topic": "Geisel First Floor",
+        "type": "Event",
         "numComments": 0,
         "lat": 32.8698645954428,
         "lng": -117.22189486026764,
-        "date": new Date("11/20/2014 04:11")
+        "date": new Date("11/20/2014 04:11"),
+        "userID": "Ricky"
     },
     {
-        "topic": "Geisel 1st Floor",
+        "topic": "Pizza Hut",
         "type": "Event",
         "numComments": 0,
         "lat": 32.8799645954428,
         "lng": -117.22199486026761,
-        "date": new Date("11/20/2014 04:11")
+        "date": new Date("11/20/2014 04:11"),
+        "userID": "Ricky"
     }
 ];
 
