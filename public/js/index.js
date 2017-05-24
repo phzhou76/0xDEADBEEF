@@ -1528,7 +1528,7 @@ function Tutorial(){
         title: 'Welcome to Deja Moo!',
         text: 'Deja Moo allows you to view cows in your surrounding areas to find ' + 
         'events, food, and sales!',
-        imageUrl: 'img/cow.png',
+        imageUrl: 'img/cow-food.png',
         imageWidth: '200px',
         imageHeight: '200px'
     },
@@ -1538,7 +1538,7 @@ function Tutorial(){
         'the topic, comment, and cow type to begin.',
         imageUrl: 'img/tut2.png',
         imageWidth: '400px',
-        imageHeight: '375px',
+        imageHeight: '350px',
         animation: false
     },
     {
@@ -1547,7 +1547,7 @@ function Tutorial(){
         'only delete a cow you have dropped before refreshing the page.',
         imageUrl: 'img/tut3.png',
         imageWidth: '520px',
-        imageHeight: '300px',
+        imageHeight: '350px',
         animation: false
     },
     {
