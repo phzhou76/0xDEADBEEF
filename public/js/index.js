@@ -342,17 +342,30 @@ var commentNode;
         lng: markerData.lng
     };
 
-    var picture = {
-        url: chooseImage(markerData.type),
-        size: new google.maps.Size(65, 65),
-        scaledSize: new google.maps.Size(65, 65),
-        labelOrigin: new google.maps.Point(20, 50)
-    };
+    //Highlights users' own markers
+    if(markerData.userID == username) {
+        var picture = {
+            url: chooseImageUser(markerData.type),
+            size: new google.maps.Size(65, 65),
+            scaledSize: new google.maps.Size(65, 65),
+            labelOrigin: new google.maps.Point(20, 50)
+        };    
+    }
+    else {
+        var picture = {
+            url: chooseImage(markerData.type),
+            size: new google.maps.Size(65, 65),
+            scaledSize: new google.maps.Size(65, 65),
+            labelOrigin: new google.maps.Point(20, 50)
+        };
+    }
+
+    console.log(picture)
 
     var marker = new google.maps.Marker({
         position: location,
         map: googleMapObject,
-        icon: picture
+        icon: picture,
     });
 
     $.post("getComment", {
@@ -482,7 +495,7 @@ $(function() {
  */
  function addCowPin(location, topic, comments, type) {
     var picture = {
-        url: chooseImage(type),
+        url: chooseImageUser(type),
         size: new google.maps.Size(60, 60),
         scaledSize: new google.maps.Size(60, 60)
     };
@@ -1393,6 +1406,23 @@ setTimeout(function() {
         return 'img/cow-event.png';
     } else if (type == "Sales") {
         return 'img/cow-sales.png';
+    } else {
+        return 'img/cow.png';
+    }
+}
+
+/**
+ * Based on the type, returns a URL for the correct image.
+ * @param {string} type - The type of the message.
+ * @return {string} The location of the image.
+ */
+ function chooseImageUser(type) {
+    if (type == "Food") {
+        return 'img/cow-food-user.png';
+    } else if (type == "Event") {
+        return 'img/cow-event-user.png';
+    } else if (type == "Sales") {
+        return 'img/cow-sales-user.png';
     } else {
         return 'img/cow.png';
     }

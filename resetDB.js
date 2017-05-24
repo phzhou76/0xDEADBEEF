@@ -16,8 +16,8 @@ mongoose.connect(localDatabaseURI || herokuDatabaseURI);
 
 // Step 1: load the JSON data
 var markersJSON = [{
-        "topic": "Pizza Hut",
-        "type": "Food",
+        "topic": "Geisel First Floor",
+        "type": "Event",
         "numComments": 0,
         "lat": 32.8698645954428,
         "lng": -117.22189486026764,
@@ -25,7 +25,7 @@ var markersJSON = [{
         "userID": "Ricky"
     },
     {
-        "topic": "Geisel 1st Floor",
+        "topic": "Pizza Hut",
         "type": "Event",
         "numComments": 0,
         "lat": 32.8799645954428,
