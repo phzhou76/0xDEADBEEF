@@ -1,7 +1,7 @@
 # Contributions
 
 ## Siyu
-Changed fonts, added images to tutorial, changed preview boxes to hover only.
+Changed fonts, added images to tutorial, changed preview boxes to hover only, added transition of initial load, UI button locations, bug fixes.
 
 ## Ricky
 Changed login page, implemented full login functionality with database, voting once per user, CSS to show if a comment was voted by a user, outer glow to signify the user's own cows, sweet alert confirmation for the delete buttons.
