@@ -230,7 +230,42 @@ var commentNode;
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(deleteContainer, 'click', function(event) {
-        return deleteMessage();
+        //Checks if cow was created by user
+        if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
+            $.post("getMarker", {
+                lat: currCow.marker.getPosition().lat(),
+                lng: currCow.marker.getPosition().lng(),
+            }, function(marker) {
+                //Only deletes if marker was created by user
+                if(marker[0].userID == username) {
+                    swal({
+                        title: 'Are you sure you want to delete the "' + marker[0].topic +  '" cow?',
+                        text: "You won't be able to revert this!",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then(function () {
+                    swal(
+                        'Deleted!',
+                        '"' + marker[0].topic + '"' + " has been deleted",
+                        'success'
+                    )
+                    deleteMessage();
+                    })
+                }
+            });
+      }
+
+      //Otherwise raise an error
+      else {
+        swal(
+            'Oops...',
+            'You can only delete your own cow!',
+            'error'
+        )
+      }
     });
 }
 
@@ -360,12 +395,11 @@ var commentNode;
         };
     }
 
-    console.log(picture)
-
     var marker = new google.maps.Marker({
         position: location,
         map: googleMapObject,
         icon: picture,
+        topic: markerData.topic,
     });
 
     $.post("getComment", {
@@ -531,6 +565,7 @@ $(function() {
         map: googleMapObject,
         icon: picture,
         animation: google.maps.Animation.DROP,
+        topic: topic,
     });
     markerCluster.addMarker(marker, true);
 
@@ -696,33 +731,17 @@ $(function() {
  * Allows the user to delete a message only if the user has created it.
  */
  function deleteMessage() {
-    if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
-        $.post("getMarker", {
-            lat: currCow.marker.getPosition().lat(),
-            lng: currCow.marker.getPosition().lng(),
-        }, function(marker) {
-            //Only deletes if marker was created by user
-           if(marker[0].userID == username) {
-             $.post("deleteMarker", {
-                lat: currCow.marker.position.lat(),
-                lng: currCow.marker.position.lng()
-             });
+    $.post("deleteMarker", {
+        lat: currCow.marker.position.lat(),
+        lng: currCow.marker.position.lng()
+    });
 
-            if (currCow.marker != null) {
-                currCow.marker.setMap(null);
-            }
-
-            markerCluster.removeMarker(currCow.marker);
-            currCow.infoBox = currCow.previewBox = currCow.marker = null;
-           }
-
-           else {
-               $("#guide-text").text("You can only delete your own cows!");
-               $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
-           }  
-          }
-       )
+    if (currCow.marker != null) {
+        currCow.marker.setMap(null);
     }
+
+    markerCluster.removeMarker(currCow.marker);
+    currCow.infoBox = currCow.previewBox = currCow.marker = null;
 }
 
 /**
