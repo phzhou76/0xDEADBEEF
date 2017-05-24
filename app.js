@@ -9,7 +9,7 @@ var indexRoutes = require('./routes/indexRoutes');
 var app = express();
 var mongoose = require('mongoose');
 
-var localHost = true;   // Flag to test on local machine.
+var localHost = false;   // Flag to test on local machine.
 
 // Connect to the Mongo database, whether locally or on Heroku.
 var localDatabaseURI = "mongodb://localhost/dejamoo";
@@ -57,6 +57,9 @@ app.post('/addComment', indexRoutes.addComment);
 app.post('/addUser', indexRoutes.addUser);
 app.post('/getUser', indexRoutes.getUser);
 app.post('/login', indexRoutes.login);
+app.post('/getVote', indexRoutes.getVote);
+app.post('/addVote', indexRoutes.addVote);
+app.post('/updateVote', indexRoutes.updateVote);
 
 
 

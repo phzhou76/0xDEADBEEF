@@ -37,7 +37,15 @@ var UserSchema = new Mongoose.Schema({
     autoIndex: false
 });
 
+var VoteSchema = new Mongoose.Schema({
+    commentID: String,
+    username: String,
+    score: Number
+})
+
+
 // Init models for use as document objects.
 exports.ModelMarker = Mongoose.model('Marker', MarkerSchema);
 exports.ModelComment = Mongoose.model('Comment', CommentSchema);
 exports.ModelUser = Mongoose.model('User', UserSchema);
+exports.ModelVote = Mongoose.model('Vote', VoteSchema);
