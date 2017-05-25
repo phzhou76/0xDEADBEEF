@@ -424,7 +424,7 @@ var outsideRadius;
         lat: markerData.lat,
         lng: markerData.lng,
     }, function(comment) {
-        var infoBox = createInfoBox(markerData.topic, markerData.expireDate, comment[0].content, comment[0].score, comment[0]._id);
+        var infoBox = createInfoBox(markerData, markerData.topic, markerData.expireDate, comment[0].content, comment[0].score, comment[0]._id);
         var previewBox = createPreviewBox(markerData.topic);
         initMarkerListener(marker, infoBox, previewBox);
         storeSortingInfo(markerData.lat, markerData.lng, marker, infoBox, previewBox);
@@ -603,7 +603,7 @@ $(function() {
     });
     markerCluster.addMarker(marker, true);
 
-    var infoBox = createInfoBox(topic, expireDate, comments, 0);
+    var infoBox = createInfoBox(marker, topic, expireDate, comments, 0);
     var previewBox = createPreviewBox(topic);
 
     initMarkerListener(marker, infoBox, previewBox);
@@ -806,9 +806,12 @@ $(function() {
  * @param {number} score - The score of the comment.
  * @return {Object} The created info box.
  */
- function createInfoBox(topic, expireDate, comments, score, commentID) {
+ function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
     var date = new Date(expireDate)
-    console.log(date.toLocaleDateString("en-US"))
+    //var testDate = new Date();
+    //var testdate = testDate.setSeconds(testDate.getSeconds() + 10)
+    //var date = new Date(testdate)
+    //console.log(date.toLocaleDateString("en-US"))
     var options = {  
         weekday: "long", year: "numeric", month: "short",  
         day: "numeric", hour: "2-digit", minute: "2-digit"  
@@ -828,34 +831,49 @@ $(function() {
     topicHTML.appendChild(topicContent);
 
     var testCountdown = document.createElement('div')
-// Set the date we're counting down to
-var countDownDate = new Date(expireDate).getTime();
+    // Set the date we're counting down to
+    var countDownDate = new Date(date).getTime();
 
-// Update the count down every 1 second
-var x = setInterval(function() {
+    // Update the count down every 1 second
+    var x = setInterval(function() {
 
-  // Get todays date and time
-  var now = new Date().getTime();
+        // Get todays date and time
+        var now = new Date().getTime();
 
-  // Find the distance between now an the count down date
-  var distance = countDownDate - now;
+        // Find the distance between now an the count down date
+        var distance = countDownDate - now;
 
-  // Time calculations for hours, minutes and seconds
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Time calculations for hours, minutes and seconds
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-  // Display the result in the element with id="demo"
-  testCountdown.innerHTML = hours + "h "
-  + minutes + "m " + seconds + "s ";
+        // Display the result in the element with id="demo"
+        testCountdown.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
 
-}, 1000);
+        // If the count down is finished, deletes the marker
+        if (distance < 0) {
+            clearInterval(x);
+            var locString = locToString(marker.lat, marker.lng);
+            var currMarker = locationMap[locString].marker;
+            $.post("deleteMarker", {
+                lat: marker.lat,
+                lng: marker.lng
+            });
+
+            if (currMarker != null) {
+                currMarker.setMap(null);
+            }
+
+            markerCluster.removeMarker(currMarker);
+        }
+    }, 1000);
     //Initialize expiration date
-    var dateHTML = document.createElement('h4');
+   /* var dateHTML = document.createElement('h4');
     dateHTML.style.fontSize = '14px';
     dateHTML.style.fontFamily = 'Arial,sans-serif';
     var dateContent = document.createTextNode("Expires at: " + date.toLocaleTimeString("en-us", options))
-    dateHTML.appendChild(dateContent)
+    dateHTML.appendChild(dateContent)*/
 
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
@@ -884,7 +902,7 @@ var x = setInterval(function() {
     var messageHTML = document.createElement('div');
     messageHTML.appendChild(topicHTML);
     messageHTML.appendChild(testCountdown);
-    messageHTML.appendChild(dateHTML);
+    //messageHTML.appendChild(dateHTML);
     messageHTML.appendChild(commentHTML);
     messageHTML.appendChild(viewHTML);
 
@@ -1567,7 +1585,7 @@ setTimeout(function() {
             textAlign: "center",
             fontSize: "12pt",
             width: (isInfoBox) ? "300px" : "200px",
-            height: (isInfoBox) ? "200px" : "40px",
+            height: (isInfoBox) ? "195px" : "40px",
             paddingBottom: "55px",
             display: (visible) ? "block" : "none",
             backgroundColor: "rgba(255, 255, 255, 1.0)"
