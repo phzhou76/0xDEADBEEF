@@ -48,7 +48,6 @@ var commentNode;
  * Initializes the Google Map and geolocation settings.
  */
  function initMap() {
-    console.log("init")
     // Infobox.js relies on Google Maps API, dynamically load script.
     var infoBoxScript = document.createElement('script');
     infoBoxScript.type = 'text/javascript';
@@ -1046,7 +1045,13 @@ $(function() {
  */
  function dropTextListener(event) {
     if (!dropMode) {
-        enableDrop();
+        if(username) {
+          enableDrop();
+        }
+        //Show login screen if not logged in
+        else {
+            $("#login-modal").modal('show')
+        }
     } else {
         disableDrop();
     }
@@ -1064,8 +1069,17 @@ $(function() {
     if (topic != null && topic.value != "" &&
         comments != null && comments.value != "" &&
         type != null && type.value != "") {
-        addCowPin(lastLocation, topic.value, comments.value, type.value);
-}
+          addCowPin(lastLocation, topic.value, comments.value, type.value);
+    }
+
+    //Otherwise pop up error
+    else {
+        swal(
+            'Oops...',
+            'You need to fill all of the fields!',
+            'error'
+        )
+    }
 
     // Reset values for the three fields.
     document.getElementById("topic").value = "";
