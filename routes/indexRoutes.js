@@ -128,7 +128,9 @@ exports.addMarker = function(req, res) {
         numComments: req.body.numComments,
         lat: req.body.lat,
         lng: req.body.lng,
-        date: req.body.date
+        date: req.body.date,
+        userID: req.body.userID,
+        expireDate: req.body.expireDate
     })
 
     // Save marker document to the database.

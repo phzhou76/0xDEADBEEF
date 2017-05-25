@@ -422,9 +422,9 @@ var outsideRadius;
     $.post("getComment", {
         index: 0,
         lat: markerData.lat,
-        lng: markerData.lng
+        lng: markerData.lng,
     }, function(comment) {
-        var infoBox = createInfoBox(markerData.topic, comment[0].content, comment[0].score, comment[0]._id);
+        var infoBox = createInfoBox(markerData.topic, markerData.expireDate, comment[0].content, comment[0].score, comment[0]._id);
         var previewBox = createPreviewBox(markerData.topic);
         initMarkerListener(marker, infoBox, previewBox);
         storeSortingInfo(markerData.lat, markerData.lng, marker, infoBox, previewBox);
@@ -558,6 +558,8 @@ $(function() {
  * @param {Object} type - Contains the type of the message.
  */
  function addCowPin(location, topic, comments, type) {
+    var expireDate = new Date();
+    expireDate.setDate(expireDate.getDate() + 1);
     var picture = {
         url: chooseImageUser(type),
         size: new google.maps.Size(60, 60),
@@ -574,8 +576,10 @@ $(function() {
         lat: location.lat(),
         lng: location.lng(),
         date: currDate,
-        userID: username
+        userID: username,
+        expireDate: expireDate
     };
+    console.log(username)
     $.post("addMarker", markerInfo);
 
     // Post comment info to route to save to database.
@@ -599,7 +603,7 @@ $(function() {
     });
     markerCluster.addMarker(marker, true);
 
-    var infoBox = createInfoBox(topic, comments, 0);
+    var infoBox = createInfoBox(topic, expireDate, comments, 0);
     var previewBox = createPreviewBox(topic);
 
     initMarkerListener(marker, infoBox, previewBox);
@@ -802,10 +806,15 @@ $(function() {
  * @param {number} score - The score of the comment.
  * @return {Object} The created info box.
  */
- function createInfoBox(topic, comments, score, commentID) {
-    // Initialize the info box.
+ function createInfoBox(topic, expireDate, comments, score, commentID) {
+    var date = new Date(expireDate)
+    console.log(date.toLocaleDateString("en-US"))
+    var options = {  
+        weekday: "long", year: "numeric", month: "short",  
+        day: "numeric", hour: "2-digit", minute: "2-digit"  
+    };  
     var infoBox = new InfoBox({
-        pixelOffset: new google.maps.Size(-150, -255),
+        pixelOffset: new google.maps.Size(-150, -270),
         enableEventPropagation: false,
         closeBoxURL: ""
     });
@@ -817,6 +826,36 @@ $(function() {
     var topicContent = document.createTextNode(topic);
     topicHTML.className += 'topic-header';
     topicHTML.appendChild(topicContent);
+
+    var testCountdown = document.createElement('div')
+// Set the date we're counting down to
+var countDownDate = new Date(expireDate).getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get todays date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now an the count down date
+  var distance = countDownDate - now;
+
+  // Time calculations for hours, minutes and seconds
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="demo"
+  testCountdown.innerHTML = hours + "h "
+  + minutes + "m " + seconds + "s ";
+
+}, 1000);
+    //Initialize expiration date
+    var dateHTML = document.createElement('h4');
+    dateHTML.style.fontSize = '14px';
+    dateHTML.style.fontFamily = 'Arial,sans-serif';
+    var dateContent = document.createTextNode("Expires at: " + date.toLocaleTimeString("en-us", options))
+    dateHTML.appendChild(dateContent)
 
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
@@ -844,6 +883,8 @@ $(function() {
     // Combine into one div.
     var messageHTML = document.createElement('div');
     messageHTML.appendChild(topicHTML);
+    messageHTML.appendChild(testCountdown);
+    messageHTML.appendChild(dateHTML);
     messageHTML.appendChild(commentHTML);
     messageHTML.appendChild(viewHTML);
 
@@ -1167,6 +1208,9 @@ $(function() {
         }
         $("#guide-text").text("Incorrect area - upvote within the grey circle.");
         $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+        setTimeout(function() {
+          $("#guide-footer").removeClass("active");
+      }, 1500);
   }
 
    //If not logged in, tells user to login and opens login page
@@ -1523,7 +1567,7 @@ setTimeout(function() {
             textAlign: "center",
             fontSize: "12pt",
             width: (isInfoBox) ? "300px" : "200px",
-            height: (isInfoBox) ? "175px" : "40px",
+            height: (isInfoBox) ? "200px" : "40px",
             paddingBottom: "55px",
             display: (visible) ? "block" : "none",
             backgroundColor: "rgba(255, 255, 255, 1.0)"

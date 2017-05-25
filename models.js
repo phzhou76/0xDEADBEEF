@@ -10,7 +10,9 @@ var MarkerSchema = new Mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    userID: String
+    userID: String,
+    expireDate: Date,
+
 }, {
     autoIndex: false // Index creation has significant performance impact.
 });

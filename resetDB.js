@@ -11,6 +11,8 @@ var localHost = true;   // Flag to test on local machine.
 // Create two URIs, one for the local machine, and the other for Heroku.
 var localDatabaseURI = "mongodb://localhost/dejamoo";
 var herokuDatabaseURI = (localHost) ? null : "mongodb://dejamoo:0xDEADBEEF@ds153719.mlab.com:53719/heroku_wv684s23";
+var date = new Date();
+var currentDate = new Date();
 
 mongoose.connect(localDatabaseURI || herokuDatabaseURI);
 
@@ -21,8 +23,9 @@ var markersJSON = [{
         "numComments": 0,
         "lat": 32.8698645954428,
         "lng": -117.22189486026764,
-        "date": new Date("11/20/2014 04:11"),
-        "userID": "Ricky"
+        "date": Date.now(),
+        "userID": "Ricky",
+        "expireDate": date.setDate(currentDate.getDate() + 1),
     },
     {
         "topic": "Pizza Hut",
@@ -30,8 +33,9 @@ var markersJSON = [{
         "numComments": 0,
         "lat": 32.8799645954428,
         "lng": -117.22199486026761,
-        "date": new Date("11/20/2014 04:11"),
-        "userID": "Ricky"
+        "date": Date.now(),
+        "userID": "Ricky",
+        "expireDate": date.setDate(currentDate.getDate() + 1),
     }
 ];
 
