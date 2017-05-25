@@ -36,6 +36,7 @@ var filterTypes = [ // Types of filters. Can be added to later.
 var username;
 var password;
 var commentNode;
+var outsideRadius;
 
 /******************************* GLOBALS END **********************************/
 
@@ -450,6 +451,15 @@ var commentNode;
  function initMarkerListener(marker, infoBox, previewBox) {
     // Create bounce animation when moving over cow marker.
     marker.addListener('mouseover', function(event) {
+        var bounds = user.radius.getBounds();
+        var latLngA = new google.maps.LatLng(marker.getPosition().lat(), marker.getPosition().lng());
+        if(bounds.contains(latLngA)) {
+            outsideRadius = false;
+        }
+        else {
+            outsideRadius = true;
+        }
+
         previewBox.open(googleMapObject, marker);
         setTimeout(function() {
                 previewBox.close();
@@ -509,7 +519,8 @@ $(function() {
  function disableDrop() {
     cowBtnText.innerHTML = "Drop a Cow!";
     dropMode = false;
-    user.radius.setVisible(false);
+    user.radius.setVisible(true);
+    //user.radius.setVisible(false);
     if ($("#guide-footer").hasClass('active')) {
         $("#guide-footer").removeClass('active');
     }
@@ -1097,7 +1108,7 @@ $(function() {
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
 
     //Only upvotes if user is logged in
-    if(username) {
+    if(username && !outsideRadius) {
       $.post("getComment", {
         index: index,
         lat: currCow.marker.getPosition().lat(),
@@ -1147,7 +1158,15 @@ $(function() {
           }
       })
     });
+  }
 
+  //Do not allow upvotes outside of the radius
+  else if(username && outsideRadius) {
+        if ($("#guide-footer").hasClass('active') == false) {
+            $("#guide-footer").addClass('active');
+        }
+        $("#guide-text").text("Incorrect area - upvote within the grey circle.");
+        $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
   }
 
    //If not logged in, tells user to login and opens login page
@@ -1179,7 +1198,7 @@ setTimeout(function() {
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
 
-    if(username) {
+    if(username && !outsideRadius) {
       $.post("getComment", {
         index: index,
         lat: currCow.marker.getPosition().lat(),
@@ -1230,6 +1249,14 @@ setTimeout(function() {
       })
     });
   } 
+  //Do not allow upvotes outside of the radius
+  else if(username && outsideRadius) {
+        if ($("#guide-footer").hasClass('active') == false) {
+            $("#guide-footer").addClass('active');
+        }
+        $("#guide-text").text("Incorrect area - upvote within the grey circle.");
+        $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+  }
 
    //If not logged in, tells user to login and opens login page
    else {
