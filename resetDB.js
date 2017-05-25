@@ -29,7 +29,7 @@ var markersJSON = [{
     },
     {
         "topic": "Pizza Hut",
-        "type": "Event",
+        "type": "Food",
         "numComments": 0,
         "lat": 32.8799645954428,
         "lng": -117.22199486026761,

@@ -801,9 +801,12 @@ $(function() {
 
 /**
  * Inits the contents of the info box.
+ * @param {marker} marker - The marker containing the infobox.
  * @param {string} topic - The topic of the message.
  * @param {string} comments - The comment of the message.
+ * @param {date} expireDate - The expiration date of the infobox.
  * @param {number} score - The score of the comment.
+ * @param {string} commentID - ID of the comment
  * @return {Object} The created info box.
  */
  function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
