@@ -456,9 +456,27 @@ footer tab {
     color: rgba(255, 255, 255, 1);
     padding-top: 11px;
     padding-bottom: 12px;
+    font-size: 20px;
     border:none;
     border-left: 1px solid;
     float: right;
+    background-color: #1474E1; background-image: -webkit-gradient(linear, left top, left bottom, from(#1474E1), to(#1160BA));
+    background-image: -webkit-linear-gradient(top, #1474E1, #1160BA);
+    background-image: -moz-linear-gradient(top, #1474E1, #1160BA);
+    background-image: -ms-linear-gradient(top, #1474E1, #1160BA);
+    background-image: -o-linear-gradient(top, #1474E1, #1160BA);
+    background-image: linear-gradient(to bottom, #1474E1, #1160BA);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#1474E1, endColorstr=#1160BA);
+}
+
+#username {
+    color: rgba(255, 255, 255, 1);
+    padding-bottom: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 16px;
+    border:none;
+    border-right: 1px solid;
+    float: left;
     background-color: #1474E1; background-image: -webkit-gradient(linear, left top, left bottom, from(#1474E1), to(#1160BA));
     background-image: -webkit-linear-gradient(top, #1474E1, #1160BA);
     background-image: -moz-linear-gradient(top, #1474E1, #1160BA);

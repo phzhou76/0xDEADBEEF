@@ -78,6 +78,7 @@ var outsideRadius;
         initMapListeners();
         initModalListeners();
         $("#logoutButton").hide()
+        $("#username").hide()
 
         markerCluster = new MarkerClusterer(googleMapObject, null, {
             imagePath: '/img/m'
@@ -1442,6 +1443,8 @@ setTimeout(function() {
             $('#login-modal').modal('hide');
             $('#loginButton').hide();
             $('#logoutButton').show();
+            $('#username').text(username);
+            $('#username').show();
             markerCluster.clearMarkers()
             initMarkers();
         }
@@ -1488,6 +1491,7 @@ setTimeout(function() {
           document.getElementById('register_form').reset();
           $('#login-modal').modal('hide');
           dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+          dialogBox.toggleClass('flip');
       }
   });
       
@@ -1511,6 +1515,8 @@ setTimeout(function() {
   $("#logoutButton").click(function()  {
       $("#loginButton").show();
       $("#logoutButton").hide();
+      $('#username').text("");
+      $('#username').hide();
       username = "";
       markerCluster.clearMarkers()
       initMarkers();
