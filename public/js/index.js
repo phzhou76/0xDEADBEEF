@@ -77,6 +77,8 @@ var outsideRadius;
         initMarkers();
         initMapListeners();
         initModalListeners();
+        $("#logoutButton").hide()
+        $("#username").hide()
 
         markerCluster = new MarkerClusterer(googleMapObject, null, {
             imagePath: '/img/m'
@@ -1439,7 +1441,10 @@ setTimeout(function() {
             dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
             document.getElementById('login_form').reset();
             $('#login-modal').modal('hide');
-            $('#loginButton').text(username)
+            $('#loginButton').hide();
+            $('#logoutButton').show();
+            $('#username').text(username);
+            $('#username').show();
             markerCluster.clearMarkers()
             initMarkers();
         }
@@ -1486,6 +1491,7 @@ setTimeout(function() {
           document.getElementById('register_form').reset();
           $('#login-modal').modal('hide');
           dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+          dialogBox.toggleClass('flip');
       }
   });
       
@@ -1505,24 +1511,16 @@ setTimeout(function() {
       dialogBox.toggleClass('flip');
   });
 
-  $( "#submit_login" ).click(function() {
-    //$('#successful_login,#successful_registration').removeClass('active');
-  /*    if ($('#successful_login').hasClass('active')) {
-       $('#successful_login').removeClass('active');
-        dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
-        document.getElementById('login_form').reset();
-        $('#login-modal').modal('hide');
-    };*/
-});
-
-  $("#submit_registration" ).click(function() {
-    /*  if ($('#successful_registration').hasClass('active')) {
-         $('#successful_login,#successful_registration').removeClass('active');
-         document.getElementById('register_form').reset();
-         $('#login-modal').modal('hide');
-         dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
-     }  */
- });
+  //Logout function - resets markers
+  $("#logoutButton").click(function()  {
+      $("#loginButton").show();
+      $("#logoutButton").hide();
+      $('#username').text("");
+      $('#username').hide();
+      username = "";
+      markerCluster.clearMarkers()
+      initMarkers();
+  });
 
   /*************************** LOGIN FUNCTIONS END *****************************/
 
