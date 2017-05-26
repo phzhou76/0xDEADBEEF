@@ -811,8 +811,9 @@ $(function() {
  */
  function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
     var date = new Date(expireDate)
-    //var testDate = new Date();
-    //var testdate = testDate.setSeconds(testDate.getSeconds() + 10)
+    //var testDate = new Date("Thu May 25 2017 22:56:40 GMT-0700 (Pacific Daylight Time)");
+    //console.log(testDate)
+    //var date = testDate.setSeconds(testDate.getSeconds() + 10)
     //var date = new Date(testdate)
     //console.log(date.toLocaleDateString("en-US"))
     var options = {  
