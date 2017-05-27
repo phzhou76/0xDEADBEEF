@@ -279,7 +279,6 @@ function initAutocomplete() {
     var initialInput = document.getElementById('pac-input');
     googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(initialInput);
     watchID = navigator.geolocation.watchPosition(function(position) {
-        console.log("auto")
         // Set the center of the map to the user's location.
         var currPosition = {
             lat: position.coords.latitude,
