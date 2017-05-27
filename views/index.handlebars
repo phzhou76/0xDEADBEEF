@@ -28,6 +28,10 @@
 </head>
 
 <body>
+    <div class="container" id="map-canvas" style="height:300px;"> </div>
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
+
     <script>document.body.className += ' fade-out';</script>
     <nav>
         <button STYLE="font-family: 'Open Sans'" type="button" class="btn btn-default tut-btn" id="loginButton" data-toggle="modal" data-target="#login-modal">Login</button>       
@@ -35,10 +39,10 @@
         <button  STYLE="font-family: 'Open Sans'" class="btn btn-default tut-btn" data-dismiss="modal" onclick="Tutorial()">Tutorial</button>
         <p STYLE="font-family: 'Open Sans'" id="username"></p>    
         <p STYLE="font-family: 'Open Sans'; font-size: 25px">Deja Moo</p>
+        
         <u1> Ricky </u1>  
     </nav>
     <main>
-
         <!-- Options Sidebar -->
         <nav id="options-sidebar">
             <h3>Options</h3>
@@ -180,7 +184,7 @@
 </footer>
 <script src="js/index.js"></script>
 <script src="js/login.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxBCLVZCXT_kDDXs2YuSuPiJPeTJhiSRM&callback=initMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxBCLVZCXT_kDDXs2YuSuPiJPeTJhiSRM&callback=initMap&libraries=places"></script>
 </body>
 
 </html>

@@ -247,8 +247,8 @@ MarkerClusterer.prototype.setupStyles_ = function() {
   for (var i = 0, size; size = this.sizes[i]; i++) {
     this.styles_.push({
       url: this.imagePath_ + (i + 1) + '.' + this.imageExtension_,
-      height: size,
-      width: size
+      height: 50,
+      width: 50
     });
   }
 };

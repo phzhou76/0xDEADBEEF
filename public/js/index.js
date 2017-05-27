@@ -73,6 +73,8 @@ var outsideRadius;
         initRecenterButton();
         initOptionsButton();
         initDeleteButton();
+        //initSearchBox();
+        initAutocomplete();
         initTypeFilters();
 
         initMapListeners();
@@ -126,6 +128,7 @@ var outsideRadius;
             lng: position.coords.longitude
         };
         user.center.setPosition(currPosition)
+        googleMapObject.setCenter(currPosition)
         googleMapObject.panTo(currPosition)
         googleMapObject.setZoom(18)
     });
@@ -251,6 +254,79 @@ var outsideRadius;
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(recenterBtnContainer, 'click', recenterListener);
+}
+
+/**
+ * Creates the search box
+ */
+/*
+ function initSearchBox() {
+    // Create a div that holds the search box
+    var searchContainer = document.createElement('div');
+    searchContainer.style.padding = "10px 10px 0px 0px";
+
+    var searchBox = document.createElement('input');
+    searchBox.type = "text"
+    searchBox.className = 'controls'
+    searchBox.id = "pac-input"
+    searchBox.autocomplete = "on"
+    searchContainer.append(searchBox)
+
+    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(searchContainer)
+ }*/
+
+function initAutocomplete() {
+    watchID = navigator.geolocation.watchPosition(function(position) {
+        // Set the center of the map to the user's location.
+        var currPosition = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById('pac-input');
+        googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(input);
+        googleMapObject.setCenter(currPosition)
+        var currLat = googleMapObject.getCenter().lat();
+        var currLng = googleMapObject.getCenter().lng();
+        var initialBounds = new google.maps.LatLngBounds(
+           new google.maps.LatLng(currLat - 0.1, currLng),
+           new google.maps.LatLng(currLat + 0.1, currLng)
+            );
+        initialBounds.extend(currPosition)
+        var searchBox = new google.maps.places.SearchBox(input, {bounds: initialBounds});
+
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener('places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+        googleMapObject.addListener('bounds_changed', function() {
+          searchBox.setBounds(googleMapObject.getBounds());
+        });
+
+          // For each place, get the icon, name and location.
+          var bounds = new google.maps.LatLngBounds();
+          places.forEach(function(place) {
+            if (!place.geometry) {
+              console.log("Returned place contains no geometry");
+              return;
+            }
+
+            if (place.geometry.viewport) {
+              // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+          });
+          googleMapObject.fitBounds(bounds);
+        });
+    });
+
 }
 
 /**
