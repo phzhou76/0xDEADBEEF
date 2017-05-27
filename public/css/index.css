@@ -534,7 +534,7 @@ footer tab {
 
      #description {
         font-family: Roboto;
-        font-size: 15px;
+        font-size: 18px;
         font-weight: 300;
       }
 
@@ -580,13 +580,14 @@ footer tab {
       #pac-input {
         background-color: #fff;
         font-family: Roboto;
-        font-size: 15px;
+        font-size: 18px;
         font-weight: 300;
-        margin-right: 40px;
-        margin-top: 20px;
+        margin-right: 30px;
+        margin-top: 10px;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
         width: 400px;
+        height: 40px;
       }
 
       #pac-input:focus {
