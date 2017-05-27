@@ -70,18 +70,21 @@ var outsideRadius;
         initGeoPosition();
 
         initDropButton();
+        initRecenterButton();
         initOptionsButton();
         initDeleteButton();
         initTypeFilters();
 
-        initMarkers();
         initMapListeners();
         initModalListeners();
+        initMarkers();
         $("#logoutButton").hide()
         $("#username").hide()
 
+
         markerCluster = new MarkerClusterer(googleMapObject, null, {
-            imagePath: '/img/m'
+            imagePath: '/img/m',
+            maxZoom: 20,
         });
         
     }
@@ -122,9 +125,11 @@ var outsideRadius;
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        googleMapObject.setCenter(currPosition);
-        user.center.setPosition(currPosition);
+        user.center.setPosition(currPosition)
+        googleMapObject.panTo(currPosition)
+        googleMapObject.setZoom(18)
     });
+
 }
 
 /**
@@ -147,7 +152,7 @@ var outsideRadius;
     });
 
     user.radius.bindTo('center', user.center, 'position');
-    user.radius.setVisible(false);
+    user.radius.setVisible(true);
 
     // Set listeners to allow for message drops on the markers.
     google.maps.event.addDomListener(user.center, 'click', userMarkerClickListener);
@@ -162,6 +167,7 @@ var outsideRadius;
     google.maps.event.addDomListener(googleMapObject, 'zoom_changed', zoomListener);
     // Setup the map listener for any clicks on the map.
     google.maps.event.addListener(googleMapObject, 'click', mapClickListener);
+
 }
 
 /**
@@ -210,6 +216,41 @@ var outsideRadius;
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(cowBtnContainer, 'click', dropTextListener);
+}
+/**
+ * Creates a recenter button
+ */
+ function initRecenterButton() {
+    // Create a div that holds the cow-dropping button.
+    var recenterBtnContainer = document.createElement('div');
+    recenterBtnContainer.style.padding = "10px 10px 0px 0px";
+
+    // Set the CSS for the button's border.
+    var recenterBtnBorder = document.createElement('div');
+    //cowBtnBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    recenterBtnBorder.style.cursor = 'pointer';
+    recenterBtnBorder.style.textAlign = 'center';
+    recenterBtnContainer.appendChild(recenterBtnBorder);
+
+    // Set the CSS for the button's interior content.
+    recenterBtnText = document.createElement('div');
+    //cowBtnText.style.color = '#fff';
+    recenterBtnText.className = "recenterBtn";
+    recenterBtnText.style.fontFamily = 'Arial,sans-serif';
+    recenterBtnText.style.fontSize = '16px';
+    recenterBtnText.style.lineHeight = '38px';
+    recenterBtnText.style.paddingLeft = '10px';
+    recenterBtnText.style.paddingRight = '10px';
+    recenterBtnText.style.borderRadius = '10px';
+    recenterBtnText.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+    recenterBtnText.innerHTML = 'Recenter';
+    recenterBtnBorder.append(recenterBtnText);
+
+    // Inserts the finished button to the right-center area of the map.
+    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(recenterBtnContainer);
+
+    // Setup the map listener for the button.
+    google.maps.event.addDomListener(recenterBtnContainer, 'click', recenterListener);
 }
 
 /**
@@ -430,13 +471,8 @@ var outsideRadius;
         var previewBox = createPreviewBox(markerData.topic);
         initMarkerListener(marker, infoBox, previewBox);
         storeSortingInfo(markerData.lat, markerData.lng, marker, infoBox, previewBox);
-        disableDrop();
-
+        //disableDrop();
         markerCluster.addMarker(marker, true);
-
-        // Attach both info boxes to the marker.
-        infoBox.open(googleMapObject, marker);
-        //previewBox.open(googleMapObject, marker);
 
         shrinkMessage(infoBox, previewBox);
     });
@@ -650,6 +686,7 @@ $(function() {
         marker: marker
     };
 
+    infoBox.open(googleMapObject, marker)
     setInfoBoxVisibility(infoBox, true, true);
     setInfoBoxVisibility(previewBox, false, false);
 
@@ -1132,6 +1169,15 @@ $(function() {
         disableDrop();
     }
 }
+
+/**
+ * Recenter Listener
+ */
+ function recenterListener(event) {
+    googleMapObject.panTo(user.center.position);
+    googleMapObject.setZoom(18);
+}
+
 
 /**
  * Listener function for the message drop modal.
