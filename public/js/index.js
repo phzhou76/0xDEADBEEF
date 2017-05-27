@@ -60,7 +60,8 @@ var outsideRadius;
     googleMapObject = new google.maps.Map(document.getElementById('map'), {
         zoom: 17,
         mapTypeControl: false,
-        streetViewControl: false
+        streetViewControl: false,
+        zoomControl: false,
     });
 
     // If geolocation services do not exist, this app should not do anything.
@@ -73,7 +74,6 @@ var outsideRadius;
         initRecenterButton();
         initOptionsButton();
         initDeleteButton();
-        //initSearchBox();
         initAutocomplete();
         initTypeFilters();
 
@@ -276,7 +276,10 @@ var outsideRadius;
  }*/
 
 function initAutocomplete() {
+    var initialInput = document.getElementById('pac-input');
+    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(initialInput);
     watchID = navigator.geolocation.watchPosition(function(position) {
+        console.log("auto")
         // Set the center of the map to the user's location.
         var currPosition = {
             lat: position.coords.latitude,
@@ -285,7 +288,6 @@ function initAutocomplete() {
         
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
-        googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(input);
         googleMapObject.setCenter(currPosition)
         var currLat = googleMapObject.getCenter().lat();
         var currLng = googleMapObject.getCenter().lng();
@@ -293,7 +295,6 @@ function initAutocomplete() {
            new google.maps.LatLng(currLat - 0.1, currLng),
            new google.maps.LatLng(currLat + 0.1, currLng)
             );
-        initialBounds.extend(currPosition)
         var searchBox = new google.maps.places.SearchBox(input, {bounds: initialBounds});
 
         // Listen for the event fired when the user selects a prediction and retrieve
@@ -1739,6 +1740,7 @@ setTimeout(function() {
  * Whenever the window exits, disable the geolocation tracking.
  */
  window.onbeforeunload = function() {
+    console.log("unload")
     navigator.geolocation.clearWatch(watchID);
 }
 
