@@ -290,7 +290,7 @@ var visibilityChanged = false;
     refreshBtnBorder.append(refreshBtnText);
 
     // Inserts the finished button to the right-center area of the map.
-    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(refreshBtnContainer);
+    googleMapObject.controls[google.maps.ControlPosition.RIGHT_TOP].push(refreshBtnContainer);
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(refreshBtnContainer, 'click', refreshListener);
