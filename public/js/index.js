@@ -73,6 +73,7 @@ var visibilityChanged = false;
         initGeoPosition();
 
         initDropButton();
+        initRefreshButton();
         initRecenterButton();
         initOptionsButton();
         initDeleteButton();
@@ -222,6 +223,7 @@ var visibilityChanged = false;
     // Setup the map listener for the button.
     google.maps.event.addDomListener(cowBtnContainer, 'click', dropTextListener);
 }
+
 /**
  * Creates a recenter button
  */
@@ -256,6 +258,42 @@ var visibilityChanged = false;
 
     // Setup the map listener for the button.
     google.maps.event.addDomListener(recenterBtnContainer, 'click', recenterListener);
+}
+
+/**
+ * Creates a refresh button
+ */
+ function initRefreshButton() {
+    // Create a div that holds the cow-dropping button.
+    var refreshBtnContainer = document.createElement('div');
+    refreshBtnContainer.style.padding = "10px 10px 0px 0px";
+
+    // Set the CSS for the button's border.
+    var refreshBtnBorder = document.createElement('div');
+    //cowBtnBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    refreshBtnBorder.style.cursor = 'pointer';
+    refreshBtnBorder.style.textAlign = 'center';
+    refreshBtnContainer.appendChild(refreshBtnBorder);
+
+    // Set the CSS for the button's interior content.
+    refreshBtnText = document.createElement('div');
+    //cowBtnText.style.color = '#fff';
+    refreshBtnText.className = "refreshBtn";
+    refreshBtnText.style.fontFamily = 'Arial,sans-serif';
+    refreshBtnText.style.fontSize = '16px';
+    refreshBtnText.style.lineHeight = '38px';
+    refreshBtnText.style.paddingLeft = '10px';
+    refreshBtnText.style.paddingRight = '10px';
+    refreshBtnText.style.borderRadius = '10px';
+    refreshBtnText.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
+    refreshBtnText.innerHTML = 'Refresh';
+    refreshBtnBorder.append(refreshBtnText);
+
+    // Inserts the finished button to the right-center area of the map.
+    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(refreshBtnContainer);
+
+    // Setup the map listener for the button.
+    google.maps.event.addDomListener(refreshBtnContainer, 'click', refreshListener);
 }
 
 /**
@@ -1235,7 +1273,6 @@ $(function() {
     otherComments.id = 'other-comments';
 
     for (var j = 1; j < comments.length; j++) {
-        console.log(comments[j].index)
         otherComments.appendChild(parseComment(comments[j].content,
             comments[j].score, comments[j].index, comments[j]._id, isGray));
     }
@@ -1331,6 +1368,15 @@ $(function() {
     googleMapObject.panTo(user.center.position);
     googleMapObject.setZoom(18);
 }
+
+/**
+ * Refresh Listener
+ */
+ function refreshListener(event) {
+    markerCluster.clearMarkers();
+    initMarkers();
+}
+
 
 
 /**
