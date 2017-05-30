@@ -788,7 +788,6 @@ $(function() {
  * @param {Object} previewBox - The shrunk down preview box of the message.
  */
  function shrinkMessage(infoBox, previewBox, isGray) {
-    console.log(isGray)
     setInfoBoxVisibility(infoBox, false, true, isGray);
     setInfoBoxVisibility(previewBox, true, false, isGray);
 }
@@ -1048,16 +1047,11 @@ $(function() {
             markerCluster.removeMarker(currMarker);
         }
     }, 1000);
-    //Initialize expiration date
-   /* var dateHTML = document.createElement('h4');
-    dateHTML.style.fontSize = '14px';
-    dateHTML.style.fontFamily = 'Arial,sans-serif';
-    var dateContent = document.createTextNode("Expires at: " + date.toLocaleTimeString("en-us", options))
-    dateHTML.appendChild(dateContent)*/
 
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
-    commentHTML.appendChild(parseComment(comments, score, 0, commentID, marker.isGray));
+    commentHTML.appendChild(parseComment(comments, score, 0, commentID, marker.isGray, true));
+    commentHTML.id = 'infoBoxComment'
 
     // Initialize a button to trigger a comment-showing modal.
     var viewHTML = document.createElement('div');
@@ -1132,7 +1126,7 @@ $(function() {
  * @param {string} commentID - The id of the comment
  * @return {Object} The DOM Object that contains the message details.
  */
- function parseComment(comment, score, index, commentID, isGray) {
+ function parseComment(comment, score, index, commentID, isGray, isMain) {
     var commentNode;
     jQuery.ajax({
         url: 'getVote',
@@ -1179,7 +1173,12 @@ $(function() {
             // Init comment segment.
             var commentHeader = document.createElement('th');
             var commentDiv = document.createElement('div');
-            commentDiv.className += 'comment';
+            if(isMain) {
+                commentDiv.className += 'infoBoxComment'
+            }
+            else {
+                commentDiv.className += 'comment';
+            }
             commentDiv.innerHTML = comment;
             if(isGray) {
                 commentDiv.style.color = 'rgba(102, 102, 102, 1)'
@@ -1236,6 +1235,7 @@ $(function() {
     otherComments.id = 'other-comments';
 
     for (var j = 1; j < comments.length; j++) {
+        console.log(comments[j].index)
         otherComments.appendChild(parseComment(comments[j].content,
             comments[j].score, comments[j].index, comments[j]._id, isGray));
     }

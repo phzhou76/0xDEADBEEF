@@ -52,7 +52,20 @@ main tab-section.active {
 .topic-header {
     color: rgba(43, 132, 237, 1);
     padding-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
 }
+
+
+/*
+.topic-header {
+    color: rgba(43, 132, 237, 1);
+    padding-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; // This is where the magic happens
+}*/
 
 .infoTable {
     border: 1px solid black;
@@ -228,7 +241,17 @@ main tab-section.active {
     transform: translateX(-75px);
 }
 
+.modal {
+    display: block;
+}
 
+.modal-dialog{
+    overflow-y: initial;
+}
+.modal-body{
+    max-height: 250px;
+    overflow-y: auto;
+}
 
 .modal-header {
     background-color: rgba(43, 132, 237, 1);
@@ -342,10 +365,20 @@ footer tab {
 
 .comment {
     margin-left: 5px;
+    max-width: 400px;
+    word-wrap:break-word;
 }
 
 #commentsModal {
     background-color: 'rgba(102, 102, 102, 1.0)'
+}
+
+.infoBoxComment {
+    margin-left: 5px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
 }
 
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
@@ -465,8 +498,6 @@ footer tab {
     -webkit-animation: bump 200ms;
     animation: bump 200ms;
 }
-
-
 
 .btn.btn-default.tut-btn {
     color: rgba(255, 255, 255, 1);
