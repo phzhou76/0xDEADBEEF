@@ -37,6 +37,8 @@ var username;
 var password;
 var commentNode;
 var outsideRadius;
+var bounds;
+var visibilityChanged = false; 
 
 /******************************* GLOBALS END **********************************/
 
@@ -475,7 +477,6 @@ function initAutocomplete() {
 
         var inputType = document.createAttribute("data-type");
         inputType.value = filterTypes[i];
-        //console.log(inputType.value);
         inputBorder.setAttributeNode(inputType);
 
         filterBorder.append(inputBorder);
@@ -512,7 +513,32 @@ function initAutocomplete() {
         lat: markerData.lat,
         lng: markerData.lng
     };
+    
+    var latLng = new google.maps.LatLng(markerData.lat, markerData.lng);
 
+
+    //Ensures bounds are not null on first load
+    google.maps.event.addListener(user.radius, 'bounds_changed', function() {
+        //Ensures function is not activated upon tab switch
+        if(visibilityChanged == false) {
+            bounds = user.radius.getBounds();
+            loadMarkers(markerData, bounds, location, latLng)
+        }
+    });
+
+    if(bounds) {
+        loadMarkers(markerData, bounds, location, latLng)    
+    }
+}
+
+/**
+ * Loads markers
+ * @param {Object} markerData - The data of the individual marker
+ * @param {Object} bounds - User.radius bounds
+ * @param {Object} location - marker location
+ * @param {latLng} latLng - contains the latLng string
+ */
+ function loadMarkers(markerData, bounds, location, latLng) {
     //Highlights users' own markers
     if(markerData.userID == username) {
         var picture = {
@@ -530,29 +556,43 @@ function initAutocomplete() {
             labelOrigin: new google.maps.Point(20, 50)
         };
     }
+    if( bounds.contains(latLng) ) {
+        var marker = new google.maps.Marker({
+            position: location,
+            map: googleMapObject,
+            icon: picture,
+            topic: markerData.topic,
+            isGray: false,
+        });
+    }
 
-    var marker = new google.maps.Marker({
-        position: location,
-        map: googleMapObject,
-        icon: picture,
-        topic: markerData.topic,
-    });
+    else {
+        var marker = new google.maps.Marker({
+            position: location,
+            map: googleMapObject,
+            icon: picture,
+            topic: markerData.topic,
+            isGray: true,
+        });
+
+    }
 
     $.post("getComment", {
         index: 0,
         lat: markerData.lat,
         lng: markerData.lng,
     }, function(comment) {
-        var infoBox = createInfoBox(markerData, markerData.topic, markerData.expireDate, comment[0].content, comment[0].score, comment[0]._id);
-        var previewBox = createPreviewBox(markerData.topic);
+        var infoBox = createInfoBox(marker, markerData.topic, markerData.expireDate, comment[0].content, comment[0].score, comment[0]._id);
+        var previewBox = createPreviewBox(markerData.topic, marker.isGray);
         initMarkerListener(marker, infoBox, previewBox);
         storeSortingInfo(markerData.lat, markerData.lng, marker, infoBox, previewBox);
-        //disableDrop();
+        disableDrop();
         markerCluster.addMarker(marker, true);
 
-        shrinkMessage(infoBox, previewBox);
+        shrinkMessage(infoBox, previewBox, marker.isGray);
     });
-}
+
+ }
 
 /**
  * Inits event listeners for the marker.
@@ -662,6 +702,15 @@ $(function() {
             $("#guide-text").css('color', 'rgba(43, 132, 237, 1)');
         });
     }
+
+    // If the map is clicked while not in drop mode, then shrink the current message open.
+    else {
+        if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
+            shrinkMessage(currCow.infoBox, currCow.previewBox);
+            currCow.infoBox.close();
+            currCow.infoBox = currCow.previewBox = currCow.marker = null;
+        }
+    }
 }
 
 /**
@@ -693,7 +742,6 @@ $(function() {
         userID: username,
         expireDate: expireDate
     };
-    console.log(username)
     $.post("addMarker", markerInfo);
 
     // Post comment info to route to save to database.
@@ -714,11 +762,12 @@ $(function() {
         icon: picture,
         animation: google.maps.Animation.DROP,
         topic: topic,
+        isGray: false,
     });
     markerCluster.addMarker(marker, true);
 
     var infoBox = createInfoBox(marker, topic, expireDate, comments, 0);
-    var previewBox = createPreviewBox(topic);
+    var previewBox = createPreviewBox(topic, marker.isGray);
 
     initMarkerListener(marker, infoBox, previewBox);
     storeSortingInfo(location.lat(), location.lng(), marker, infoBox, previewBox);
@@ -738,9 +787,10 @@ $(function() {
  * @param {Object} infoBox - The expanded info box of the message.
  * @param {Object} previewBox - The shrunk down preview box of the message.
  */
- function shrinkMessage(infoBox, previewBox) {
-    setInfoBoxVisibility(infoBox, false, true);
-    setInfoBoxVisibility(previewBox, true, false);
+ function shrinkMessage(infoBox, previewBox, isGray) {
+    console.log(isGray)
+    setInfoBoxVisibility(infoBox, false, true, isGray);
+    setInfoBoxVisibility(previewBox, true, false, isGray);
 }
 
 /**
@@ -753,7 +803,7 @@ $(function() {
  function enlargeMessage(marker, infoBox, previewBox) {
     // Shrink the contents of the previously opened message, if available.
     if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
-        shrinkMessage(currCow.infoBox, currCow.previewBox);
+        shrinkMessage(currCow.infoBox, currCow.previewBox, currCow.marker.isGray);
     }
 
     currCow = {
@@ -763,8 +813,8 @@ $(function() {
     };
 
     infoBox.open(googleMapObject, marker)
-    setInfoBoxVisibility(infoBox, true, true);
-    setInfoBoxVisibility(previewBox, false, false);
+    setInfoBoxVisibility(infoBox, true, true, marker.isGray);
+    setInfoBoxVisibility(previewBox, false, false, marker.isGray);
 
     googleMapObject.panTo({
         lat: marker.getPosition().lat(),
@@ -796,14 +846,27 @@ $(function() {
             lat: currCow.marker.position.lat(),
             lng: currCow.marker.position.lng(),
         }, function(comments) {
-            commentsDiv.appendChild(createMainComment(comments[0]));
+            commentsDiv.appendChild(createMainComment(comments[0], currCow.marker.isGray));
 
             if (comments.length > 1) {
                 commentsDiv.appendChild(document.createElement('hr'));
-                commentsDiv.appendChild(createOtherComments(comments));
+                commentsDiv.appendChild(createOtherComments(comments, currCow.marker.isGray));
             }
         });
-
+        if(currCow.marker.isGray) {
+            $('.add-header').hide()
+            $('#comments-header').css("background-color", 'rgba(102, 102, 102, 1.0)')
+            //$('#add').css("background-color", 'rgba(102, 102, 102, 1.0)')
+            $('#add-comment').hide();
+            $('#add').hide();
+        }
+        else {
+            $('.add-header').show()
+            $('#comments-header').css("background-color", 'rgba(43, 132, 237, 1)')
+            $('#add').css("background-color", 'rgba(43, 132, 237, 1)')
+            $('#add-comment').show()
+            $('#add').show();
+        }
         $('#commentsModal').modal('show'); // Reveals the modal.
     });
 }
@@ -835,7 +898,7 @@ $(function() {
         for(var i = 0; i < markers.length; ++i) {
             var locString = locToString(markers[i].lat, markers[i].lng);
             locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
-            setInfoBoxVisibility(locationMap[locString].infoBox, false, true);
+            setInfoBoxVisibility(locationMap[locString].infoBox, false, true, locationMap[locString].marker.isGray);
             //only close preview box not set visi to true since previewbox is now display on hover.
             locationMap[locString].previewBox.close();
             //setInfoBoxVisibility(locationMap[locString].previewBox, visible, false);
@@ -926,11 +989,6 @@ $(function() {
  */
  function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
     var date = new Date(expireDate)
-    //var testDate = new Date("Thu May 25 2017 22:56:40 GMT-0700 (Pacific Daylight Time)");
-    //console.log(testDate)
-    //var date = testDate.setSeconds(testDate.getSeconds() + 10)
-    //var date = new Date(testdate)
-    //console.log(date.toLocaleDateString("en-US"))
     var options = {  
         weekday: "long", year: "numeric", month: "short",  
         day: "numeric", hour: "2-digit", minute: "2-digit"  
@@ -941,12 +999,15 @@ $(function() {
         closeBoxURL: ""
     });
 
-    setInfoBoxVisibility(infoBox, true, true);
+    setInfoBoxVisibility(infoBox, true, true, marker.isGray);
 
     // Initialize the topic.
     var topicHTML = document.createElement('h3');
     var topicContent = document.createTextNode(topic);
     topicHTML.className += 'topic-header';
+    if(marker.isGray) {
+        topicHTML.style.color = "rgba(102, 102, 102, 1.0)"
+    }   
     topicHTML.appendChild(topicContent);
 
     var testCountdown = document.createElement('div')
@@ -973,7 +1034,7 @@ $(function() {
         // If the count down is finished, deletes the marker
         if (distance < 0) {
             clearInterval(x);
-            var locString = locToString(marker.lat, marker.lng);
+            var locString = locToString(marker.position.lat(), marker.position.lng());
             var currMarker = locationMap[locString].marker;
             $.post("deleteMarker", {
                 lat: marker.lat,
@@ -996,11 +1057,14 @@ $(function() {
 
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
-    commentHTML.appendChild(parseComment(comments, score, 0, commentID));
+    commentHTML.appendChild(parseComment(comments, score, 0, commentID, marker.isGray));
 
     // Initialize a button to trigger a comment-showing modal.
     var viewHTML = document.createElement('div');
     viewHTML.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
+    if(marker.isGray) {
+        viewHTML.style.backgroundColor = 'rgba(102, 102, 102, 1.0)';  
+    }
     viewHTML.style.cursor = 'pointer';
     viewHTML.style.textAlign = 'center';
     viewHTML.style.margin = '-3px';
@@ -1009,11 +1073,14 @@ $(function() {
     // Set the CSS for the button's interior content.
     var viewText = document.createElement('div');
     viewText.style.color = '#fff';
+    if(marker.isGray) {
+        viewText.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'    
+    }
     viewText.style.fontFamily = 'Arial,sans-serif';
     viewText.style.fontSize = '16px';
     viewText.style.lineHeight = '38px';
-    viewText.style.paddingLeft = '10px';
-    viewText.style.paddingRight = '10px';
+    viewText.style.paddingLeft = '9px';
+    viewText.style.paddingRight = '9px';
     viewText.innerHTML = 'View Comments';
     viewHTML.append(viewText);
 
@@ -1035,7 +1102,7 @@ $(function() {
  * @param {string} topic - The topic of the message.
  * @return {Object} The created preview box.
  */
- function createPreviewBox(topic) {
+ function createPreviewBox(topic, isGray) {
     // Initialize the preview box.
     var previewBox = new InfoBox({
         pixelOffset: new google.maps.Size(-100, -140),
@@ -1043,12 +1110,15 @@ $(function() {
         closeBoxURL: ""
     });
 
-    setInfoBoxVisibility(previewBox, false, false);
+    setInfoBoxVisibility(previewBox, false, false, isGray);
 
     // Initialize the preview window with just the topic.
     var previewHTML = document.createElement('h3');
     previewHTML.className += 'topic-header';
     previewHTML.innerHTML = topic;
+    if(isGray) {
+        previewHTML.style.color = 'rgba(102, 102, 102, 1)'
+    }
     previewBox.setContent(previewHTML);
 
     return previewBox;
@@ -1062,7 +1132,7 @@ $(function() {
  * @param {string} commentID - The id of the comment
  * @return {Object} The DOM Object that contains the message details.
  */
- function parseComment(comment, score, index, commentID) {
+ function parseComment(comment, score, index, commentID, isGray) {
     var commentNode;
     jQuery.ajax({
         url: 'getVote',
@@ -1096,6 +1166,10 @@ $(function() {
         else {
             downvoteDiv.className += 'increment down';
         }
+        if(isGray) {
+            upvoteDiv.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
+            downvoteDiv.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
+         }
         downvoteDiv.addEventListener('click', addDownvoteListener);
 
         var countDiv = document.createElement('div');
@@ -1107,6 +1181,9 @@ $(function() {
             var commentDiv = document.createElement('div');
             commentDiv.className += 'comment';
             commentDiv.innerHTML = comment;
+            if(isGray) {
+                commentDiv.style.color = 'rgba(102, 102, 102, 1)'
+            }
 
             var commentIndex = document.createAttribute("data-index");
             commentIndex.value = index;
@@ -1136,13 +1213,13 @@ $(function() {
  * @param {Object} comment - Main comment object.
  * @return {Object} The table element containing the main comment.
  */
- function createMainComment(comment) {
+ function createMainComment(comment, isGray) {
     // First create a table for the main comment.
     var mainComment = document.createElement('table');
     mainComment.className = 'comments-table';
     mainComment.id = 'main-comment';
     mainComment.appendChild(parseComment(comment.content,
-        comment.score, comment.index, comment._id));
+        comment.score, comment.index, comment._id, isGray));
 
     return mainComment;
 }
@@ -1153,14 +1230,14 @@ $(function() {
  *      than one.
  * @return {Object} The table element containing the rest of the comments.
  */
- function createOtherComments(comments) {
+ function createOtherComments(comments, isGray) {
     var otherComments = document.createElement('table');
     otherComments.className = 'comments-table';
     otherComments.id = 'other-comments';
 
     for (var j = 1; j < comments.length; j++) {
         otherComments.appendChild(parseComment(comments[j].content,
-            comments[j].score, comments[j].index, comments[j]._id));
+            comments[j].score, comments[j].index, comments[j]._id, isGray));
     }
 
     return otherComments;
@@ -1215,7 +1292,8 @@ $(function() {
     // If the map is clicked while not in drop mode, then shrink the current message open.
     else {
         if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
-            shrinkMessage(currCow.infoBox, currCow.previewBox);
+            shrinkMessage(currCow.infoBox, currCow.previewBox, currCow.marker.isGray);
+            currCow.infoBox.close();
             currCow.infoBox = currCow.previewBox = currCow.marker = null;
         }
     }
@@ -1291,6 +1369,7 @@ $(function() {
     var thisButton = this;
     var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
+
     var score = parseInt($("~ .count", this).text()) + 1;
     var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
 
@@ -1318,6 +1397,7 @@ $(function() {
                 $("~ .count", thisButton).text(score);
                 updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
                     score, index); 
+
                 $(thisButton).addClass("active")
 
             }
@@ -1701,20 +1781,39 @@ setTimeout(function() {
  * @param {bool} isInfoBox - True if info box, false if preview box.
  */
 
- function setInfoBoxVisibility(infoBox, visible, isInfoBox) {
-    infoBox.setOptions({
-        boxStyle: {
-            borderRadius: "10px",
-            border: (isInfoBox) ? "6px solid rgba(43, 132, 237, 1.0)" : "6px solid rgba(43, 132, 237, 0.5)",
-            textAlign: "center",
-            fontSize: "12pt",
-            width: (isInfoBox) ? "300px" : "200px",
-            height: (isInfoBox) ? "195px" : "40px",
-            paddingBottom: "55px",
-            display: (visible) ? "block" : "none",
-            backgroundColor: "rgba(255, 255, 255, 1.0)"
-        }
-    });
+ function setInfoBoxVisibility(infoBox, visible, isInfoBox, isGray) {
+    if(isGray) {
+        infoBox.setOptions({
+            boxStyle: {
+                borderRadius: "10px",
+                border: (isInfoBox) ? "6px solid rgba(102, 102, 102, 1.0)" : "6px solid rgba(102, 102, 102, 1)",
+                textAlign: "center",
+                fontSize: "12pt",
+                width: (isInfoBox) ? "300px" : "200px",
+                height: (isInfoBox) ? "195px" : "40px",
+                paddingBottom: "55px",
+                display: (visible) ? "block" : "none",
+                backgroundColor: "rgba(255, 255, 255, 1.0)"
+            }
+        });
+    }
+
+    else {
+        infoBox.setOptions({
+            boxStyle: {
+                borderRadius: "10px",
+                border: (isInfoBox) ? "6px solid rgba(43, 132, 237, 1.0)" : "6px solid rgba(43, 132, 237, 0.5)",
+                textAlign: "center",
+                fontSize: "12pt",
+                width: (isInfoBox) ? "300px" : "200px",
+                height: (isInfoBox) ? "195px" : "40px",
+                paddingBottom: "55px",
+                display: (visible) ? "block" : "none",
+                backgroundColor: "rgba(255, 255, 255, 1.0)"
+            }
+        });
+    }
+
 }
 
 /**
@@ -1739,9 +1838,17 @@ setTimeout(function() {
  * Whenever the window exits, disable the geolocation tracking.
  */
  window.onbeforeunload = function() {
-    console.log("unload")
     navigator.geolocation.clearWatch(watchID);
 }
+
+document.addEventListener('visibilitychange', function() {
+    if(document.visibilityState == "visible") {
+        visibilityChanged = true;
+        setTimeout(function(){ visibilityChanged = true }, 3000);
+
+    }
+
+});
 
 function Tutorial(){
     swal.setDefaults({
