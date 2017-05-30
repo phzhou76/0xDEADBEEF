@@ -1089,7 +1089,7 @@ $(function() {
     // Initialize the votes and message.
     var commentHTML = document.createElement('table');
     commentHTML.appendChild(parseComment(comments, score, 0, commentID, marker.isGray, true));
-    commentHTML.id = 'infoBoxComment'
+    //commentHTML.id = 'infoBoxComment'
 
     // Initialize a button to trigger a comment-showing modal.
     var viewHTML = document.createElement('div');
@@ -1417,7 +1417,12 @@ $(function() {
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
 
     var score = parseInt($("~ .count", this).text()) + 1;
-    var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    if($(this).closest(".commentRow").find(".comment").get(0)) {
+        var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    }
+    else {
+        index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
+    }
 
     //Only upvotes if user is logged in
     if(username && !outsideRadius) {
@@ -1512,7 +1517,12 @@ setTimeout(function() {
     var score = parseInt($("~ .count", this).text()) - 1;
     var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
-    var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    if($(this).closest(".commentRow").find(".comment").get(0)) {
+        var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    }
+    else {
+        index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
+    }
 
     if(username && !outsideRadius) {
       $.post("getComment", {
