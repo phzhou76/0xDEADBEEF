@@ -256,11 +256,12 @@ main tab-section.active {
     display: block;
 }
 
-.modal-dialog{
+#comments-modal-dialog{
     overflow-y: initial;
 }
-.modal-body{
-    max-height: 250px;
+
+#comments-div {
+        max-height: 250px;
     overflow-y: auto;
 }
 
