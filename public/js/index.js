@@ -840,6 +840,12 @@ $(function() {
             locationMap[locString].previewBox.close();
             //setInfoBoxVisibility(locationMap[locString].previewBox, visible, false);
         }
+        if (visible){
+            markerCluster.repaint();
+        }
+        else{
+            markerCluster.resetViewport();
+        }
     });
 }
 
