@@ -140,6 +140,7 @@ exports.addMarker = function(req, res) {
             res.send(500);
         } else {
             res.redirect('/');
+            res.end();
         }
     });
 };
@@ -161,6 +162,7 @@ exports.deleteMarker = function(req, res) {
                 console.log(err);
                 res.send(500);
             }
+            res.end();
         });
 };
 
@@ -184,6 +186,7 @@ exports.updateScore = function(req, res) {
                 console.log(err);
                 res.send(500);
             }
+            res.end();
         });
 };
 
@@ -217,6 +220,7 @@ exports.addComment = function(req, res) {
             res.send(500);
         } else {
             res.redirect('/');
+            res.end();
         }
     });
 };
@@ -232,7 +236,7 @@ exports.addUser = function(req, res) {
         username: req.body.username,
         password: req.body.password
     });
-    
+
     // Save user document to the database.
     newUser.save(function(err) {
         if (err) {
@@ -240,6 +244,7 @@ exports.addUser = function(req, res) {
             res.send(500);
         } else {
             res.redirect('/');
+            res.end();
         }
     });
 };
@@ -327,7 +332,8 @@ exports.addVote = function(req, res) {
             if (err) {
                 console.log(err);
                 res.send(500);
-            } 
+            }
+            res.end();
         });
 };
 
@@ -350,7 +356,7 @@ exports.updateVote = function(req, res) {
                 console.log(err);
                 res.send(500);
             }
-            console.log(req.body.score)
+            res.end();
         });
 };
 /************************* DATABASE POST FUNCTIONS END ************************/

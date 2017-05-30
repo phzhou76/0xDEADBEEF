@@ -19,7 +19,7 @@ var zoomImages = []; // Holds different image sizes for different zoom amounts.
 
 var cowBtnText; // Used to modify the drop cow button text.
 var deleteContainer; // Used to modify the location of the delete message button.
-var optionsContainer;// Used to modify the location of the options button.
+var optionsContainer; // Used to modify the location of the options button.
 
 var lastLocation; // Location of the last click before drop was clicked.
 
@@ -38,7 +38,7 @@ var password;
 var commentNode;
 var outsideRadius;
 var bounds;
-var visibilityChanged = false; 
+var visibilityChanged = false;
 
 /******************************* GLOBALS END **********************************/
 
@@ -50,7 +50,7 @@ var visibilityChanged = false;
 /**
  * Initializes the Google Map and geolocation settings.
  */
- function initMap() {
+function initMap() {
     // Infobox.js relies on Google Maps API, dynamically load script.
     var infoBoxScript = document.createElement('script');
     infoBoxScript.type = 'text/javascript';
@@ -91,7 +91,7 @@ var visibilityChanged = false;
             imagePath: '/img/m',
             maxZoom: 20,
         });
-        
+
     }
 }
 
@@ -99,7 +99,7 @@ var visibilityChanged = false;
  * Initializes the zoom images, which are used to change the size of the user's
  * marker to ensure greater visual accuracy.
  */
- function initZoomImages() {
+function initZoomImages() {
     zoomImages.push({
         url: 'img/self.png',
         size: new google.maps.Size(12.5, 12.5),
@@ -122,7 +122,7 @@ var visibilityChanged = false;
  * to the user's current location. Also initializes the markers required to
  * allow the user to see their location.
  */
- function initGeoPosition() {
+function initGeoPosition() {
     // watchID can be used to disable continuous geolocation tracking.
     watchID = navigator.geolocation.watchPosition(function(position) {
         // Set the center of the map to the user's location.
@@ -141,7 +141,7 @@ var visibilityChanged = false;
 /**
  * Inits marker and drop radius circle for the user.
  */
- function initUserMarker() {
+function initUserMarker() {
     // Create a marker for the map center.
     user.center = new google.maps.Marker({
         icon: zoomImages[1],
@@ -168,7 +168,7 @@ var visibilityChanged = false;
 /**
  * Inits listeners for the map.
  */
- function initMapListeners() {
+function initMapListeners() {
     // Setup the map listener for any changes in zoom.
     google.maps.event.addDomListener(googleMapObject, 'zoom_changed', zoomListener);
     // Setup the map listener for any clicks on the map.
@@ -179,7 +179,7 @@ var visibilityChanged = false;
 /**
  * Inits the listeners for the modals.
  */
- function initModalListeners() {
+function initModalListeners() {
     // Inits click for the drop message modal.
     $('#drop').click(messageDropListener);
     // Inits click for the view comments modal.
@@ -190,10 +190,10 @@ var visibilityChanged = false;
  * Creates a custom map button to allow toggling of message-dropping
  * functionality.
  */
- function initDropButton() {
+function initDropButton() {
     // Create a div that holds the cow-dropping button.
     var cowBtnContainer = document.createElement('div');
-     cowBtnContainer.style.padding = "10px 10px 0px 0px";
+    cowBtnContainer.style.padding = "10px 10px 0px 0px";
 
 
     // Set the CSS for the button's border.
@@ -227,7 +227,7 @@ var visibilityChanged = false;
 /**
  * Creates a recenter button
  */
- function initRecenterButton() {
+function initRecenterButton() {
     // Create a div that holds the cow-dropping button.
     var recenterBtnContainer = document.createElement('div');
     recenterBtnContainer.style.padding = "10px 10px 0px 0px";
@@ -263,7 +263,7 @@ var visibilityChanged = false;
 /**
  * Creates a refresh button
  */
- function initRefreshButton() {
+function initRefreshButton() {
     // Create a div that holds the cow-dropping button.
     var refreshBtnContainer = document.createElement('div');
     refreshBtnContainer.style.padding = "10px 10px 0px 0px";
@@ -324,46 +324,48 @@ function initAutocomplete() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        
+
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
         googleMapObject.setCenter(currPosition)
         var currLat = googleMapObject.getCenter().lat();
         var currLng = googleMapObject.getCenter().lng();
         var initialBounds = new google.maps.LatLngBounds(
-           new google.maps.LatLng(currLat - 0.1, currLng),
-           new google.maps.LatLng(currLat + 0.1, currLng)
-            );
-        var searchBox = new google.maps.places.SearchBox(input, {bounds: initialBounds});
+            new google.maps.LatLng(currLat - 0.1, currLng),
+            new google.maps.LatLng(currLat + 0.1, currLng)
+        );
+        var searchBox = new google.maps.places.SearchBox(input, {
+            bounds: initialBounds
+        });
 
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
+            var places = searchBox.getPlaces();
 
-          if (places.length == 0) {
-            return;
-          }
-        googleMapObject.addListener('bounds_changed', function() {
-          searchBox.setBounds(googleMapObject.getBounds());
-        });
-
-          // For each place, get the icon, name and location.
-          var bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
+            if (places.length == 0) {
+                return;
             }
+            googleMapObject.addListener('bounds_changed', function() {
+                searchBox.setBounds(googleMapObject.getBounds());
+            });
 
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            }
-          });
-          googleMapObject.fitBounds(bounds);
+            // For each place, get the icon, name and location.
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function(place) {
+                if (!place.geometry) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            googleMapObject.fitBounds(bounds);
         });
     });
 
@@ -373,7 +375,7 @@ function initAutocomplete() {
  * Creates a custom map button that allows the user to delete their own
  * created messages.
  */
- function initDeleteButton() {
+function initDeleteButton() {
     // Create a div that holds the delete message button.
     deleteContainer = document.createElement('div');
     deleteContainer.style.padding = "0px 0px 10px 10px";
@@ -409,42 +411,42 @@ function initAutocomplete() {
                 lng: currCow.marker.getPosition().lng(),
             }, function(marker) {
                 //Only deletes if marker was created by user
-                if(marker[0].userID == username) {
+                if (marker[0].userID == username) {
                     swal({
-                        title: 'Are you sure you want to delete the "' + marker[0].topic +  '" cow?',
+                        title: 'Are you sure you want to delete the "' + marker[0].topic + '" cow?',
                         text: "You won't be able to revert this!",
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes, delete it!'
-                    }).then(function () {
-                    swal(
-                        'Deleted!',
-                        '"' + marker[0].topic + '"' + " has been deleted",
-                        'success'
-                    )
-                    deleteMessage();
+                    }).then(function() {
+                        swal(
+                            'Deleted!',
+                            '"' + marker[0].topic + '"' + " has been deleted",
+                            'success'
+                        )
+                        deleteMessage();
                     })
                 }
             });
-      }
+        }
 
-      //Otherwise raise an error
-      else {
-        swal(
-            'Oops...',
-            'You can only delete your own cow!',
-            'error'
-        )
-      }
+        //Otherwise raise an error
+        else {
+            swal(
+                'Oops...',
+                'You can only delete your own cow!',
+                'error'
+            )
+        }
     });
 }
 
 /**
  * Creates a custom map button that shows various options (like filtering).
  */
- function initOptionsButton() {
+function initOptionsButton() {
     // Create a div that holds the options button.
     var optionsContainer = document.createElement('div');
     optionsContainer.style.padding = "10px 0px 0px 10px";
@@ -484,11 +486,11 @@ function initAutocomplete() {
         }
     });
 }
- 
+
 /**
  * Inits the type filter buttons.
  */
- function initTypeFilters() {
+function initTypeFilters() {
     for (var i = 0; i < filterTypes.length; ++i) {
         var filterContainer = document.createElement('div');
         filterContainer.style.padding = "0px 16px 0px 10px";
@@ -534,7 +536,7 @@ function initAutocomplete() {
 /**
  * Load initial markers from the database.
  */
- function initMarkers() {
+function initMarkers() {
     $.get("getMarkers", function(markers) {
         for (var i = 0; i < markers.length; i++) {
             initMarkersHelper(markers[i]);
@@ -546,26 +548,26 @@ function initAutocomplete() {
  * Create a marker, given the marker data from the database.
  * @param {Object} markerData - The data of the individual marker.
  */
- function initMarkersHelper(markerData) {
+function initMarkersHelper(markerData) {
     var location = {
         lat: markerData.lat,
         lng: markerData.lng
     };
-    
+
     var latLng = new google.maps.LatLng(markerData.lat, markerData.lng);
 
 
     //Ensures bounds are not null on first load
     google.maps.event.addListener(user.radius, 'bounds_changed', function() {
         //Ensures function is not activated upon tab switch
-        if(visibilityChanged == false) {
+        if (visibilityChanged == false) {
             bounds = user.radius.getBounds();
             loadMarkers(markerData, bounds, location, latLng)
         }
     });
 
-    if(bounds) {
-        loadMarkers(markerData, bounds, location, latLng)    
+    if (bounds) {
+        loadMarkers(markerData, bounds, location, latLng)
     }
 }
 
@@ -576,17 +578,16 @@ function initAutocomplete() {
  * @param {Object} location - marker location
  * @param {latLng} latLng - contains the latLng string
  */
- function loadMarkers(markerData, bounds, location, latLng) {
+function loadMarkers(markerData, bounds, location, latLng) {
     //Highlights users' own markers
-    if(markerData.userID == username) {
+    if (markerData.userID == username) {
         var picture = {
             url: chooseImageUser(markerData.type),
             size: new google.maps.Size(65, 65),
             scaledSize: new google.maps.Size(65, 65),
             labelOrigin: new google.maps.Point(20, 50)
-        };    
-    }
-    else {
+        };
+    } else {
         var picture = {
             url: chooseImage(markerData.type),
             size: new google.maps.Size(65, 65),
@@ -594,7 +595,7 @@ function initAutocomplete() {
             labelOrigin: new google.maps.Point(20, 50)
         };
     }
-    if( bounds.contains(latLng) ) {
+    if (bounds.contains(latLng)) {
         var marker = new google.maps.Marker({
             position: location,
             map: googleMapObject,
@@ -602,9 +603,7 @@ function initAutocomplete() {
             topic: markerData.topic,
             isGray: false,
         });
-    }
-
-    else {
+    } else {
         var marker = new google.maps.Marker({
             position: location,
             map: googleMapObject,
@@ -630,7 +629,7 @@ function initAutocomplete() {
         shrinkMessage(infoBox, previewBox, marker.isGray);
     });
 
- }
+}
 
 /**
  * Inits event listeners for the marker.
@@ -640,22 +639,21 @@ function initAutocomplete() {
  * @param {Object} previewBox - The info box attached to the marker that displays
  *      only the topic.
  */
- function initMarkerListener(marker, infoBox, previewBox) {
+function initMarkerListener(marker, infoBox, previewBox) {
     // Create bounce animation when moving over cow marker.
     marker.addListener('mouseover', function(event) {
         var bounds = user.radius.getBounds();
         var latLngA = new google.maps.LatLng(marker.getPosition().lat(), marker.getPosition().lng());
-        if(bounds.contains(latLngA)) {
+        if (bounds.contains(latLngA)) {
             outsideRadius = false;
-        }
-        else {
+        } else {
             outsideRadius = true;
         }
 
         previewBox.open(googleMapObject, marker);
         setTimeout(function() {
-                previewBox.close();
-            }, 2000);
+            previewBox.close();
+        }, 2000);
         if (marker.getAnimation() == null) {
             setTimeout(function() {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -685,7 +683,7 @@ $(function() {
 /**
  * Enables the message drop mode.
  */
- function enableDrop() {
+function enableDrop() {
     cowBtnText.innerHTML = "Cancel";
     dropMode = true;
 
@@ -708,7 +706,7 @@ $(function() {
 /**
  * Disables the message drop mode.
  */
- function disableDrop() {
+function disableDrop() {
     cowBtnText.innerHTML = "Drop a Cow!";
     dropMode = false;
     user.radius.setVisible(true);
@@ -725,7 +723,7 @@ $(function() {
 /**
  * Event listener for any clicks on the center or radius marker.
  */
- function dropClick() {
+function dropClick() {
     if (dropMode) {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
@@ -758,7 +756,7 @@ $(function() {
  * @param {string} comments - Contains the comments for the message.
  * @param {Object} type - Contains the type of the message.
  */
- function addCowPin(location, topic, comments, type) {
+function addCowPin(location, topic, comments, type) {
     var expireDate = new Date();
     expireDate.setDate(expireDate.getDate() + 1);
     var picture = {
@@ -825,7 +823,7 @@ $(function() {
  * @param {Object} infoBox - The expanded info box of the message.
  * @param {Object} previewBox - The shrunk down preview box of the message.
  */
- function shrinkMessage(infoBox, previewBox, isGray) {
+function shrinkMessage(infoBox, previewBox, isGray) {
     setInfoBoxVisibility(infoBox, false, true, isGray);
     setInfoBoxVisibility(previewBox, true, false, isGray);
 }
@@ -837,7 +835,7 @@ $(function() {
  * @param {Object} infoBox - The info box Object that will be expanded.
  * @param {Object} previewBox - The info box Object that will disappear.
  */
- function enlargeMessage(marker, infoBox, previewBox) {
+function enlargeMessage(marker, infoBox, previewBox) {
     // Shrink the contents of the previously opened message, if available.
     if (currCow.infoBox != null && currCow.previewBox != null && currCow.marker != null) {
         shrinkMessage(currCow.infoBox, currCow.previewBox, currCow.marker.isGray);
@@ -862,7 +860,7 @@ $(function() {
 /**
  * Loads the contents of one message cow into the modal.
  */
- function loadComments() {
+function loadComments() {
     // Clear the contents of the modal.
     var commentsDiv = document.getElementById("comments-div");
     if (commentsDiv != null) {
@@ -890,14 +888,13 @@ $(function() {
                 commentsDiv.appendChild(createOtherComments(comments, currCow.marker.isGray));
             }
         });
-        if(currCow.marker.isGray) {
+        if (currCow.marker.isGray) {
             $('.add-header').hide()
             $('#comments-header').css("background-color", 'rgba(102, 102, 102, 1.0)')
             //$('#add').css("background-color", 'rgba(102, 102, 102, 1.0)')
             $('#add-comment').hide();
             $('#add').hide();
-        }
-        else {
+        } else {
             $('.add-header').show()
             $('#comments-header').css("background-color", 'rgba(43, 132, 237, 1)')
             $('#add').css("background-color", 'rgba(43, 132, 237, 1)')
@@ -911,7 +908,7 @@ $(function() {
 /**
  * Reveals the options menu.
  */
- function showOptions() {
+function showOptions() {
     if ($("#options-sidebar").hasClass("active")) {
         $("#options-sidebar").removeClass("active");
         if ($("#types-filter").hasClass("active")) {
@@ -927,12 +924,12 @@ $(function() {
  * @param {string} type - The category that the message falls under.
  * @param {bool} visible - True if the visiblity should be on.
  */
- function toggleType(type, visible) {
+function toggleType(type, visible) {
     // Obtain list of all markers of this type.
     $.post("getMarkersByType", {
         type: type
     }, function(markers) {
-        for(var i = 0; i < markers.length; ++i) {
+        for (var i = 0; i < markers.length; ++i) {
             var locString = locToString(markers[i].lat, markers[i].lng);
             locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
             setInfoBoxVisibility(locationMap[locString].infoBox, false, true, locationMap[locString].marker.isGray);
@@ -952,7 +949,7 @@ $(function() {
  * Adds a comment to the currently opened message. Will only
  * add a new comment if the same text does not already exist.
  */
- function addComment() {
+function addComment() {
     var commentBox = document.getElementById("add-comment");
     if (commentBox.value != "") {
         // Need to grab the total number of comments, and update it.
@@ -979,7 +976,7 @@ $(function() {
 /**
  * Allows the user to delete a message only if the user has created it.
  */
- function deleteMessage() {
+function deleteMessage() {
     $.post("deleteMarker", {
         lat: currCow.marker.position.lat(),
         lng: currCow.marker.position.lng()
@@ -1000,7 +997,7 @@ $(function() {
  * @param {number} score - The updated score.
  * @param {number} index - The index of the comment.
  */
- function updateScore(latitude, longitude, score, index) {
+function updateScore(latitude, longitude, score, index) {
     $.post("updateScore", {
         score: score,
         index: index,
@@ -1024,12 +1021,16 @@ $(function() {
  * @param {string} commentID - ID of the comment
  * @return {Object} The created info box.
  */
- function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
+function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
     var date = new Date(expireDate)
-    var options = {  
-        weekday: "long", year: "numeric", month: "short",  
-        day: "numeric", hour: "2-digit", minute: "2-digit"  
-    };  
+    var options = {
+        weekday: "long",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    };
     var infoBox = new InfoBox({
         pixelOffset: new google.maps.Size(-150, -270),
         enableEventPropagation: false,
@@ -1042,9 +1043,9 @@ $(function() {
     var topicHTML = document.createElement('h3');
     var topicContent = document.createTextNode(topic);
     topicHTML.className += 'topic-header';
-    if(marker.isGray) {
+    if (marker.isGray) {
         topicHTML.style.color = "rgba(102, 102, 102, 1.0)"
-    }   
+    }
     topicHTML.appendChild(topicContent);
 
     var testCountdown = document.createElement('div')
@@ -1094,8 +1095,8 @@ $(function() {
     // Initialize a button to trigger a comment-showing modal.
     var viewHTML = document.createElement('div');
     viewHTML.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
-    if(marker.isGray) {
-        viewHTML.style.backgroundColor = 'rgba(102, 102, 102, 1.0)';  
+    if (marker.isGray) {
+        viewHTML.style.backgroundColor = 'rgba(102, 102, 102, 1.0)';
     }
     viewHTML.style.cursor = 'pointer';
     viewHTML.style.textAlign = 'center';
@@ -1105,8 +1106,8 @@ $(function() {
     // Set the CSS for the button's interior content.
     var viewText = document.createElement('div');
     viewText.style.color = '#fff';
-    if(marker.isGray) {
-        viewText.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'    
+    if (marker.isGray) {
+        viewText.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
     }
     viewText.style.fontFamily = 'Arial,sans-serif';
     viewText.style.fontSize = '16px';
@@ -1134,7 +1135,7 @@ $(function() {
  * @param {string} topic - The topic of the message.
  * @return {Object} The created preview box.
  */
- function createPreviewBox(topic, isGray) {
+function createPreviewBox(topic, isGray) {
     // Initialize the preview box.
     var previewBox = new InfoBox({
         pixelOffset: new google.maps.Size(-100, -140),
@@ -1148,7 +1149,7 @@ $(function() {
     var previewHTML = document.createElement('h3');
     previewHTML.className += 'topic-header';
     previewHTML.innerHTML = topic;
-    if(isGray) {
+    if (isGray) {
         previewHTML.style.color = 'rgba(102, 102, 102, 1)'
     }
     previewBox.setContent(previewHTML);
@@ -1164,12 +1165,15 @@ $(function() {
  * @param {string} commentID - The id of the comment
  * @return {Object} The DOM Object that contains the message details.
  */
- function parseComment(comment, score, index, commentID, isGray, isMain) {
+function parseComment(comment, score, index, commentID, isGray, isMain) {
     var commentNode;
     jQuery.ajax({
         url: 'getVote',
         type: 'POST',
-        data: {username: username, commentID: commentID },
+        data: {
+            username: username,
+            commentID: commentID
+        },
         success: function(vote) {
             var tableRow = document.createElement('tr');
             tableRow.className = 'commentRow';
@@ -1182,43 +1186,40 @@ $(function() {
             var upvoteDiv = document.createElement('div');
 
             //Lets user know if they have already voted
-            if(vote[0] && vote[0].score == 1) {
+            if (vote[0] && vote[0].score == 1) {
                 upvoteDiv.className += 'increment up active'
+            } else {
+                upvoteDiv.className += 'increment up';
             }
-            else {
-              upvoteDiv.className += 'increment up';
-          }
-          upvoteDiv.addEventListener('click', addUpvoteListener);
+            upvoteDiv.addEventListener('click', addUpvoteListener);
 
-          var downvoteDiv = document.createElement('div');
+            var downvoteDiv = document.createElement('div');
 
-          if(vote[0] && vote[0].score == -1) {
-            downvoteDiv.className += 'increment down active';
-        }
-        else {
-            downvoteDiv.className += 'increment down';
-        }
-        if(isGray) {
-            upvoteDiv.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
-            downvoteDiv.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
-         }
-        downvoteDiv.addEventListener('click', addDownvoteListener);
+            if (vote[0] && vote[0].score == -1) {
+                downvoteDiv.className += 'increment down active';
+            } else {
+                downvoteDiv.className += 'increment down';
+            }
+            if (isGray) {
+                upvoteDiv.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
+                downvoteDiv.style.backgroundColor = 'rgba(102, 102, 102, 1.0)'
+            }
+            downvoteDiv.addEventListener('click', addDownvoteListener);
 
-        var countDiv = document.createElement('div');
-        countDiv.className += 'count';
-        countDiv.innerHTML = score;
+            var countDiv = document.createElement('div');
+            countDiv.className += 'count';
+            countDiv.innerHTML = score;
 
             // Init comment segment.
             var commentHeader = document.createElement('th');
             var commentDiv = document.createElement('div');
-            if(isMain) {
+            if (isMain) {
                 commentDiv.className += 'infoBoxComment'
-            }
-            else {
+            } else {
                 commentDiv.className += 'comment';
             }
             commentDiv.innerHTML = comment;
-            if(isGray) {
+            if (isGray) {
                 commentDiv.style.color = 'rgba(102, 102, 102, 1)'
             }
 
@@ -1238,7 +1239,7 @@ $(function() {
             commentHeader.appendChild(commentDiv);
             commentNode = tableRow;
 
-        }, 
+        },
         async: false
     })
 
@@ -1250,7 +1251,7 @@ $(function() {
  * @param {Object} comment - Main comment object.
  * @return {Object} The table element containing the main comment.
  */
- function createMainComment(comment, isGray) {
+function createMainComment(comment, isGray) {
     // First create a table for the main comment.
     var mainComment = document.createElement('table');
     mainComment.className = 'comments-table';
@@ -1267,7 +1268,7 @@ $(function() {
  *      than one.
  * @return {Object} The table element containing the rest of the comments.
  */
- function createOtherComments(comments, isGray) {
+function createOtherComments(comments, isGray) {
     var otherComments = document.createElement('table');
     otherComments.className = 'comments-table';
     otherComments.id = 'other-comments';
@@ -1288,7 +1289,7 @@ $(function() {
 /**
  * Listener function for zoom_changed event.
  */
- function zoomListener(event) {
+function zoomListener(event) {
     // Adjust size of position icon depending on zoom.
     if (googleMapObject.getZoom() < 17) {
         user.center.setIcon(zoomImages[0]);
@@ -1317,7 +1318,7 @@ $(function() {
 /**
  * Listener function for the map click event.
  */
- function mapClickListener(event) {
+function mapClickListener(event) {
     // If drop mode is enabled, there should not be clicks outside of radius.
     if (dropMode) {
         if ($("#guide-footer").hasClass('active') == false) {
@@ -1339,7 +1340,7 @@ $(function() {
 /**
  * Listener function for the user marker and radius circle click event.
  */
- function userMarkerClickListener(event) {
+function userMarkerClickListener(event) {
     lastLocation = event.latLng;
     return dropClick();
 }
@@ -1347,10 +1348,10 @@ $(function() {
 /**
  * Modifies the text of the message drop button, as well as the guide text.
  */
- function dropTextListener(event) {
+function dropTextListener(event) {
     if (!dropMode) {
-        if(username) {
-          enableDrop();
+        if (username) {
+            enableDrop();
         }
         //Show login screen if not logged in
         else {
@@ -1364,7 +1365,7 @@ $(function() {
 /**
  * Recenter Listener
  */
- function recenterListener(event) {
+function recenterListener(event) {
     googleMapObject.panTo(user.center.position);
     googleMapObject.setZoom(18);
 }
@@ -1372,7 +1373,7 @@ $(function() {
 /**
  * Refresh Listener
  */
- function refreshListener(event) {
+function refreshListener(event) {
     markerCluster.clearMarkers();
     initMarkers();
 }
@@ -1382,7 +1383,7 @@ $(function() {
 /**
  * Listener function for the message drop modal.
  */
- function messageDropListener(event) {
+function messageDropListener(event) {
     var topic = document.getElementById("topic");
     var comments = document.getElementById("comments");
     var type = document.getElementById("type");
@@ -1391,7 +1392,7 @@ $(function() {
     if (topic != null && topic.value != "" &&
         comments != null && comments.value != "" &&
         type != null && type.value != "") {
-          addCowPin(lastLocation, topic.value, comments.value, type.value);
+        addCowPin(lastLocation, topic.value, comments.value, type.value);
     }
 
     //Otherwise pop up error
@@ -1411,239 +1412,236 @@ $(function() {
 /**
  * Adds 1 to a score count of a message.
  */
- function addUpvoteListener(event) {
+function addUpvoteListener(event) {
     var thisButton = this;
     var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
 
     var score = parseInt($("~ .count", this).text()) + 1;
-    if($(this).closest(".commentRow").find(".comment").get(0)) {
+    if ($(this).closest(".commentRow").find(".comment").get(0)) {
         var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
-    }
-    else {
+    } else {
         index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
     }
 
     //Only upvotes if user is logged in
-    if(username && !outsideRadius) {
-      $.post("getComment", {
-        index: index,
-        lat: currCow.marker.getPosition().lat(),
-        lng: currCow.marker.getPosition().lng(),
-    }, function(comment) {
+    if (username && !outsideRadius) {
+        $.post("getComment", {
+            index: index,
+            lat: currCow.marker.getPosition().lat(),
+            lng: currCow.marker.getPosition().lng(),
+        }, function(comment) {
 
-        //Get vote using commentID and username
-        $.post("getVote", {
-            commentID: comment[0]._id,
-            username: username,
-        }, function(vote) {
-            //If vote doesn't exist, post a new vote
-            if(!vote[0]) {
-                $.post("addVote", {
-                    commentID: comment[0]._id,
-                    username: username,
-                    score: 1
-                });
-                //Update comment score and html
-                $("~ .count", thisButton).text(score);
-                updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                    score, index); 
+            //Get vote using commentID and username
+            $.post("getVote", {
+                commentID: comment[0]._id,
+                username: username,
+            }, function(vote) {
+                //If vote doesn't exist, post a new vote
+                if (!vote[0]) {
+                    $.post("addVote", {
+                        commentID: comment[0]._id,
+                        username: username,
+                        score: 1
+                    });
+                    //Update comment score and html
+                    $("~ .count", thisButton).text(score);
+                    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                        score, index);
 
-                $(thisButton).addClass("active")
+                    $(thisButton).addClass("active")
 
-            }
-            //Change vote to +1 of what it was before if not already at 1 (upvoted)
-            else {
-                if(vote[0].score != 1) {
-                  $.post("updateVote", {
-                    commentID: comment[0]._id,
-                    username: username,
-                    score: vote[0].score + 1
-                })
-                  $("~ .count", thisButton).text(score);
-                  updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                     score, index); 
+                }
+                //Change vote to +1 of what it was before if not already at 1 (upvoted)
+                else {
+                    if (vote[0].score != 1) {
+                        $.post("updateVote", {
+                            commentID: comment[0]._id,
+                            username: username,
+                            score: vote[0].score + 1
+                        })
+                        $("~ .count", thisButton).text(score);
+                        updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                            score, index);
 
-                   //From vote score -1 to 0:
-                   if(vote[0].score == - 1) {
-                      $(increment_down).removeClass('active')
-                  }
-                   //From vote score 0 to 1
-                   else {
-                      $(increment_up).addClass('active')
-                  }
-              }
-          }
-      })
-    });
-  }
+                        //From vote score -1 to 0:
+                        if (vote[0].score == -1) {
+                            $(increment_down).removeClass('active')
+                        }
+                        //From vote score 0 to 1
+                        else {
+                            $(increment_up).addClass('active')
+                        }
+                    }
+                }
+            })
+        });
+    }
 
-  //Do not allow upvotes outside of the radius
-  else if(username && outsideRadius) {
+    //Do not allow upvotes outside of the radius
+    else if (username && outsideRadius) {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
         }
         $("#guide-text").text("Incorrect area - upvote within the grey circle.");
         $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
         setTimeout(function() {
-          $("#guide-footer").removeClass("active");
-      }, 1500);
-  }
-
-   //If not logged in, tells user to login and opens login page
-   else {
-      if ($("#guide-footer").hasClass('active') == false) {
-        $("#guide-footer").addClass('active');
-        setTimeout(function() {
-          $("#guide-footer").removeClass("active");
-      }, 1500);
+            $("#guide-footer").removeClass("active");
+        }, 1500);
     }
-    $("#guide-text").text('Please login to vote');
-    $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
-    $("#login-modal").modal('show')
-}
 
-$(this).parent().addClass("bump");
-setTimeout(function() {
-    $(this).parent().removeClass("bump");
-}, 400);
+    //If not logged in, tells user to login and opens login page
+    else {
+        if ($("#guide-footer").hasClass('active') == false) {
+            $("#guide-footer").addClass('active');
+            setTimeout(function() {
+                $("#guide-footer").removeClass("active");
+            }, 1500);
+        }
+        $("#guide-text").text('Please login to vote');
+        $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+        $("#login-modal").modal('show')
+    }
+
+    $(this).parent().addClass("bump");
+    setTimeout(function() {
+        $(this).parent().removeClass("bump");
+    }, 400);
 }
 
 /**
  * Subtracts 1 from the score count of a message.
  */
- function addDownvoteListener(event) {
+function addDownvoteListener(event) {
     var thisButton = this;
     var score = parseInt($("~ .count", this).text()) - 1;
     var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
     var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
-    if($(this).closest(".commentRow").find(".comment").get(0)) {
+    if ($(this).closest(".commentRow").find(".comment").get(0)) {
         var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
-    }
-    else {
+    } else {
         index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
     }
 
-    if(username && !outsideRadius) {
-      $.post("getComment", {
-        index: index,
-        lat: currCow.marker.getPosition().lat(),
-        lng: currCow.marker.getPosition().lng(),
-    }, function(comment) {
+    if (username && !outsideRadius) {
+        $.post("getComment", {
+            index: index,
+            lat: currCow.marker.getPosition().lat(),
+            lng: currCow.marker.getPosition().lng(),
+        }, function(comment) {
 
-        //Get vote using commentID and username
-        $.post("getVote", {
-            commentID: comment[0]._id,
-            username: username,
-        }, function(vote) {
-            //If vote doesn't exist, post a new vote with score of -1
-            if(!vote[0]) {
-                $.post("addVote", {
-                    commentID: comment[0]._id,
-                    username: username,
-                    score: -1
-                });
-                //Update comment score and html
-                $("~ .count", thisButton).text(score);
-                updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                    score, index);
-                $(increment_down).addClass('active') 
-            }
-            //Change vote to -1 of what it was before if not already at -1 (downvoted)
-            else {
-                if(vote[0].score != -1) {
-                  $.post("updateVote", {
-                    commentID: comment[0]._id,
-                    username: username,
-                    score: vote[0].score - 1
-                });
-                  $("~ .count", thisButton).text(score);
-                  updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                     score, index); 
+            //Get vote using commentID and username
+            $.post("getVote", {
+                commentID: comment[0]._id,
+                username: username,
+            }, function(vote) {
+                //If vote doesn't exist, post a new vote with score of -1
+                if (!vote[0]) {
+                    $.post("addVote", {
+                        commentID: comment[0]._id,
+                        username: username,
+                        score: -1
+                    });
+                    //Update comment score and html
+                    $("~ .count", thisButton).text(score);
+                    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                        score, index);
+                    $(increment_down).addClass('active')
+                }
+                //Change vote to -1 of what it was before if not already at -1 (downvoted)
+                else {
+                    if (vote[0].score != -1) {
+                        $.post("updateVote", {
+                            commentID: comment[0]._id,
+                            username: username,
+                            score: vote[0].score - 1
+                        });
+                        $("~ .count", thisButton).text(score);
+                        updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                            score, index);
 
-                   //From 1 to 0
-                   if(vote[0].score == 1) {
-                      $(increment_up).removeClass('active')
-                  }
+                        //From 1 to 0
+                        if (vote[0].score == 1) {
+                            $(increment_up).removeClass('active')
+                        }
 
-                   //From 0 to -1
-                   else {
-                      $(increment_down).addClass('active')
-                  }
-              }
-          }
-      })
-    });
-  } 
-  //Do not allow upvotes outside of the radius
-  else if(username && outsideRadius) {
+                        //From 0 to -1
+                        else {
+                            $(increment_down).addClass('active')
+                        }
+                    }
+                }
+            })
+        });
+    }
+    //Do not allow upvotes outside of the radius
+    else if (username && outsideRadius) {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
         }
         $("#guide-text").text("Incorrect area - upvote within the grey circle.");
         $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
-  }
-
-   //If not logged in, tells user to login and opens login page
-   else {
-      if ($("#guide-footer").hasClass('active') == false) {
-        $("#guide-footer").addClass('active');
-        setTimeout(function() {
-          $("#guide-footer").removeClass("active");
-      }, 1500);
     }
-    $("#guide-text").text('Please login to vote');
-    $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
-    $("#login-modal").modal('show')
-}
 
-$(this).parent().addClass("bump");
-setTimeout(function() {
-    $(this).parent().removeClass("bump");
-}, 400);
+    //If not logged in, tells user to login and opens login page
+    else {
+        if ($("#guide-footer").hasClass('active') == false) {
+            $("#guide-footer").addClass('active');
+            setTimeout(function() {
+                $("#guide-footer").removeClass("active");
+            }, 1500);
+        }
+        $("#guide-text").text('Please login to vote');
+        $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+        $("#login-modal").modal('show')
+    }
+
+    $(this).parent().addClass("bump");
+    setTimeout(function() {
+        $(this).parent().removeClass("bump");
+    }, 400);
 }
 
 /************************** LISTENER FUNCTIONS END ****************************/
 
 /************************** LOGIN FUNCTIONS START *****************************/
-   // The "getFormData()" function retrieves the names and values of each input field in the form; 
+// The "getFormData()" function retrieves the names and values of each input field in the form;
 
-   function getFormData(form) {
-      var data = {};
-      $(form).find('input, select').each(function() {
+function getFormData(form) {
+    var data = {};
+    $(form).find('input, select').each(function() {
         if (this.tagName.toLowerCase() == 'input') {
-          if (this.type.toLowerCase() == 'checkbox') {
-            data[this.name] = this.checked;
-        } else if (this.type.toLowerCase() != 'submit') {
+            if (this.type.toLowerCase() == 'checkbox') {
+                data[this.name] = this.checked;
+            } else if (this.type.toLowerCase() != 'submit') {
+                data[this.name] = this.value;
+            }
+        } else {
             data[this.name] = this.value;
         }
-    } else {
-      data[this.name] = this.value;
-  }
-});
-      return data;
-  }
+    });
+    return data;
+}
 
-    // The "addFormError()" function, when called, adds the "error" class to the form-group that wraps around the "formRow" attribute;
+// The "addFormError()" function, when called, adds the "error" class to the form-group that wraps around the "formRow" attribute;
 
-    function addFormError(formRow, errorMsg) {
-      var errorMSG = '<span class="error-msg">' + errorMsg + '</span>';
-      $(formRow).parents('.form-group').addClass('has-error');
-      $(formRow).parents('.form-group').append(errorMSG);
-      $('#dialog').removeClass('dialog-effect-in');
-      $('#dialog').addClass('shakeit');
-      setTimeout(function() {
+function addFormError(formRow, errorMsg) {
+    var errorMSG = '<span class="error-msg">' + errorMsg + '</span>';
+    $(formRow).parents('.form-group').addClass('has-error');
+    $(formRow).parents('.form-group').append(errorMSG);
+    $('#dialog').removeClass('dialog-effect-in');
+    $('#dialog').addClass('shakeit');
+    setTimeout(function() {
         $('#dialog').removeClass('shakeit');
     }, 300);
-  }
+}
 
-    // FORM HANDLER:
+// FORM HANDLER:
 
-    // form_name - This attribute ties the form-handler function to the form you want to submit through ajax. Requires an ID (ex: #myfamousid)
-    // custom_validation - 
-
-    function form_handler(form_name, custom_validation, success_message, error_message, success_function, error_function) {
-      $(form_name).find('input[type="submit"]').on('click', function(e) { // if submit button is clicked
+// form_name - This attribute ties the form-handler function to the form you want to submit through ajax. Requires an ID (ex: #myfamousid)
+// custom_validation -
+function form_handler(form_name, custom_validation, success_message, error_message, success_function, error_function) {
+    $(form_name).find('input[type="submit"]').on('click', function(e) { // if submit button is clicked
 
         window.onbeforeunload = null; // cancels the alert message for unsaved changes (if such function exists)
 
@@ -1654,28 +1652,28 @@ setTimeout(function() {
         var form = $(form_name)[0];
         // The custom validation function must return true or false.
         if (custom_validation != null) {
-          if (!custom_validation(form, getFormData(form))) {
-            submitButton.disabled = false;
-            return false;
+            if (!custom_validation(form, getFormData(form))) {
+                submitButton.disabled = false;
+                return false;
+            }
         }
-    }
         e.preventDefault(); //STOP default action
     });
-      $(document).click(function(e) { // Whenever the user clicks inside the form, the error messages will be removed.
+    $(document).click(function(e) { // Whenever the user clicks inside the form, the error messages will be removed.
         if ($(e.target).closest(form_name).length) {
-          $(form_name).find('.form-group').removeClass('has-error');
-          setTimeout(function() {
-            $(form_name).find('.form-group .error-msg').remove();
-        }, 300);
-      } else {
-          return
-      }
-  });
-  }
+            $(form_name).find('.form-group').removeClass('has-error');
+            setTimeout(function() {
+                $(form_name).find('.form-group .error-msg').remove();
+            }, 300);
+        } else {
+            return
+        }
+    });
+}
 
-    // LOGIN FORM: Validation function - Sets global username and password 
-    function validate_login_form(form, data) {
-      if (data.user_username == "") {
+// LOGIN FORM: Validation function - Sets global username and password
+function validate_login_form(form, data) {
+    if (data.user_username == "") {
         // if username variable is empty
         addFormError(form["user_username"], 'The username is invalid');
         return false; // stop the script if validation is triggered
@@ -1687,12 +1685,12 @@ setTimeout(function() {
         return false; // stop the script if validation is triggered
     }
 
-      //Attempt login.  If successful, change login text to username, hides modal, and reinits markers
-      $.post("login", {
+    //Attempt login.  If successful, change login text to username, hides modal, and reinits markers
+    $.post("login", {
         username: data.user_username,
         password: data.user_password
-      }, function(user) { 
-         if(user[0] != null ) {
+    }, function(user) {
+        if (user[0] != null) {
             username = data.user_username;
             password = data.user_password;
             $('#successful_login').removeClass('active');
@@ -1705,16 +1703,15 @@ setTimeout(function() {
             $('#username').show();
             markerCluster.clearMarkers()
             initMarkers();
-        }
-        else {
+        } else {
             addFormError(form["user_username"], 'The username or password is incorrect');
         }
     });
-  }
+}
 
-    // REGISTRATION FORM: Validation function
-    function validate_registration_form(form, data) {
-      if (data.user_username == "") {
+// REGISTRATION FORM: Validation function
+function validate_registration_form(form, data) {
+    if (data.user_username == "") {
         // if username variable is empty
         addFormError(form["user_username"], 'The username is invalid');
         return false; // stop the script if validation is triggered
@@ -1732,58 +1729,57 @@ setTimeout(function() {
         return false; // stop the script if validation is triggered
     }
 
-      //Creates user unless user already exists
-      $.post("getUser", {
+    //Creates user unless user already exists
+    $.post("getUser", {
         username: data.user_username,
         password: data.user_password
-    }, function(user) {   
-        if(user[0] != null ) {
+    }, function(user) {
+        if (user[0] != null) {
             addFormError(form["user_username"], 'The username already exists');
+        } else {
+            $.post("addUser", {
+                username: data.user_username,
+                password: data.user_password
+            });
+            $('#successful_login,#successful_registration').removeClass('active');
+            document.getElementById('register_form').reset();
+            $('#login-modal').modal('hide');
+            dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
+            dialogBox.toggleClass('flip');
         }
-        else {
-          $.post("addUser", {
-            username: data.user_username,
-            password: data.user_password
-        });
-          $('#successful_login,#successful_registration').removeClass('active');
-          document.getElementById('register_form').reset();
-          $('#login-modal').modal('hide');
-          dialogBox.removeClass('dialog-effect-out').addClass('dialog-effect-in');
-          dialogBox.toggleClass('flip');
-      }
-  });
-      
-     // $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
-     // $('#dialog').addClass('dialog-effect-out');
-     $('#successful_registration').addClass('active');
+    });
 
-      //return true;
-  }
+    // $('#dialog').removeClass('dialog-effect-in').removeClass('shakeit');
+    // $('#dialog').addClass('dialog-effect-out');
+    $('#successful_registration').addClass('active');
 
-  form_handler("#login_form", validate_login_form, null, null, null, null, null, null);
-  form_handler("#register_form", validate_registration_form, null, null, null, null, null, null);
+    //return true;
+}
 
-  var dialogBox = $('#dialog');
+form_handler("#login_form", validate_login_form, null, null, null, null, null, null);
+form_handler("#register_form", validate_registration_form, null, null, null, null, null, null);
 
-  dialogBox.on('click', 'a.user-actions', function() {
-      dialogBox.toggleClass('flip');
-  });
+var dialogBox = $('#dialog');
 
-  //Logout function - resets markers
-  $("#logoutButton").click(function()  {
-      $("#loginButton").show();
-      $("#logoutButton").hide();
-      $('#username').text("");
-      $('#username').hide();
-      username = "";
-      markerCluster.clearMarkers()
-      initMarkers();
-  });
+dialogBox.on('click', 'a.user-actions', function() {
+    dialogBox.toggleClass('flip');
+});
 
-  /*************************** LOGIN FUNCTIONS END *****************************/
+//Logout function - resets markers
+$("#logoutButton").click(function() {
+    $("#loginButton").show();
+    $("#logoutButton").hide();
+    $('#username').text("");
+    $('#username').hide();
+    username = "";
+    markerCluster.clearMarkers()
+    initMarkers();
+});
+
+/*************************** LOGIN FUNCTIONS END *****************************/
 
 
-  /*************************** MISC FUNCTIONS START *****************************/
+/*************************** MISC FUNCTIONS START *****************************/
 
 /**
  * Given a latitude and longitude (in float), will create a space-separated
@@ -1792,7 +1788,7 @@ setTimeout(function() {
  * @param {float} longitude - The longitude of the location.
  * @return {string} The string representation of the latitude-longitude coords.
  */
- function locToString(latitude, longitude) {
+function locToString(latitude, longitude) {
     return parseFloat(latitude) + " " + parseFloat(longitude);
 }
 
@@ -1801,7 +1797,7 @@ setTimeout(function() {
  * @param {string} type - The type of the message.
  * @return {string} The location of the image.
  */
- function chooseImage(type) {
+function chooseImage(type) {
     if (type == "Food") {
         return 'img/cow-food.png';
     } else if (type == "Event") {
@@ -1818,7 +1814,7 @@ setTimeout(function() {
  * @param {string} type - The type of the message.
  * @return {string} The location of the image.
  */
- function chooseImageUser(type) {
+function chooseImageUser(type) {
     if (type == "Food") {
         return 'img/cow-food-user.png';
     } else if (type == "Event") {
@@ -1837,8 +1833,8 @@ setTimeout(function() {
  * @param {bool} isInfoBox - True if info box, false if preview box.
  */
 
- function setInfoBoxVisibility(infoBox, visible, isInfoBox, isGray) {
-    if(isGray) {
+function setInfoBoxVisibility(infoBox, visible, isInfoBox, isGray) {
+    if (isGray) {
         infoBox.setOptions({
             boxStyle: {
                 borderRadius: "10px",
@@ -1852,9 +1848,7 @@ setTimeout(function() {
                 backgroundColor: "rgba(255, 255, 255, 1.0)"
             }
         });
-    }
-
-    else {
+    } else {
         infoBox.setOptions({
             boxStyle: {
                 borderRadius: "10px",
@@ -1869,7 +1863,6 @@ setTimeout(function() {
             }
         });
     }
-
 }
 
 /**
@@ -1880,7 +1873,7 @@ setTimeout(function() {
  * @param {Object} infoBox - The info box of this message.
  * @param {Object} previewBox - The preview box of this message.
  */
- function storeSortingInfo(latitude, longitude, marker, infoBox, previewBox) {
+function storeSortingInfo(latitude, longitude, marker, infoBox, previewBox) {
     // Location will be used as the key.
     var locString = locToString(latitude, longitude);
     locationMap[locString] = {
@@ -1893,91 +1886,92 @@ setTimeout(function() {
 /**
  * Whenever the window exits, disable the geolocation tracking.
  */
- window.onbeforeunload = function() {
+window.onbeforeunload = function() {
     navigator.geolocation.clearWatch(watchID);
 }
 
 document.addEventListener('visibilitychange', function() {
-    if(document.visibilityState == "visible") {
+    if (document.visibilityState == "visible") {
         visibilityChanged = true;
-        setTimeout(function(){ visibilityChanged = true }, 3000);
+        setTimeout(function() {
+            visibilityChanged = true
+        }, 3000);
 
     }
 
 });
 
-function Tutorial(){
+function Tutorial() {
     swal.setDefaults({
-      confirmButtonText: 'Next &rarr;',
-      showCancelButton: true,
-      animation: true,
-      progressSteps: ['1', '2', '3', '4', '5', '6']
-  })
+        confirmButtonText: 'Next &rarr;',
+        showCancelButton: true,
+        animation: true,
+        progressSteps: ['1', '2', '3', '4', '5', '6']
+    })
 
-    var steps = [
-    {
-        title: 'Welcome to Deja Moo!',
-        text: 'Deja Moo allows you to view cows in your surrounding areas to find ' + 
-        'events, food, and sales!',
-        imageUrl: 'img/cow-food.png',
-        imageWidth: '200px',
-        imageHeight: '200px'
-    },
-    {
-        title: 'Dropping a Cow',
-        text: 'Dropping a cow lets you place a cow pin near your current location. Click on the "Drop a Cow!" button and enter ' +
-        'the topic, comment, and cow type to begin.',
-        imageUrl: 'img/tut2.png',
-        imageWidth: '400px',
-        imageHeight: '350px',
-        animation: false
-    },
-    {
-        title: 'Deleting a Cow',
-        text: 'Click on your own cow and click the delete button to delete a cow.  You can ' +
-        'only delete a cow you have dropped before refreshing the page.',
-        imageUrl: 'img/tut3.png',
-        imageWidth: '520px',
-        imageHeight: '350px',
-        animation: false
-    },
-    {
-        title: 'Viewing Other Cows',
-        text: 'Click on a cow on the map to see the main comment!  Click view comments to view' +
-        ' all of the comments.',
-        imageUrl: 'img/tut4.png',
-        imageWidth: '400px',
-        imageHeight: '250px',
-        animation: false
-    },
-    {
-        title: 'Voting Comments',
-        text: 'Click on the green arrow to upvote and the red arrow to downvote comments!',
-        imageUrl: 'img/tut5.png',
-        imageWidth: '350px',
-        imageHeight: '250px',
-        animation: false
-    },
-    {
-        title: 'Filtering Cows',
-        text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!',
-        imageUrl: 'img/tut6.png',
-        imageWidth: '600px',
-        imageHeight: '275px',
-        animation: false
-    },
+    var steps = [{
+            title: 'Welcome to Deja Moo!',
+            text: 'Deja Moo allows you to view cows in your surrounding areas to find ' +
+                'events, food, and sales!',
+            imageUrl: 'img/cow-food.png',
+            imageWidth: '200px',
+            imageHeight: '200px'
+        },
+        {
+            title: 'Dropping a Cow',
+            text: 'Dropping a cow lets you place a cow pin near your current location. Click on the "Drop a Cow!" button and enter ' +
+                'the topic, comment, and cow type to begin.',
+            imageUrl: 'img/tut2.png',
+            imageWidth: '400px',
+            imageHeight: '350px',
+            animation: false
+        },
+        {
+            title: 'Deleting a Cow',
+            text: 'Click on your own cow and click the delete button to delete a cow.  You can ' +
+                'only delete a cow you have dropped before refreshing the page.',
+            imageUrl: 'img/tut3.png',
+            imageWidth: '520px',
+            imageHeight: '350px',
+            animation: false
+        },
+        {
+            title: 'Viewing Other Cows',
+            text: 'Click on a cow on the map to see the main comment!  Click view comments to view' +
+                ' all of the comments.',
+            imageUrl: 'img/tut4.png',
+            imageWidth: '400px',
+            imageHeight: '250px',
+            animation: false
+        },
+        {
+            title: 'Voting Comments',
+            text: 'Click on the green arrow to upvote and the red arrow to downvote comments!',
+            imageUrl: 'img/tut5.png',
+            imageWidth: '350px',
+            imageHeight: '250px',
+            animation: false
+        },
+        {
+            title: 'Filtering Cows',
+            text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!',
+            imageUrl: 'img/tut6.png',
+            imageWidth: '600px',
+            imageHeight: '275px',
+            animation: false
+        },
     ]
 
-    swal.queue(steps).then(function (result) {
-      swal.resetDefaults()
-      swal({
-        title: 'All done!',
-        confirmButtonText: 'Ready to Deja Moo',
-        showCancelButton: false
+    swal.queue(steps).then(function(result) {
+        swal.resetDefaults()
+        swal({
+            title: 'All done!',
+            confirmButtonText: 'Ready to Deja Moo',
+            showCancelButton: false
+        })
+    }, function() {
+        swal.resetDefaults()
     })
-  }, function () {
-      swal.resetDefaults()
-  })
 }
 
 /**************************** MISC FUNCTIONS END ******************************/
