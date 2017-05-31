@@ -692,7 +692,6 @@ $(function() {
         userID: username,
         expireDate: expireDate
     };
-    console.log(username)
     $.post("addMarker", markerInfo);
 
     // Post comment info to route to save to database.
@@ -827,6 +826,7 @@ $(function() {
  * @param {bool} visible - True if the visiblity should be on.
  */
  function toggleType(type, visible) {
+    console.log(visible)
     // Obtain list of all markers of this type.
     $.post("getMarkersByType", {
         type: type
@@ -834,6 +834,12 @@ $(function() {
         for(var i = 0; i < markers.length; ++i) {
             var locString = locToString(markers[i].lat, markers[i].lng);
             locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
+            if(visible) {
+                markerCluster.addMarker(locationMap[locString].marker)
+            }
+            else {
+                markerCluster.removeMarker(locationMap[locString].marker)
+            }
             setInfoBoxVisibility(locationMap[locString].infoBox, false, true);
             //only close preview box not set visi to true since previewbox is now display on hover.
             locationMap[locString].previewBox.close();
@@ -928,11 +934,6 @@ $(function() {
  */
  function createInfoBox(marker, topic, expireDate, comments, score, commentID) {
     var date = new Date(expireDate)
-    //var testDate = new Date("Thu May 25 2017 22:56:40 GMT-0700 (Pacific Daylight Time)");
-    //console.log(testDate)
-    //var date = testDate.setSeconds(testDate.getSeconds() + 10)
-    //var date = new Date(testdate)
-    //console.log(date.toLocaleDateString("en-US"))
     var options = {  
         weekday: "long", year: "numeric", month: "short",  
         day: "numeric", hour: "2-digit", minute: "2-digit"  
@@ -1741,7 +1742,6 @@ setTimeout(function() {
  * Whenever the window exits, disable the geolocation tracking.
  */
  window.onbeforeunload = function() {
-    console.log("unload")
     navigator.geolocation.clearWatch(watchID);
 }
 
