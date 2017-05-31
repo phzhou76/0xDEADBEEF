@@ -289,7 +289,7 @@ function initRefreshButton() {
     refreshBtnText.style.paddingRight = '10px';
     refreshBtnText.style.borderRadius = '10px';
     refreshBtnText.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
-    refreshBtnText.innerHTML = 'Refresh';
+    refreshBtnText.innerHTML = '<span class="glyphicon glyphicon-refresh"></span>'
     refreshBtnBorder.append(refreshBtnText);
 
     // Inserts the finished button to the right-center area of the map.
@@ -303,6 +303,7 @@ function initRefreshButton() {
  * Creates the location search box.
  */
 function initAutocomplete() {
+
     var initialInput = document.getElementById('pac-input');
     googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(initialInput);
     watchID = navigator.geolocation.watchPosition(function(position) {
@@ -859,7 +860,7 @@ function loadComments() {
             commentsDiv.appendChild(createMainComment(comments[0], currCow.marker.isGray));
 
             if (comments.length > 1) {
-                commentsDiv.appendChild(document.createElement('hr'));
+                //commentsDiv.appendChild(document.createElement('hr'));
                 commentsDiv.appendChild(createOtherComments(comments, currCow.marker.isGray));
             }
         });
@@ -1251,6 +1252,7 @@ function createMainComment(comment, isGray) {
     mainComment.id = 'main-comment';
     mainComment.appendChild(parseComment(comment.content,
         comment.score, comment.index, comment._id, isGray));
+    mainComment.appendChild(document.createElement('hr'))
 
     return mainComment;
 }

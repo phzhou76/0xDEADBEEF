@@ -56,7 +56,7 @@ main tab-section.active {
     padding-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; // This is where the magic happens
+    text-overflow: ellipsis; 
 }
 
 .infoTable {
@@ -97,11 +97,21 @@ main tab-section.active {
     width: 80%;
 }
 
-.comments-table hr {
-    width: 1100%;
-    border-width: 1px;
+#main-comment hr {
+    width: 1090%;
+    border-width: 4px;
     color: black;
     background-color: black;
+    border-color: black;
+}
+
+
+#other-comments hr {
+    width: 1090%;
+    border-width: 2px;
+    color: black;
+    background-color: black;
+    border-color: black;
 }
 
 #options-sidebar div {
