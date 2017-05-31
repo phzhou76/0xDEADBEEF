@@ -932,6 +932,12 @@ function toggleType(type, visible) {
         for (var i = 0; i < markers.length; ++i) {
             var locString = locToString(markers[i].lat, markers[i].lng);
             locationMap[locString].marker.setMap((visible) ? googleMapObject : null);
+            if(visible) {
+                markerCluster.addMarker(locationMap[locString].marker)
+            }
+            else {
+                markerCluster.removeMarker(locationMap[locString].marker)
+            }
             setInfoBoxVisibility(locationMap[locString].infoBox, false, true, locationMap[locString].marker.isGray);
             //only close preview box not set visi to true since previewbox is now display on hover.
             locationMap[locString].previewBox.close();
