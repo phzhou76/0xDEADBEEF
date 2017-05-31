@@ -884,7 +884,7 @@ function loadComments() {
             commentsDiv.appendChild(createMainComment(comments[0], currCow.marker.isGray));
 
             if (comments.length > 1) {
-                commentsDiv.appendChild(document.createElement('hr'));
+                //commentsDiv.appendChild(document.createElement('hr'));
                 commentsDiv.appendChild(createOtherComments(comments, currCow.marker.isGray));
             }
         });
@@ -1276,6 +1276,7 @@ function createMainComment(comment, isGray) {
     mainComment.id = 'main-comment';
     mainComment.appendChild(parseComment(comment.content,
         comment.score, comment.index, comment._id, isGray));
+    mainComment.appendChild(document.createElement('hr'))
 
     return mainComment;
 }
@@ -1439,10 +1440,8 @@ function addUpvoteListener(event) {
     var score = parseInt($("~ .count", this).text()) + 1;
     if ($(this).closest(".commentRow").find(".comment").get(0)) {
         var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
-        console.log( $(this).closest(".commentRow").find(".comment").get(0))
     } else {
         index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
-    console.log($(this).closest(".commentRow").find(".infoBoxComment").get(0))
 
     }
 
