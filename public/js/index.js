@@ -1779,17 +1779,17 @@ function Tutorial(){
         text: 'Dropping a cow lets you place a cow pin near your current location. Click on the "Drop a Cow!" button and enter ' +
         'the topic, comment, and cow type to begin. To be able to drop a cow, you must be logged in! Also remember, your cow will only last 24 hours!',
         imageUrl: 'img/tut2.png',
-        imageWidth: '462px',
-        imageHeight: '462px',
+        imageWidth: '400px',
+        imageHeight: '380px',
         animation: false
     },
     {
         title: 'Deleting a Cow',
-        text: 'Click on your own cow and click the delete button to delete a cow.  You can ' +
-        'only delete a cow you have dropped before refreshing the page.',
+        text: 'Click on a cow  you have dropped and click the recycle bin button at the bottom left of the page to delete a cow.  You can ' +
+        'only delete a cow you have dropped. A popup will let you confirm.',
         imageUrl: 'img/tut3.png',
-        imageWidth: '520px',
-        imageHeight: '350px',
+        imageWidth: '514px',
+        imageHeight: '330px',
         animation: false
     },
     {
