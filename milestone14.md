@@ -1,17 +1,18 @@
 # Contributions
 
 ## Siyu
-Changed fonts, added images to tutorial, changed preview boxes to hover only, added transition of initial load, UI button locations, bug fixes.
+Changed UI design.
 
 ## Ricky
-Changed login page, implemented full login functionality with database, voting once per user, CSS to show if a comment was voted by a user, outer glow to signify the user's own cows, sweet alert confirmation for the delete buttons.
+Fixed markerclusterer bug with zooming out. Redesigned UI for better visuals. Improved the design of the
+added comments section.
 
 ## Phillip
 Changed voting algorithm, moved UI elements around, and redesigned the UI. Also fixed a big issue with AJAX
 requests would "crash" Node.js. In addition, the clustering of markers was fixed and visually improved.
 
 ## Arvin
-Designed new buttons and reorganized layout
+Designed new buttons.
 
 ## Screenshot
 ![Screenshot](Images/Milestone14_1.png)
