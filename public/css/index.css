@@ -32,6 +32,25 @@ nav {
     font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
+nav a {
+    float: right;
+    background-color: rgba(70, 160, 255, 1);
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 5px;
+}
+
+#username {
+    background-color: rgba(70, 160, 255, 1);
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 5px;
+    border: none;
+    float: left;
+}
+
 #nav-title {
     display: inline-block;
     text-align: center;
@@ -56,7 +75,7 @@ main tab-section.active {
     padding-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
 }
 
 .infoTable {
@@ -104,7 +123,6 @@ main tab-section.active {
     background-color: black;
     border-color: black;
 }
-
 
 #other-comments hr {
     width: 1090%;
@@ -503,18 +521,6 @@ footer tab {
     border: none;
     border-left: 1px solid;
     float: right;
-    background-color: #1474E1;
-}
-
-#username {
-    color: rgba(255, 255, 255, 1);
-    padding-bottom: 12px;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 16px;
-    border: none;
-    border-right: 1px solid;
-    float: left;
     background-color: #1474E1;
 }
 
