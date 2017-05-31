@@ -951,25 +951,37 @@ function toggleType(type, visible) {
  */
 function addComment() {
     var commentBox = document.getElementById("add-comment");
-    if (commentBox.value != "") {
-        // Need to grab the total number of comments, and update it.
-        $.post("getMarker", {
-            lat: currCow.marker.getPosition().lat(),
-            lng: currCow.marker.getPosition().lng()
-        }, function(marker) {
-            $.post("addComment", {
-                content: commentBox.value,
-                score: 0,
-                index: marker[0].numComments,
-                numComments: (marker[0].numComments + 1),
+    if(username) {
+        if (commentBox.value != "") {
+            // Need to grab the total number of comments, and update it.
+            $.post("getMarker", {
                 lat: currCow.marker.getPosition().lat(),
-                lng: currCow.marker.getPosition().lng(),
-                date: new Date()
-            });
+                lng: currCow.marker.getPosition().lng()
+            }, function(marker) {
+                $.post("addComment", {
+                    content: commentBox.value,
+                    score: 0,
+                    index: (marker[0].numComments + 1),
+                    numComments: (marker[0].numComments + 1),
+                    lat: currCow.marker.getPosition().lat(),
+                    lng: currCow.marker.getPosition().lng(),
+                    date: new Date()
+                });
 
-            commentBox.value = "";
-            loadComments();
-        });
+                $.post("updateNumComments",  {
+                    lat: currCow.marker.getPosition().lat(),
+                    lng: currCow.marker.getPosition().lng(),
+                    numComments: (marker[0].numComments + 1)
+                });
+
+                commentBox.value = "";
+                loadComments();
+            });
+        }
+    }
+
+    else {
+        $("#login-modal").modal('show')
     }
 }
 
@@ -1276,6 +1288,7 @@ function createOtherComments(comments, isGray) {
     for (var j = 1; j < comments.length; j++) {
         otherComments.appendChild(parseComment(comments[j].content,
             comments[j].score, comments[j].index, comments[j]._id, isGray));
+        otherComments.appendChild(document.createElement('hr'))
     }
 
     return otherComments;
@@ -1420,9 +1433,14 @@ function addUpvoteListener(event) {
     var score = parseInt($("~ .count", this).text()) + 1;
     if ($(this).closest(".commentRow").find(".comment").get(0)) {
         var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+        console.log( $(this).closest(".commentRow").find(".comment").get(0))
     } else {
         index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
+    console.log($(this).closest(".commentRow").find(".infoBoxComment").get(0))
+
     }
+
+    console.log(index)
 
     //Only upvotes if user is logged in
     if (username && !outsideRadius) {

@@ -49,11 +49,13 @@ app.get('/getMarkers', indexRoutes.getMarkers);
 app.post('/getMarker', indexRoutes.getMarker);
 app.post('/getMarkersByType', indexRoutes.getMarkersByType);
 app.post('/getComments', indexRoutes.getComments);
+app.post('/getCommentsSorted', indexRoutes.getCommentsSorted);
 app.post('/getComment', indexRoutes.getComment);
 app.post('/addMarker', indexRoutes.addMarker);
 app.post('/deleteMarker', indexRoutes.deleteMarker);
 app.post('/updateScore', indexRoutes.updateScore);
 app.post('/addComment', indexRoutes.addComment);
+app.post('/updateNumComments', indexRoutes.updateNumComments)
 app.post('/addUser', indexRoutes.addUser);
 app.post('/getUser', indexRoutes.getUser);
 app.post('/login', indexRoutes.login);

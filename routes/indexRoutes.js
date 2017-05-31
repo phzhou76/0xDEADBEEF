@@ -95,6 +95,53 @@ exports.getComments = function(req, res) {
 };
 
 /**
+ * POST function: Grabs all comments at a certain coordinate location.
+ * @param {object} req - The location of the comments.
+ * @param {object} res - The comments found in the database.
+ */
+exports.getCommentsSorted = function(req, res) {
+    models.ModelComment
+        .find({
+            lat: req.body.lat,
+            lng: req.body.lng
+        })
+        .sort('-score')
+        .exec(function(err, comments) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.send(comments);
+            }
+        });
+};
+
+/**
+ * POST function: Updates the marker's number of commnets
+ * @param {object} req - The number of comments.
+ * @param {object} res - Should be null
+ */
+
+ exports.updateNumComments = function(req, res) {
+    models.ModelMarker
+        .find({
+            lat: req.body.lat,
+            lng: req.body.lng
+        })
+        .update({
+            numComments: req.body.numComments
+        })
+        .exec(function(err) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.end()
+            }
+        })
+ }
+
+/**
  * POST function: Gets a specific comment at a certain location.
  * @param {object} req - The location, contents, score, and date of creation of the comment.
  * @param {object} res - The comment found in the database.
