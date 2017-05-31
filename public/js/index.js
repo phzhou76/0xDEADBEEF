@@ -1768,14 +1768,16 @@ function Tutorial(){
     var steps = [
     {
         html: '<h2><a href="//github.com/phzhou76/0xDEADBEEF">Deja Moo</a> allows you to view cows in your surrounding areas to find ' + 
-        'events, food, and sales!</h2><p align = "left"><br><b>Drop a cow</b> to share with other people what exciting stuff is happening near you.<br><b>Delete</b> a cow that you feel is no longer needed.' +
-        '<br><b>View cows</b> others have dropped and upvote them as well as leave a comment!<br><b>Filter</b> only the types of cows that you want to see.<br><b>Search</b> for different addresses and see what cows there are anywhere in the world!</p>',
+        'events, food, and sales!</h2><p align = "left"><br><b>Drop a cow</b> to share with other people what exciting stuff is happening near ' +
+         'you.<br><b>Delete</b> a cow that you feel is no longer needed.' +
+        '<br><b>View cows</b> others have dropped and upvote them as well as leave a comment!<br><b>Filter</b> only the types of cows that ' + 
+        'you want to see.<br><b>Search</b> for different addresses and see what cows there are anywhere in the world!</p>',
         imageUrl: 'img/tut1.jpg',
         imageWidth: '200px',
         imageHeight: '200px'
     },
     {
-        title: 'Dropping a Cow',
+        title: 'Dropping A Cow',
         text: 'Dropping a cow lets you place a cow pin near your current location. Click on the "Drop a Cow!" button and enter ' +
         'the topic, comment, and cow type to begin. To be able to drop a cow, you must be logged in! Also remember, your cow will only last 24 hours!',
         imageUrl: 'img/tut2.png',
@@ -1784,7 +1786,7 @@ function Tutorial(){
         animation: false
     },
     {
-        title: 'Deleting a Cow',
+        title: 'Deleting A Cow',
         text: 'Click on a cow  you have dropped and click the recycle bin button at the bottom left of the page to delete a cow.  You can ' +
         'only delete a cow you have dropped. A popup will let you confirm.',
         imageUrl: 'img/tut3.png',
@@ -1795,27 +1797,31 @@ function Tutorial(){
     {
         title: 'Viewing Other Cows',
         text: 'Click on a cow on the map to see the main comment!  Click view comments to view' +
-        ' all of the comments.',
+        ' all of the comments. You can also upvote/downvote the main comment right from the info box! ' + 
+        'If you click view comments you will be led to the all comments info box where you can see all the comments as well as upvote/downvote them.',
         imageUrl: 'img/tut4.png',
-        imageWidth: '400px',
-        imageHeight: '250px',
+        imageWidth: '448px',
+        imageHeight: '338px',
         animation: false
     },
     {
-        title: 'Voting Comments',
-        text: 'Click on the green arrow to upvote and the red arrow to downvote comments!',
+        title: 'Filter Comments',
+        text: 'Click on the gear icon on the top right then click on the types to use the filter cow function! You can ' +
+         'toggle which cows you would like to see with the press of a button!',
         imageUrl: 'img/tut5.png',
-        imageWidth: '350px',
-        imageHeight: '250px',
+        imageWidth: '500px',
+        imageHeight: '310px',
         animation: false
     },
     {
-        title: 'Filtering Cows',
-        text: 'Click on the "Filter Cows" button and select which types of cows you would like to see!',
+        title: 'Search for Other Cows',
+        text: 'Enter an address in the search bar located near the top right and press enter to go to that location! ' +
+         'This function is great for exploring cows on the other side of the world! Revert back to your original location using Recenter.',
         imageUrl: 'img/tut6.png',
-        imageWidth: '600px',
-        imageHeight: '275px',
-        animation: false
+        imageWidth: '570px',
+        imageHeight: '300px',
+        animation: false,
+        confirmButtonText: 'Finish'
     },
     ]
 
