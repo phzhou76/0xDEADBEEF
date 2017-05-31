@@ -86,7 +86,6 @@ var outsideRadius;
 
         markerCluster = new MarkerClusterer(googleMapObject, null, {
             imagePath: '/img/m',
-            maxZoom: 20,
         });
         
     }
