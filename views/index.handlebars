@@ -16,7 +16,7 @@
     <script src="js/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="css/sweetalert2.min.css">
 
-    <!-- Include a polyfill for ES6 Promises (optional) for IE11 and Android browser --> 
+    <!-- Include a polyfill for ES6 Promises (optional) for IE11 and Android browser -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/sweetalert2.css">
@@ -29,18 +29,15 @@
 
 <body>
     <div class="container" id="map-canvas" style="height:300px;"> </div>
-    <input id="pac-input" class="controls" type="text" placeholder="Find a greener pasture"> 
+    <input id="pac-input" class="controls" type="text" placeholder="Find a greener pasture">
 
     <script>document.body.className += ' fade-out';</script>
-    <nav>
-        <button STYLE="font-family: 'Open Sans'" type="button" class="btn btn-default tut-btn" id="loginButton" data-toggle="modal" data-target="#login-modal">Login</button>       
-        <button STYLE="font-family: 'Open Sans'" type="button" class="btn btn-default tut-btn" id="logoutButton" style="display: none;">Logout</button>    
-        <button  STYLE="font-family: 'Open Sans'" class="btn btn-default tut-btn" data-dismiss="modal" onclick="Tutorial()">
-        <span class="glyphicon glyphicon-question-sign"> </button>
-        <p STYLE="font-family: 'Open Sans'" id="username"></p>    
-        <p STYLE="font-family: 'Open Sans'; font-size: 25px">Deja Moo</p>
-        
-        <u1> Ricky </u1>  
+    <nav id="top-nav">
+        <div id="username"></div>
+        <div id="nav-title">Deja Moo</div>
+        <a id="loginButton" data-toggle="modal" data-target="#login-modal">Login</a>
+        <a id="logoutButton" style="display: none;">Logout</a>
+        <a data-dismiss="modal" onclick="Tutorial()">Tutorial</a>
     </nav>
     <main>
         <!-- Options Sidebar -->
@@ -156,7 +153,7 @@
            <legend>Register</legend>
            <div class="form-group">
              <label for="user_username" class="control-label">Username:</label>
-             <input type="text" id="user_username" class="form-control" name="user_username"/> 
+             <input type="text" id="user_username" class="form-control" name="user_username"/>
          </div>
          <div class="form-group">
              <label for="user_password" class="control-label">Password:</label>
