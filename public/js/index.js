@@ -30,7 +30,8 @@ var locationMap = []; // Mapping of location to markers and their info boxes.
 var filterTypes = [ // Types of filters. Can be added to later.
     "Food",
     "Event",
-    "Sales"
+    "Sales",
+    "Other"
 ];
 
 var username;
@@ -1786,8 +1787,9 @@ function chooseImage(type) {
     } else if (type == "Sales") {
         return 'img/cow-sales.png';
     } else {
-        return 'img/cow.png';
+        return 'img/cow-other.png';
     }
+
 }
 
 /**
@@ -1803,7 +1805,7 @@ function chooseImageUser(type) {
     } else if (type == "Sales") {
         return 'img/cow-sales-user.png';
     } else {
-        return 'img/cow.png';
+        return 'img/cow-other-user.png';
     }
 }
 
