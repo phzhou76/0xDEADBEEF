@@ -17,5 +17,7 @@ Designed new buttons and reorganized layout
 ![Screenshot](Images/Milestone14_1.png)
 ![Screenshot](Images/Milestone14_2.png)
 ![Screenshot](Images/Milestone14_3.png)
+![Screenshot](Images/Milestone14_4.png)
 This iteration mostly focuses on improving UI design, as well as enforcing a simpler UI look. In addition,
-this iteration also fixes multiple bugs that were present from the previous iteration.
+this iteration also fixes multiple bugs that were present from the previous iteration. The comments boxes
+were also improved for user readability.
