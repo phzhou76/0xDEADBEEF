@@ -89,7 +89,6 @@ var visibilityChanged = false;
 
         markerCluster = new MarkerClusterer(googleMapObject, null, {
             imagePath: '/img/m',
-            maxZoom: 20,
         });
         
     }
@@ -561,6 +560,7 @@ function initAutocomplete() {
         if(visibilityChanged == false) {
             bounds = user.radius.getBounds();
             loadMarkers(markerData, bounds, location, latLng)
+            console.log("loadingmarkers")
         }
     });
 
