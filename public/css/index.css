@@ -54,18 +54,8 @@ main tab-section.active {
     padding-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; // This is where the magic happens
+    text-overflow: ellipsis; 
 }
-
-
-/*
-.topic-header {
-    color: rgba(43, 132, 237, 1);
-    padding-bottom: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; // This is where the magic happens
-}*/
 
 .infoTable {
     border: 1px solid black;

@@ -289,7 +289,7 @@ function initRefreshButton() {
     refreshBtnText.style.paddingRight = '10px';
     refreshBtnText.style.borderRadius = '10px';
     refreshBtnText.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.3)';
-    refreshBtnText.innerHTML = 'Refresh';
+    refreshBtnText.innerHTML = '<span class="glyphicon glyphicon-refresh"></span>'
     refreshBtnBorder.append(refreshBtnText);
 
     // Inserts the finished button to the right-center area of the map.
@@ -303,6 +303,7 @@ function initRefreshButton() {
  * Creates the location search box.
  */
 function initAutocomplete() {
+
     var initialInput = document.getElementById('pac-input');
     googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(initialInput);
     watchID = navigator.geolocation.watchPosition(function(position) {
