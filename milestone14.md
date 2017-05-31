@@ -1,7 +1,7 @@
 # Contributions
 
 ## Siyu
-Changed UI design.
+Changed UI design, fixed some bugs, added comprehensive tutorial.
 
 ## Ricky
 Fixed markerclusterer bug with zooming out. Redesigned UI for better visuals. Improved the design of the
