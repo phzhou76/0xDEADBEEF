@@ -1749,30 +1749,38 @@ setTimeout(function() {
     navigator.geolocation.clearWatch(watchID);
 }
 
+
+// For 0: Welcome to Deja Moo and show different features
+// For 1: Dropping a cow, you have to login first, cows only last for a day
+// For 2: Deleting a cow, you have to click the delete button
+// For 3: Viewing other cows, and add comments + upvote
+// For 4: Filter cows
+// For 5: Use the search bar at the top to find a location and recenter the map there
+
 function Tutorial(){
     swal.setDefaults({
       confirmButtonText: 'Next &rarr;',
       showCancelButton: true,
       animation: true,
-      progressSteps: ['1', '2', '3', '4', '5', '6']
+      progressSteps: ['H', '1', '2', '3', '4', '5']
   })
 
     var steps = [
     {
-        title: 'Welcome to Deja Moo!',
-        text: 'Deja Moo allows you to view cows in your surrounding areas to find ' + 
-        'events, food, and sales!',
-        imageUrl: 'img/cow-food.png',
+        html: '<h2><a href="//github.com/phzhou76/0xDEADBEEF">Deja Moo</a> allows you to view cows in your surrounding areas to find ' + 
+        'events, food, and sales!</h2><p align = "left"><br><b>Drop a cow</b> to share with other people what exciting stuff is happening near you.<br><b>Delete</b> a cow that you feel is no longer needed.' +
+        '<br><b>View cows</b> others have dropped and upvote them as well as leave a comment!<br><b>Filter</b> only the types of cows that you want to see.<br><b>Search</b> for different addresses and see what cows there are anywhere in the world!</p>',
+        imageUrl: 'img/tut1.jpg',
         imageWidth: '200px',
         imageHeight: '200px'
     },
     {
         title: 'Dropping a Cow',
         text: 'Dropping a cow lets you place a cow pin near your current location. Click on the "Drop a Cow!" button and enter ' +
-        'the topic, comment, and cow type to begin.',
+        'the topic, comment, and cow type to begin. To be able to drop a cow, you must be logged in! Also remember, your cow will only last 24 hours!',
         imageUrl: 'img/tut2.png',
-        imageWidth: '400px',
-        imageHeight: '350px',
+        imageWidth: '462px',
+        imageHeight: '462px',
         animation: false
     },
     {
@@ -1814,13 +1822,14 @@ function Tutorial(){
     swal.queue(steps).then(function (result) {
       swal.resetDefaults()
       swal({
-        title: 'All done!',
+        title: 'Enjoy our app!',
         confirmButtonText: 'Ready to Deja Moo',
         showCancelButton: false
     })
   }, function () {
       swal.resetDefaults()
   })
+
 }
 
 /**************************** MISC FUNCTIONS END ******************************/
