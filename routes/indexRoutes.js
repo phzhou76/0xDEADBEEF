@@ -95,6 +95,53 @@ exports.getComments = function(req, res) {
 };
 
 /**
+ * POST function: Grabs all comments at a certain coordinate location.
+ * @param {object} req - The location of the comments.
+ * @param {object} res - The comments found in the database.
+ */
+exports.getCommentsSorted = function(req, res) {
+    models.ModelComment
+        .find({
+            lat: req.body.lat,
+            lng: req.body.lng
+        })
+        .sort('-score')
+        .exec(function(err, comments) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.send(comments);
+            }
+        });
+};
+
+/**
+ * POST function: Updates the marker's number of commnets
+ * @param {object} req - The number of comments.
+ * @param {object} res - Should be null
+ */
+
+ exports.updateNumComments = function(req, res) {
+    models.ModelMarker
+        .find({
+            lat: req.body.lat,
+            lng: req.body.lng
+        })
+        .update({
+            numComments: req.body.numComments
+        })
+        .exec(function(err) {
+            if (err) {
+                console.log(err);
+                res.send(500);
+            } else {
+                res.end()
+            }
+        })
+ }
+
+/**
  * POST function: Gets a specific comment at a certain location.
  * @param {object} req - The location, contents, score, and date of creation of the comment.
  * @param {object} res - The comment found in the database.
@@ -140,6 +187,7 @@ exports.addMarker = function(req, res) {
             res.send(500);
         } else {
             res.redirect('/');
+            res.end();
         }
     });
 };
@@ -161,6 +209,7 @@ exports.deleteMarker = function(req, res) {
                 console.log(err);
                 res.send(500);
             }
+            res.end();
         });
 };
 
@@ -184,6 +233,7 @@ exports.updateScore = function(req, res) {
                 console.log(err);
                 res.send(500);
             }
+            res.end();
         });
 };
 
@@ -217,6 +267,7 @@ exports.addComment = function(req, res) {
             res.send(500);
         } else {
             res.redirect('/');
+            res.end();
         }
     });
 };
@@ -232,7 +283,7 @@ exports.addUser = function(req, res) {
         username: req.body.username,
         password: req.body.password
     });
-    
+
     // Save user document to the database.
     newUser.save(function(err) {
         if (err) {
@@ -240,6 +291,7 @@ exports.addUser = function(req, res) {
             res.send(500);
         } else {
             res.redirect('/');
+            res.end();
         }
     });
 };
@@ -327,7 +379,8 @@ exports.addVote = function(req, res) {
             if (err) {
                 console.log(err);
                 res.send(500);
-            } 
+            }
+            res.end();
         });
 };
 
@@ -350,7 +403,7 @@ exports.updateVote = function(req, res) {
                 console.log(err);
                 res.send(500);
             }
-            console.log(req.body.score)
+            res.end();
         });
 };
 /************************* DATABASE POST FUNCTIONS END ************************/

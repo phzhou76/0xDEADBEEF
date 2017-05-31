@@ -1,175 +1,190 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Deja Moo</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1,
-            user-scalable=no">
-        <link rel="stylesheet" href="css/index.css" />
-        <link href='//fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="js/markerclusterer.js"></script>
-        <script src="https://cdn.jsdelivr.net/promise.prototype.finally/1.0.1/finally.js"></script>
-        <script src="js/sweetalert2.min.js"></script>
-        <!-- Include a polyfill for ES6 Promises (optional) for IE11 and Android browser --> 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/sweetalert2.css">
-        <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,100,500'>
-        <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto+Slab:400,700,300,100'>
-        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
-        <link rel="stylesheet" href="css/login.css">
-    </head>
-    <body>
-        <div class="container" id="map-canvas" style="height:300px;"> </div>
-        <input id="pac-input" class="controls" type="text" placeholder="Find a greener pasture">
-        <script>document.body.className += ' fade-out';</script>
-        <nav>
-            <button STYLE="font-family: 'Open Sans'" type="button" class="btn btn-default tut-btn" id="loginButton" data-toggle="modal" data-target="#login-modal">Login</button>       
-            <button STYLE="font-family: 'Open Sans'" type="button" class="btn btn-default tut-btn" id="logoutButton" style="display: none;">Logout</button>    
-            <button  STYLE="font-family: 'Open Sans'" class="btn btn-default tut-btn" data-dismiss="modal" onclick="Tutorial()">Tutorial</button>
-            <p STYLE="font-family: 'Open Sans'" id="username"></p>
-            <p STYLE="font-family: 'Open Sans'; font-size: 25px">Deja Moo</p>
-            <!-- <u1> Ricky </u1> -->
+
+<head>
+    <title>Deja Moo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+    user-scalable=no">
+    <link rel="stylesheet" href="css/index.css" />
+    <link href='//fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/markerclusterer.js"></script>
+    <script src="https://cdn.jsdelivr.net/promise.prototype.finally/1.0.1/finally.js"></script>
+    <script src="js/markerclusterer.js"></script>
+    <script src="js/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="css/sweetalert2.min.css">
+
+    <!-- Include a polyfill for ES6 Promises (optional) for IE11 and Android browser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/sweetalert2.css">
+    <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,100,500'>
+    <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto+Slab:400,700,300,100'>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+    <div class="container" id="map-canvas" style="height:300px;"> </div>
+    <input id="pac-input" class="controls" type="text" placeholder="Find a greener pasture">
+
+    <script>
+        document.body.className += ' fade-out';
+    </script>
+    <nav id="top-nav">
+        <div id="username"></div>
+        <div id="nav-title">Deja Moo</div>
+        <a id="tutorialButton" data-dismiss="modal" onclick="Tutorial()">Tutorial</a>
+        <a id="loginButton" data-toggle="modal" data-target="#login-modal">Login</a>
+        <a id="logoutButton" style="display: none;">Logout</a>
+    </nav>
+    <main>
+        <!-- Options Sidebar -->
+        <nav id="options-sidebar">
+            <h3>Options</h3>
+            <hr>
+            <div id="types-button">
+                Types
+            </div>
         </nav>
-        <main>
-            <!-- Options Sidebar -->
-            <nav id="options-sidebar">
-                <h3>Options</h3>
-                <hr>
-                <div id="types-button">
-                    Types
-                </div>
-            </nav>
-            <!-- Types Filter -->
-            <nav id="types-filter">
-            </nav>
-            <!-- Loading screen and Google Maps are held here. -->
-            <div id="map-outer">
-                <img id="map-loading" src="img/loading.svg" />
-                <div id="map"></div>
-            </div>
-            <!-- Drop Message Modal -->
-            <div id="cowModal" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-                    <!-- Modal content. -->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Add a Cow</h4>
+
+        <!-- Types Filter -->
+        <nav id="types-filter">
+        </nav>
+
+        <!-- Loading screen and Google Maps are held here. -->
+        <div id="map-outer">
+            <img id="map-loading" src="img/loading.svg" />
+            <div id="map"></div>
+        </div>
+
+        <!-- Drop Message Modal -->
+        <div id="cowModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content. -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add a Cow</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="dropform">
+                            <label for="topic">Topic</label>
+                            </br>
+                            <input type="text" id="topic">
+                            </br>
+                            <label for="comments">Comment</label>
+                            <textarea rows="3" cols="50" class="form-control" id="comments"></textarea>
+                        </form>
+                        <div class="form-group">
+                            <label for="category">Cow Type</label>
+                            <select class="form-control" id="type">
+                        <option>Food</option>
+                        <option>Event</option>
+                        <option>Sales</option>
+                        <option>Other</option>
+                    </select>
                         </div>
-                        <div class="modal-body">
-                            <form id="dropform">
-                                <label for="topic">Topic</label>
-                                </br>
-                                <input type="text" id="topic">
-                                </br>
-                                <label for="comments">Comment</label>
-                                <textarea rows="3" cols="50" class="form-control" id="comments"></textarea>
-                            </form>
-                            <div class="form-group">
-                                <label for="category">Cow Type</label>
-                                <select class="form-control" id="type">
-                                    <option>Food</option>
-                                    <option>Event</option>
-                                    <option>Sales</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default drop-btn" data-dismiss="modal" id="drop">Drop</button>
-                            <button type="button" class="btn btn-default drop-btn" data-dismiss="modal">Cancel</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default drop-btn" data-dismiss="modal" id="drop">Drop</button>
+                        <button type="button" class="btn btn-default drop-btn" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
             </div>
-            <!-- Comments Modal -->
-            <div id="commentsModal" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-                    <!-- Modal content. -->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <!-- Topic dynamically placed here. -->
-                            <h4 class="modal-title" id="topic-header"></h4>
-                        </div>
-                        <!-- Comments dynamically placed here. -->
-                        <div class="modal-body" id="comments-div">
-                        </div>
-                        <div class="modal-footer">
-                            <h4 class="add-header">Add a Cowmment</h4>
-                            <p class="add-header">Type your comment and click the button below to add it!</p>
-                            <textarea rows="6" cols="50" class="form-control" id="add-comment"></textarea>
-                            <button type="button" class="btn btn-default add-btn" id="add">
-                            <img src="img/new.png"/>
-                            </button>
-                        </div>
+        </div>
+
+        <!-- Comments Modal -->
+        <div id="commentsModal" class="modal fade" role="dialog">
+            <div class="modal-dialog" id="comments-modal-dialog">
+                <!-- Modal content. -->
+                <div class="modal-content">
+                    <div class="modal-header" id="comments-header">
+                        <!-- Topic dynamically placed here. -->
+                        <h4 class="modal-title" id="topic-header"></h4>
+                    </div>
+                    <!-- Comments dynamically placed here. -->
+                    <div class="modal-body" id="comments-div">
+                    </div>
+                    <div class="modal-footer">
+                        <h4 class="add-header"> Add a Cowmment!</h4>
+                        <textarea rows="6" cols="50" class="form-control" id="add-comment"></textarea>
+                        <button type="button" class="btn btn-primary add-btn" id="add"> Submit
+                    <!--<img src="img/new.png"/> -->
+                </button>
                     </div>
                 </div>
             </div>
-            <!-- Login Modal -->
-            <div id="login-modal" class="modal fade" role="dialog">
-                <div id="successful_login" class="fix-middle">
-                </div>
-                <div id="successful_registration" class="fix-middle">
-                </div>
-                <div id="dialog" class="dialog dialog-effect-in">
-                    <div class="dialog-front">
-                        <div class="dialog-content">
-                            <form id="login_form" class="dialog-form" action="" method="POST">
-                                <fieldset>
-                                    <legend>Log in</legend>
-                                    <div class="form-group">
-                                        <label for="user_username" class="control-label">Username:</label>
-                                        <input type="text" id="user_username" class="form-control" name="user_username" autofocus/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="user_password" class="control-label">Password:</label>
-                                        <input type="password" id="user_password" class="form-control" name="user_password"/>
-                                    </div>
-                                    <div class="pad-top-20 pad-btm-20">
-                                        <input type="submit" id="submit_login" class="btn btn-default btn-block btn-lg" value="Continue">
-                                    </div>
-                                    <div class="text-center">
-                                        <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
-                                    </div>
-                                </fieldset>
-                            </form>
-                        </div>
+        </div>
+        <!-- Login Modal -->
+        <div id="login-modal" class="modal fade" role="dialog">
+            <div id="successful_login" class="fix-middle">
+            </div>
+            <div id="successful_registration" class="fix-middle">
+            </div>
+            <div id="dialog" class="dialog dialog-effect-in">
+                <div class="dialog-front">
+                    <div class="dialog-content">
+                        <form id="login_form" class="dialog-form" action="" method="POST">
+                            <fieldset>
+                                <legend>Log in</legend>
+                                <div class="form-group">
+                                    <label for="user_username" class="control-label">Username:</label>
+                                    <input type="text" id="user_username" class="form-control" name="user_username" autofocus/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_password" class="control-label">Password:</label>
+                                    <input type="password" id="user_password" class="form-control" name="user_password" />
+                                </div>
+                                <div class="pad-top-20 pad-btm-20">
+                                    <input type="submit" id="submit_login" class="btn btn-default btn-block btn-lg" value="Continue">
+                                </div>
+                                <div class="text-center">
+                                    <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
+                                </div>
+                            </fieldset>
+                        </form>
                     </div>
-                    <div class="dialog-back">
-                        <div class="dialog-content">
-                            <form id="register_form" class="dialog-form" action="" method="POST">
-                                <fieldset>
-                                    <legend>Register</legend>
-                                    <div class="form-group">
-                                        <label for="user_username" class="control-label">Username:</label>
-                                        <input type="text" id="user_username" class="form-control" name="user_username"/> 
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="user_password" class="control-label">Password:</label>
-                                        <input type="password" id="user_password" class="form-control" name="user_password"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="user_cnf_password" class="control-label">Confirm password:</label>
-                                        <input type="password" id="user_cnf_password" class="form-control" name="user_cnf_password"/>
-                                    </div>
-                                    <div class="pad-btm-20">
-                                        <input type="submit" class="btn btn-default btn-block btn-lg" id="submit_registration" value="Continue"/>
-                                    </div>
-                                    <div class="text-center">
-                                        <p>Return to <a href="#" class="link user-actions"><strong>log in page</strong></a>?</p>
-                                    </div>
-                                </fieldset>
-                            </form>
-                        </div>
+                </div>
+                <div class="dialog-back">
+                    <div class="dialog-content">
+                        <form id="register_form" class="dialog-form" action="" method="POST">
+                            <fieldset>
+                                <legend>Register</legend>
+                                <div class="form-group">
+                                    <label for="user_username" class="control-label">Username:</label>
+                                    <input type="text" id="user_username" class="form-control" name="user_username" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_password" class="control-label">Password:</label>
+                                    <input type="password" id="user_password" class="form-control" name="user_password" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_cnf_password" class="control-label">Confirm password:</label>
+                                    <input type="password" id="user_cnf_password" class="form-control" name="user_cnf_password" />
+                                </div>
+                                <div class="pad-btm-20">
+                                    <input type="submit" class="btn btn-default btn-block btn-lg" id="submit_registration" value="Continue" />
+                                </div>
+                                <div class="text-center">
+                                    <p>Return to <a href="#" class="link user-actions"><strong>log in page</strong></a>?</p>
+                                </div>
+                            </fieldset>
+                        </form>
                     </div>
                 </div>
             </div>
-        </main>
-        <footer id="guide-footer">
-            <tab id="guide-text">Moo!</tab>
-        </footer>
-        <script src="js/index.js"></script>
-        <script src="js/login.js"></script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxBCLVZCXT_kDDXs2YuSuPiJPeTJhiSRM&callback=initMap&libraries=places"></script>
-    </body>
+        </div>
+    </main>
+
+    <footer id="guide-footer">
+        <tab id="guide-text">Moo!</tab>
+    </footer>
+    <script src="js/index.js"></script>
+    <script src="js/login.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxBCLVZCXT_kDDXs2YuSuPiJPeTJhiSRM&callback=initMap&libraries=places"></script>
+</body>
+
 </html>
