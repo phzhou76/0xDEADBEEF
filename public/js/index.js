@@ -45,8 +45,6 @@ var visibilityChanged = false;
 
 /**************************** INIT FUNCTIONS START ****************************/
 
-
-
 /**
  * Initializes the Google Map and geolocation settings.
  */
@@ -59,6 +57,8 @@ function initMap() {
 
     dropMode = false;
     $("#map-loading").fadeOut();
+    $('body').removeClass('fade-out');
+
     googleMapObject = new google.maps.Map(document.getElementById('map'), {
         zoom: 17,
         mapTypeControl: false,
@@ -83,14 +83,20 @@ function initMap() {
         initMapListeners();
         initModalListeners();
         initMarkers();
-        $("#logoutButton").hide()
-        $("#username").hide()
 
+        $("#logoutButton").hide();
+        $("#username").hide();
 
-        markerCluster = new MarkerClusterer(googleMapObject, null, {
-            imagePath: '/img/m',
-        });
+        var options = {
+            styles: [{
+                url: '/img/cow-cluster.png',
+                height: 130,
+                width: 100,
+                textSize: 20
+            }]
+        };
 
+        markerCluster = new MarkerClusterer(googleMapObject, [], options);
     }
 }
 
@@ -129,12 +135,11 @@ function initGeoPosition() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        user.center.setPosition(currPosition)
-        googleMapObject.setCenter(currPosition)
-        googleMapObject.panTo(currPosition)
-        googleMapObject.setZoom(18)
+        user.center.setPosition(currPosition);
+        googleMapObject.setCenter(currPosition);
+        googleMapObject.panTo(currPosition);
+        googleMapObject.setZoom(18);
     });
-
 }
 
 /**
@@ -172,7 +177,6 @@ function initMapListeners() {
     google.maps.event.addDomListener(googleMapObject, 'zoom_changed', zoomListener);
     // Setup the map listener for any clicks on the map.
     google.maps.event.addListener(googleMapObject, 'click', mapClickListener);
-
 }
 
 /**
@@ -224,7 +228,7 @@ function initDropButton() {
 }
 
 /**
- * Creates a recenter button
+ * Creates a recenter button.
  */
 function initRecenterButton() {
     // Create a div that holds the cow-dropping button.
@@ -296,24 +300,8 @@ function initRefreshButton() {
 }
 
 /**
- * Creates the search box
+ * Creates the location search box.
  */
-/*
- function initSearchBox() {
-    // Create a div that holds the search box
-    var searchContainer = document.createElement('div');
-    searchContainer.style.padding = "10px 10px 0px 0px";
-
-    var searchBox = document.createElement('input');
-    searchBox.type = "text"
-    searchBox.className = 'controls'
-    searchBox.id = "pac-input"
-    searchBox.autocomplete = "on"
-    searchContainer.append(searchBox)
-
-    googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(searchContainer)
- }*/
-
 function initAutocomplete() {
     var initialInput = document.getElementById('pac-input');
     googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(initialInput);
@@ -430,8 +418,7 @@ function initDeleteButton() {
                 }
             });
         }
-
-        //Otherwise raise an error
+        // Otherwise raise an error.
         else {
             swal(
                 'Oops...',
@@ -453,7 +440,6 @@ function initOptionsButton() {
 
     // Set the CSS for the button's border.
     var optionsBorder = document.createElement('div');
-    //optionsBorder.style.backgroundColor = 'rgba(43, 132, 237, 1.0)';
     optionsBorder.style.cursor = 'pointer';
     optionsBorder.style.textAlign = 'center';
     optionsBorder.style.borderRadius = '20%';
@@ -555,19 +541,17 @@ function initMarkersHelper(markerData) {
 
     var latLng = new google.maps.LatLng(markerData.lat, markerData.lng);
 
-
     //Ensures bounds are not null on first load
     google.maps.event.addListener(user.radius, 'bounds_changed', function() {
         //Ensures function is not activated upon tab switch
         if (visibilityChanged == false) {
             bounds = user.radius.getBounds();
-            loadMarkers(markerData, bounds, location, latLng)
-            console.log("loadingmarkers")
+            loadMarkers(markerData, bounds, location, latLng);
         }
     });
 
     if (bounds) {
-        loadMarkers(markerData, bounds, location, latLng)
+        loadMarkers(markerData, bounds, location, latLng);
     }
 }
 
@@ -579,7 +563,7 @@ function initMarkersHelper(markerData) {
  * @param {latLng} latLng - contains the latLng string
  */
 function loadMarkers(markerData, bounds, location, latLng) {
-    //Highlights users' own markers
+    // Highlights users' own markers.
     if (markerData.userID == username) {
         var picture = {
             url: chooseImageUser(markerData.type),
@@ -611,7 +595,6 @@ function loadMarkers(markerData, bounds, location, latLng) {
             topic: markerData.topic,
             isGray: true,
         });
-
     }
 
     $.post("getComment", {
@@ -619,7 +602,8 @@ function loadMarkers(markerData, bounds, location, latLng) {
         lat: markerData.lat,
         lng: markerData.lng,
     }, function(comment) {
-        var infoBox = createInfoBox(marker, markerData.topic, markerData.expireDate, comment[0].content, comment[0].score, comment[0]._id);
+        var infoBox = createInfoBox(marker, markerData.topic, markerData.expireDate,
+            comment[0].content, comment[0].score, comment[0]._id);
         var previewBox = createPreviewBox(markerData.topic, marker.isGray);
         initMarkerListener(marker, infoBox, previewBox);
         storeSortingInfo(markerData.lat, markerData.lng, marker, infoBox, previewBox);
@@ -628,7 +612,6 @@ function loadMarkers(markerData, bounds, location, latLng) {
 
         shrinkMessage(infoBox, previewBox, marker.isGray);
     });
-
 }
 
 /**
@@ -670,11 +653,6 @@ function initMarkerListener(marker, infoBox, previewBox) {
     });
 }
 
-//function for css fade in after init page and functions load
-$(function() {
-    $('body').removeClass('fade-out');
-});
-
 /**************************** INIT FUNCTIONS END ******************************/
 
 
@@ -697,10 +675,8 @@ function enableDrop() {
     $("#guide-text").text('Drop a cow within the gray area.');
     $("#guide-text").css('color', 'rgba(43, 132, 237, 1)');
 
-    // Remove the add comment and delete pin functionality if drop mode is true.
-    //optionsContainer.className = "options inactive";
+    // Remove the delete pin functionality if drop mode is active.
     deleteContainer.className = "options inactive";
-
 }
 
 /**
@@ -715,8 +691,7 @@ function disableDrop() {
         $("#guide-footer").removeClass('active');
     }
 
-    // Add the add comment and delete pin functionality if drop mode is false.
-    //optionsContainer.className = "options";
+    // Add the delete pin funcitonality if drop mode is inactive.
     deleteContainer.className = "options";
 }
 
@@ -1259,7 +1234,7 @@ function parseComment(comment, score, index, commentID, isGray, isMain) {
 
         },
         async: false
-    })
+    });
 
     return commentNode;
 }
@@ -1398,8 +1373,6 @@ function refreshListener(event) {
     initMarkers();
 }
 
-
-
 /**
  * Listener function for the message drop modal.
  */
@@ -1434,74 +1407,62 @@ function messageDropListener(event) {
  */
 function addUpvoteListener(event) {
     var thisButton = this;
-    var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
-    var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
-
-    var score = parseInt($("~ .count", this).text()) + 1;
-    if ($(this).closest(".commentRow").find(".comment").get(0)) {
-        var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    var incrementDown = $(thisButton).parent().closest("div").find(".increment.down")[0];
+    var score = parseInt($("~ .count", thisButton).text());
+    var index;
+    if ($(thisButton).closest(".commentRow").find(".comment").get(0)) {
+        index = $(thisButton).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
     } else {
-        index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
-
+        index = $(thisButton).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
     }
 
-    console.log(index)
-
-    //Only upvotes if user is logged in
+    // Only upvotes if user is logged in.
     if (username && !outsideRadius) {
         $.post("getComment", {
             index: index,
             lat: currCow.marker.getPosition().lat(),
             lng: currCow.marker.getPosition().lng(),
         }, function(comment) {
+            var updateVote = 0;
+            var adjustScore = 0;
+            if ($(thisButton).hasClass("active")) {
+                $(thisButton).removeClass("active");
+            } else {
+                $(thisButton).addClass("active");
+                if ($(incrementDown).hasClass("active")) {
+                    $(incrementDown).removeClass("active");
+                    adjustScore = 1;
+                }
+                updateVote = 1;
+            }
 
-            //Get vote using commentID and username
+            // Get vote using commentID and username.
             $.post("getVote", {
                 commentID: comment[0]._id,
                 username: username,
             }, function(vote) {
-                //If vote doesn't exist, post a new vote
                 if (!vote[0]) {
                     $.post("addVote", {
                         commentID: comment[0]._id,
                         username: username,
-                        score: 1
+                        score: updateVote
                     });
-                    //Update comment score and html
-                    $("~ .count", thisButton).text(score);
-                    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                        score, index);
-
-                    $(thisButton).addClass("active")
-
+                } else {
+                    $.post("updateVote", {
+                        commentID: comment[0]._id,
+                        username: username,
+                        score: updateVote
+                    });
                 }
-                //Change vote to +1 of what it was before if not already at 1 (upvoted)
-                else {
-                    if (vote[0].score != 1) {
-                        $.post("updateVote", {
-                            commentID: comment[0]._id,
-                            username: username,
-                            score: vote[0].score + 1
-                        })
-                        $("~ .count", thisButton).text(score);
-                        updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                            score, index);
 
-                        //From vote score -1 to 0:
-                        if (vote[0].score == -1) {
-                            $(increment_down).removeClass('active')
-                        }
-                        //From vote score 0 to 1
-                        else {
-                            $(increment_up).addClass('active')
-                        }
-                    }
-                }
-            })
+                // Update comment score and HTML.
+                $("~ .count", thisButton).text(score + (updateVote == 1 ? 1 : -1) + adjustScore);
+                updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                    score + (updateVote == 1 ? 1 : -1) + adjustScore, index);
+            });
         });
     }
-
-    //Do not allow upvotes outside of the radius
+    // Do not allow upvotes outside of the radius.
     else if (username && outsideRadius) {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
@@ -1512,8 +1473,7 @@ function addUpvoteListener(event) {
             $("#guide-footer").removeClass("active");
         }, 1500);
     }
-
-    //If not logged in, tells user to login and opens login page
+    // If not logged in, tells user to login and opens login page.
     else {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
@@ -1537,76 +1497,73 @@ function addUpvoteListener(event) {
  */
 function addDownvoteListener(event) {
     var thisButton = this;
-    var score = parseInt($("~ .count", this).text()) - 1;
-    var increment_down = $(thisButton).parent().closest("div").find(".increment.down")[0]
-    var increment_up = $(thisButton).parent().closest("div").find(".increment.up")[0]
-    if ($(this).closest(".commentRow").find(".comment").get(0)) {
-        var index = $(this).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
+    var incrementUp = $(thisButton).parent().closest("div").find(".increment.Up")[0];
+    var score = parseInt($("~ .count", thisButton).text());
+    var index;
+    if ($(thisButton).closest(".commentRow").find(".comment").get(0)) {
+        index = $(thisButton).closest(".commentRow").find(".comment").get(0).getAttribute("data-index");
     } else {
-        index = $(this).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
+        index = $(thisButton).closest(".commentRow").find(".infoBoxComment").get(0).getAttribute("data-index");
     }
 
+    // Only upvotes if user is logged in.
     if (username && !outsideRadius) {
         $.post("getComment", {
             index: index,
             lat: currCow.marker.getPosition().lat(),
             lng: currCow.marker.getPosition().lng(),
         }, function(comment) {
+            var updateVote = 0;
+            var adjustScore = 0;
+            if ($(thisButton).hasClass("active")) {
+                $(thisButton).removeClass("active");
+            } else {
+                $(thisButton).addClass("active");
+                if ($(incrementUp).hasClass("active")) {
+                    $(incrementUp).removeClass("active");
+                    adjustScore = -1;
+                }
+                updateVote = -1;
+            }
 
-            //Get vote using commentID and username
+            // Get vote using commentID and username.
             $.post("getVote", {
                 commentID: comment[0]._id,
                 username: username,
             }, function(vote) {
-                //If vote doesn't exist, post a new vote with score of -1
                 if (!vote[0]) {
                     $.post("addVote", {
                         commentID: comment[0]._id,
                         username: username,
-                        score: -1
+                        score: updateVote
                     });
-                    //Update comment score and html
-                    $("~ .count", thisButton).text(score);
-                    updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                        score, index);
-                    $(increment_down).addClass('active')
+                } else {
+                    $.post("updateVote", {
+                        commentID: comment[0]._id,
+                        username: username,
+                        score: updateVote
+                    });
                 }
-                //Change vote to -1 of what it was before if not already at -1 (downvoted)
-                else {
-                    if (vote[0].score != -1) {
-                        $.post("updateVote", {
-                            commentID: comment[0]._id,
-                            username: username,
-                            score: vote[0].score - 1
-                        });
-                        $("~ .count", thisButton).text(score);
-                        updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
-                            score, index);
 
-                        //From 1 to 0
-                        if (vote[0].score == 1) {
-                            $(increment_up).removeClass('active')
-                        }
-
-                        //From 0 to -1
-                        else {
-                            $(increment_down).addClass('active')
-                        }
-                    }
-                }
-            })
+                // Update comment score and HTML.
+                $("~ .count", thisButton).text(score + (updateVote == -1 ? -1 : 1) + adjustScore);
+                updateScore(currCow.marker.getPosition().lat(), currCow.marker.getPosition().lng(),
+                    score + (updateVote == -1 ? -1 : 1) + adjustScore, index);
+            });
         });
     }
-    //Do not allow upvotes outside of the radius
+    // Do not allow upvotes outside of the radius.
     else if (username && outsideRadius) {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
         }
         $("#guide-text").text("Incorrect area - upvote within the grey circle.");
         $("#guide-text").css('color', 'rgba(209, 44, 29, 1)');
+        setTimeout(function() {
+            $("#guide-footer").removeClass("active");
+        }, 1500);
     }
-
-    //If not logged in, tells user to login and opens login page
+    // If not logged in, tells user to login and opens login page.
     else {
         if ($("#guide-footer").hasClass('active') == false) {
             $("#guide-footer").addClass('active');
