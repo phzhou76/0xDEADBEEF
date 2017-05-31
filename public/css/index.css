@@ -110,6 +110,13 @@ main tab-section.active {
     width: 80%;
 }
 
+.comments-table hr {
+    width: 1100%;
+    border-width: 1px;
+    color: black;
+    background-color: black;
+}
+
 #options-sidebar div {
     height: 40px;
     width: 70%;
