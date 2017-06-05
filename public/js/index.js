@@ -1499,7 +1499,7 @@ function addUpvoteListener(event) {
  */
 function addDownvoteListener(event) {
     var thisButton = this;
-    var incrementUp = $(thisButton).parent().closest("div").find(".increment.Up")[0];
+    var incrementUp = $(thisButton).parent().closest("div").find(".increment.up")[0];
     var score = parseInt($("~ .count", thisButton).text());
     var index;
     if ($(thisButton).closest(".commentRow").find(".comment").get(0)) {
@@ -1901,10 +1901,10 @@ function Tutorial(){
 
     var steps = [
     {
-        html: '<h2><a href="//github.com/phzhou76/0xDEADBEEF">Deja Moo</a> allows you to view cows in your surrounding areas to find ' + 
+        html: '<h2><a href="//github.com/phzhou76/0xDEADBEEF">Deja Moo</a> allows you to view cows in your surrounding areas to find ' +
         'events, food, and sales!</h2><p align = "left"><br><b>Drop a cow</b> to share with other people what exciting stuff is happening near ' +
          'you.<br><b>Delete</b> a cow that you feel is no longer needed.' +
-        '<br><b>View cows</b> others have dropped and upvote them as well as leave a comment!<br><b>Filter</b> only the types of cows that ' + 
+        '<br><b>View cows</b> others have dropped and upvote them as well as leave a comment!<br><b>Filter</b> only the types of cows that ' +
         'you want to see.<br><b>Search</b> for different addresses and see what cows there are anywhere in the world!</p>',
         imageUrl: 'img/tut1.jpg',
         imageWidth: '200px',
@@ -1931,7 +1931,7 @@ function Tutorial(){
     {
         title: 'Viewing Other Cows',
         text: 'Click on a cow on the map to see the main comment!  Click view comments to view' +
-        ' all of the comments. You can also upvote/downvote the main comment right from the info box! ' + 
+        ' all of the comments. You can also upvote/downvote the main comment right from the info box! ' +
         'If you click view comments you will be led to the all comments info box where you can see all the comments as well as upvote/downvote them.',
         imageUrl: 'img/tut4.png',
         imageWidth: '448px',
